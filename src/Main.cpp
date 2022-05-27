@@ -14,8 +14,11 @@ int main()
 
     renderer.setup_window_data();
 
+    renderer.start_timer();
     while (!renderer.close_window())
     {
+        renderer.new_frame();
+        std::cout<<renderer.deltaTime<<" "<<(int)(1.0f/renderer.deltaTime)<<std::endl;
         if (renderer.check_key(GLFW_KEY_ESCAPE))
         {
             glfwSetWindowShouldClose(renderer.window, true);

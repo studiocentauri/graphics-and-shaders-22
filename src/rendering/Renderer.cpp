@@ -73,6 +73,20 @@ bool Renderer::check_key(int key)
     return (glfwGetKey(window,key)==GLFW_PRESS);
 }
 
+void Renderer::start_timer()
+{
+    currentTime = glfwGetTime();
+    previousTime = currentTime;
+    deltaTime = 0.0f;
+}
+
+void Renderer::new_frame()
+{
+    currentTime = glfwGetTime();
+    deltaTime = currentTime-previousTime;
+    previousTime = currentTime;
+}
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);

@@ -9,12 +9,16 @@
 class Renderer
 {
     private:
+    float previousTime;
+    float currentTime;
 
     public:
     int major;
     int minor;
     int width;
     int height;
+
+    float deltaTime;
 
     GLFWwindow* window;
 
@@ -27,6 +31,8 @@ class Renderer
     bool close_window();
     void swap_buffers(bool lockFrameRate);
     bool check_key(int key);
+    void start_timer();
+    void new_frame();
 
 };
 
