@@ -11,11 +11,11 @@ Renderer::Renderer(int major_, int minor_, int width_, int height_)
 void Renderer::initialise_glfw()
 {
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,major);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,minor);
-    glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #if __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 }
 
@@ -30,7 +30,7 @@ bool Renderer::create_window()
 
     if (window == NULL)
     {
-        std::cout<<"Failed to create GLFW window"<<std::endl;
+        std::cout << "Failed to create GLFW window" << std::endl;
         terminate_glfw();
         return false;
     }
@@ -42,9 +42,9 @@ void Renderer::setup_window_data()
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        std::cout<<"Failed to initialize GLAD" <<std::endl;
+        std::cout << "Failed to initialize GLAD" << std::endl;
     }
 }
 
@@ -58,7 +58,7 @@ void Renderer::swap_buffers(bool lockFrameRate)
     glfwSwapBuffers(window);
     glfwPollEvents();
 
-    if(!lockFrameRate)
+    if (!lockFrameRate)
     {
         glfwSwapInterval(0);
     }
@@ -70,7 +70,7 @@ void Renderer::swap_buffers(bool lockFrameRate)
 
 bool Renderer::check_key(int key)
 {
-    return (glfwGetKey(window,key)==GLFW_PRESS);
+    return (glfwGetKey(window, key) == GLFW_PRESS);
 }
 
 void Renderer::start_timer()
@@ -83,12 +83,55 @@ void Renderer::start_timer()
 void Renderer::new_frame()
 {
     currentTime = glfwGetTime();
-    deltaTime = currentTime-previousTime;
+    deltaTime = currentTime - previousTime;
     previousTime = currentTime;
 }
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+//------------------------------------------------------------
+
+void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
 
+//---------------------------------------------------------
+
+void VertexArray::generate_buffers()
+{
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+}
+void VertexArray::bind_vao()
+{
+    glBindVertexArray(VAO);
+}
+void VertexArray::unbind_vao()
+{
+    glBindVertexArray(0);
+}
+void VertexArray::bind_vbo(int vertexCount, GLsizeiptr stride, void *pointer)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, vertexCount * stride, pointer, GL_STATIC_DRAW);
+}
+void VertexArray::unbind_vbo()
+{
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+void VertexArray::bind_ebo(int indexCount, void *pointer)
+{
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), pointer, GL_STATIC_DRAW);
+}
+void VertexArray::unbind_ebo()
+{
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void VertexArray::free_data()
+{
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+}
