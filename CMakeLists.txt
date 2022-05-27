@@ -19,6 +19,7 @@ add_executable(
     
     src/Main.cpp
     src/thirdparty/glad.c
+    src/rendering/Renderer.cpp
 )
 
 target_link_libraries(

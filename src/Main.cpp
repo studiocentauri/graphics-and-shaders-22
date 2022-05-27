@@ -1,14 +1,14 @@
 #include <iostream>
-#include "thirdparty/glad/glad.h"
 #include "Config.h"
-#include "GLFW/glfw3.h"
+#include "rendering/Renderer.h"
 
+Renderer renderer;
 
 int main()
 {
-    glfwInit();
+    renderer.initialise_glfw();
     std::cout<<WINDOW_NAME<<std::endl;
-    glfwTerminate();
+    renderer.terminate_glfw();
     return 0;
 }
 
