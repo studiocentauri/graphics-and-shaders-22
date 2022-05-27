@@ -8,6 +8,7 @@ find_package(OpenGL REQUIRED)
 find_package(GLFW3 REQUIRED)
 
 include_directories(includes)
+include_directories(includes/thirdparty)
 
 if(WIN32)
 link_directories(lib)
@@ -17,6 +18,11 @@ add_executable(
     graphics-and-shaders
     
     src/Main.cpp
+    src/thirdparty/glad.c
+)
+
+target_link_libraries(
+    graphics-and-shaders ${CMAKE_DL_LIBS}
 )
 
 if(WIN32)

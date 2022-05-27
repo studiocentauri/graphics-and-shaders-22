@@ -1,6 +1,8 @@
 #include <iostream>
+#include "thirdparty/glad/glad.h"
 #include "Config.h"
 #include "GLFW/glfw3.h"
+
 
 int main()
 {
