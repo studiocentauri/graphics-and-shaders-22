@@ -68,7 +68,13 @@ void Renderer::swap_buffers(bool lockFrameRate)
     }
 }
 
+bool Renderer::check_key(int key)
+{
+    return (glfwGetKey(window,key)==GLFW_PRESS);
+}
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
+

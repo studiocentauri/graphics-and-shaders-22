@@ -26,6 +26,7 @@ class Renderer
     void setup_window_data();
     bool close_window();
     void swap_buffers(bool lockFrameRate);
+    bool check_key(int key);
 
 };
 
