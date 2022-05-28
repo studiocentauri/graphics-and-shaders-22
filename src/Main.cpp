@@ -3,6 +3,13 @@
 #include "rendering/Renderer.h"
 
 Renderer renderer;
+float vertices[] = {
+    -0.5f, -0.5f, 0.0f,
+    0.5f, -0.5f, 0.0f,
+    0.0f, 0.5f, 0.0f
+};
+
+VertexArray varray;
 
 int main()
 {
@@ -13,6 +20,9 @@ int main()
     }
 
     renderer.setup_window_data();
+
+    varray.generate_buffers();
+    varray.bind_vbo(3,3*sizeof(float), vertices);
 
     renderer.start_timer();
     while (!renderer.close_window())
