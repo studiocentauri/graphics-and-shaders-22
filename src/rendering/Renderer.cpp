@@ -139,6 +139,12 @@ void VertexArray::draw_triangle(int count, int startIndex)
     glDrawArrays(GL_TRIANGLES, startIndex, count);
     unbind_vao();
 }
+void VertexArray::draw_indices(int indexCount)
+{
+    bind_vao();
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+    unbind_vao();
+}
 void VertexArray::free_data()
 {
     glDeleteVertexArrays(1, &VAO);

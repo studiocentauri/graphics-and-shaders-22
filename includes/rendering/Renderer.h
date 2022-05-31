@@ -19,6 +19,7 @@ public:
     void unbind_ebo();
     void set_attribute_array(int layoutLayer, int count, GLsizeiptr stride, const void *pointer = (void *)0);
     void draw_triangle(int count, int startIndex);
+    void draw_indices(int indexCount);
     void free_data();
 };
 

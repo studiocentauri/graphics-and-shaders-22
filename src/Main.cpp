@@ -3,11 +3,18 @@
 #include "rendering/Renderer.h"
 #include "rendering/Shader.h"
 Renderer renderer;
+// float vertices[] = {
+//     -0.5f, -0.5f, 0.0f,
+//     0.5f, -0.5f, 0.0f,
+//     0.0f, 0.5f, 0.0f};
 float vertices[] = {
-    -0.5f, -0.5f, 0.0f,
+    -0.5f, 0.5f, 0.0f,
+    0.5f, 0.5f, 0.0f,
     0.5f, -0.5f, 0.0f,
-    0.0f, 0.5f, 0.0f};
-
+    -0.5f, -0.5f, 0.0f};
+unsigned int indices[] = {
+    0, 1, 2,
+    2, 3, 0};
 VertexArray varray;
 
 int main()
@@ -23,7 +30,8 @@ int main()
 
     varray.generate_buffers();
     varray.bind_vao();
-    varray.bind_vbo(3, 3 * sizeof(float), vertices);
+    varray.bind_vbo(4, 3 * sizeof(float), vertices);
+    varray.bind_ebo(6, indices);
     varray.set_attribute_array(0, 3, 3 * sizeof(float));
     varray.unbind_vbo();
     varray.unbind_vao();
@@ -56,7 +64,8 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
         // Drawing Shapes and Objects
         shdr.use();
-        varray.draw_triangle(3, 0);
+        // varray.draw_triangle(3, 0);
+        varray.draw_indices(6);
         // End of Frame
         renderer.swap_buffers(false);
     }
