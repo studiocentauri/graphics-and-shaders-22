@@ -17,7 +17,8 @@ public:
     void unbind_vao();
     void unbind_vbo();
     void unbind_ebo();
-
+    void set_attribute_array(int layoutLayer, int count, GLsizeiptr stride, const void *pointer = (void *)0);
+    void draw_triangle(int count, int startIndex);
     void free_data();
 };
 

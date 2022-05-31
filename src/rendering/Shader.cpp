@@ -2,15 +2,14 @@
 
 Shader::Shader()
 {
-
 }
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath)
+Shader::Shader(const char *vertexPath, const char *fragmentPath)
 {
     create_shader(vertexPath, fragmentPath);
 }
 
-void Shader::create_shader(const char* vertexPath, const char* fragmentPath)
+void Shader::create_shader(const char *vertexPath, const char *fragmentPath)
 {
     std::string vertexCode;
     std::string fragmentCode;
@@ -36,25 +35,22 @@ void Shader::create_shader(const char* vertexPath, const char* fragmentPath)
 
         vertexCode = vertexShaderStream.str();
         fragmentCode = fragmentShaderStream.str();
-
     }
-    catch(std::ifstream::failure e)
+    catch (std::ifstream::failure e)
     {
-        std::cout<<"Error Shader File Not loaded successfully"<<std::endl;
+        std::cout << "Error Shader File Not loaded successfully" << std::endl;
     }
 
     unsigned int vertex, fragment;
-
     vertex = compile_shader(vertexCode.c_str(), VERTEX_SHADER);
 
-    if(check_compile_errors(vertex, VERTEX_SHADER))
+    if (check_compile_errors(vertex, VERTEX_SHADER))
     {
         return;
     }
-
     fragment = compile_shader(fragmentCode.c_str(), FRAGMENT_SHADER);
 
-    if(check_compile_errors(fragment, FRAGMENT_SHADER))
+    if (check_compile_errors(fragment, FRAGMENT_SHADER))
     {
         return;
     }
@@ -65,7 +61,7 @@ void Shader::create_shader(const char* vertexPath, const char* fragmentPath)
 
     glLinkProgram(id);
 
-    if(check_compile_errors(id, COMBINED_SHADER))
+    if (check_compile_errors(id, COMBINED_SHADER))
     {
         return;
     }
@@ -74,20 +70,20 @@ void Shader::create_shader(const char* vertexPath, const char* fragmentPath)
     glDeleteShader(fragment);
 }
 
-unsigned int Shader::compile_shader(const char* code, SHADER_TYPE type)
+unsigned int Shader::compile_shader(const char *code, SHADER_TYPE type)
 {
     unsigned int shader;
 
-    if(type == VERTEX_SHADER)
+    if (type == VERTEX_SHADER)
     {
         shader = glCreateShader(GL_VERTEX_SHADER);
     }
-    else if(type == FRAGMENT_SHADER)
+    else if (type == FRAGMENT_SHADER)
     {
         shader = glCreateShader(GL_FRAGMENT_SHADER);
     }
 
-    glShaderSource(shader, 1, code, NULL);
+    glShaderSource(shader, 1, &code, NULL);
     glCompileShader(shader);
     return shader;
 }
@@ -102,30 +98,33 @@ void Shader::free_data()
     glDeleteProgram(id);
 }
 
-bool check_compile_errors(unsigned int shader, SHADER_TYPE type)
+bool Shader::check_compile_errors(unsigned int shader, SHADER_TYPE type)
 {
     int success;
 
     char infoLog[1024];
 
-    if(type == COMBINED_SHADER)
+    if (type == COMBINED_SHADER)
     {
         glGetProgramiv(shader, GL_LINK_STATUS, &success);
 
-        if(!success)
+        if (!success)
         {
             glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-            std::cout<< "ERROR::SHADER::PROGRAM::LINKING FAILED OF TYPE" <<std::endl<< infoLog << std::endl;
+            std::cout << "ERROR::SHADER::PROGRAM::LINKING FAILED OF TYPE" << std::endl
+                      << infoLog << std::endl;
         }
     }
     else
     {
         glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 
-        if(!success)
+        if (!success)
         {
             glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-            std::cout<< "ERROR::SHADER::COMPILE::LINKING FAILED OF TYPE" <<std::endl<< infoLog << std::endl;
+            std::cout << "ERROR::SHADER::COMPILE::LINKING FAILED OF TYPE" << std::endl
+                      << infoLog << std::endl;
         }
     }
+    return success == 0;
 }
