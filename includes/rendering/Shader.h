@@ -23,6 +23,7 @@ public:
     unsigned int id;
 
     Shader();
+    Shader(std::string vertexPath, std::string fragmentPath);
     Shader(const char *vertexPath, const char *fragmentPath);
     void create_shader(const char *vertexPath, const char *fragmentPath);
     unsigned int compile_shader(const char *code, SHADER_TYPE type);

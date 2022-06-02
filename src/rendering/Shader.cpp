@@ -4,6 +4,13 @@ Shader::Shader()
 {
 }
 
+Shader::Shader(std::string vertexPath, std::string fragmentPath)
+{
+
+    std::cout << vertexPath << fragmentPath;
+    create_shader(vertexPath.c_str(), fragmentPath.c_str());
+}
+
 Shader::Shader(const char *vertexPath, const char *fragmentPath)
 {
     create_shader(vertexPath, fragmentPath);

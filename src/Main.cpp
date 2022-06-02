@@ -1,6 +1,7 @@
 #include "Config.h"
 #include "rendering/Renderer.h"
 #include "rendering/Shader.h"
+#include "utility/FileSystem.h"
 
 #include <iostream>
 
@@ -22,7 +23,6 @@ unsigned int indices[] = {
     2, 3, 0};
 
 VertexArray varray;
-
 int main()
 {
     // Setup Renderer
@@ -34,6 +34,7 @@ int main()
     renderer.setup_window_data();
 
     // Setup Vertex Array
+
     varray.generate_buffers();
     varray.bind_vao();
     varray.bind_vbo(4, 3 * sizeof(float), vertices);
@@ -43,14 +44,14 @@ int main()
     varray.unbind_vao();
 
     // Setup Shader
-    Shader shdr("../../shaders/defaultShader.vs", "../../shaders/defaultShader.fs");
+    Shader shdr(FileSystem::get_path("shaders/defaultShader.vs").c_str(), FileSystem::get_path("shaders/defaultShader.fs").c_str());
 
     // Start Render Loop
     renderer.start_timer();
     while (!renderer.close_window())
     {
         renderer.new_frame();
-        std::cout << renderer.deltaTime << " " << (int)(1.0f / renderer.deltaTime) << std::endl;
+        // std::cout << renderer.deltaTime << " " << (int)(1.0f / renderer.deltaTime) << std::endl;
         if (renderer.check_key(GLFW_KEY_ESCAPE))
         {
             glfwSetWindowShouldClose(renderer.window, true);
