@@ -8,25 +8,29 @@
 #include <fstream>
 #include <sstream>
 
+// Types of Shaders
+enum SHADER_TYPE
+{
+    VERTEX_SHADER,
+    FRAGMENT_SHADER,
+    COMBINED_SHADER,
+};
 
-enum SHADER_TYPE {VERTEX_SHADER, FRAGMENT_SHADER, COMBINED_SHADER};
-
+// Shader Class
 class Shader
 {
-    public:
+public:
     unsigned int id;
 
     Shader();
-    Shader(const char* vertexPath, const char* fragmentPath);
-    void create_shader(const char* vertexPath, const char* fragmentPath);
-    unsigned int compile_shader(const char* code, SHADER_TYPE type);
+    Shader(const char *vertexPath, const char *fragmentPath);
+    void create_shader(const char *vertexPath, const char *fragmentPath);
+    unsigned int compile_shader(const char *code, SHADER_TYPE type);
     void use();
     void free_data();
 
-    private:
+private:
     bool check_compile_errors(unsigned int shader, SHADER_TYPE type);
-
-
 };
 
 #endif

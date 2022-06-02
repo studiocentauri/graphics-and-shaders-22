@@ -1,15 +1,19 @@
 #ifndef RENDERER_H
 #define RENDERER_H
-#include <iostream>
+
 #include "Config.h"
 #include "thirdparty/glad/glad.h"
 #include "thirdparty/GLFW/glfw3.h"
 
+#include <iostream>
+
+// Vertex Array Class
 class VertexArray
 {
 private:
-public:
     unsigned int VAO, VBO, EBO;
+
+public:
     void generate_buffers();
     void bind_vao();
     void bind_vbo(int vertexCount, GLsizeiptr stride, void *pointer);
@@ -23,7 +27,7 @@ public:
     void free_data();
 };
 
-// Rendering class
+// Rendering Class
 class Renderer
 {
 private:
@@ -35,15 +39,12 @@ public:
     int minor;
     int width;
     int height;
-
     float deltaTime;
-
     GLFWwindow *window;
 
     Renderer(int major_ = OPENGL_MAJOR_VERSION, int minor_ = OPENGL_MINOR_VERSION, int width_ = WINDOW_WIDTH, int height_ = WINDOW_HEIGHT);
     void initialise_glfw();
     void terminate_glfw();
-
     bool create_window();
     void setup_window_data();
     bool close_window();

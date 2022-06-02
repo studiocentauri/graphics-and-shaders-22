@@ -102,49 +102,59 @@ void VertexArray::generate_buffers()
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
 }
+
 void VertexArray::bind_vao()
 {
     glBindVertexArray(VAO);
 }
+
 void VertexArray::unbind_vao()
 {
     glBindVertexArray(0);
 }
+
 void VertexArray::bind_vbo(int vertexCount, GLsizeiptr stride, void *pointer)
 {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertexCount * stride, pointer, GL_STATIC_DRAW);
 }
+
 void VertexArray::unbind_vbo()
 {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
+
 void VertexArray::bind_ebo(int indexCount, void *pointer)
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), pointer, GL_STATIC_DRAW);
 }
+
 void VertexArray::unbind_ebo()
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
+
 void VertexArray::set_attribute_array(int layoutLayer, int count, GLsizeiptr stride, const void *pointer)
 {
     glEnableVertexAttribArray(layoutLayer);
     glVertexAttribPointer(layoutLayer, count, GL_FLOAT, GL_FALSE, stride, pointer);
 }
+
 void VertexArray::draw_triangle(int count, int startIndex)
 {
     bind_vao();
     glDrawArrays(GL_TRIANGLES, startIndex, count);
     unbind_vao();
 }
+
 void VertexArray::draw_indices(int indexCount)
 {
     bind_vao();
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
     unbind_vao();
 }
+
 void VertexArray::free_data()
 {
     glDeleteVertexArrays(1, &VAO);

@@ -1,33 +1,39 @@
-#include <iostream>
 #include "Config.h"
 #include "rendering/Renderer.h"
 #include "rendering/Shader.h"
+
+#include <iostream>
+
 Renderer renderer;
+
 // float vertices[] = {
 //     -0.5f, -0.5f, 0.0f,
 //     0.5f, -0.5f, 0.0f,
 //     0.0f, 0.5f, 0.0f};
+
 float vertices[] = {
     -0.5f, 0.5f, 0.0f,
     0.5f, 0.5f, 0.0f,
     0.5f, -0.5f, 0.0f,
     -0.5f, -0.5f, 0.0f};
+
 unsigned int indices[] = {
     0, 1, 2,
     2, 3, 0};
+
 VertexArray varray;
 
 int main()
 {
+    // Setup Renderer
     renderer.initialise_glfw();
     if (!renderer.create_window())
     {
         return -1;
     }
-
     renderer.setup_window_data();
-    Shader shdr("../../shaders/defaultShader.vs", "../../shaders/defaultShader.fs");
 
+    // Setup Vertex Array
     varray.generate_buffers();
     varray.bind_vao();
     varray.bind_vbo(4, 3 * sizeof(float), vertices);
@@ -36,6 +42,10 @@ int main()
     varray.unbind_vbo();
     varray.unbind_vao();
 
+    // Setup Shader
+    Shader shdr("../../shaders/defaultShader.vs", "../../shaders/defaultShader.fs");
+
+    // Start Render Loop
     renderer.start_timer();
     while (!renderer.close_window())
     {
@@ -62,14 +72,17 @@ int main()
             glClearColor(0.2f, 0.1f, 0.3f, 1.0f);
         }
         glClear(GL_COLOR_BUFFER_BIT);
+
         // Drawing Shapes and Objects
         shdr.use();
         // varray.draw_triangle(3, 0);
         varray.draw_indices(6);
+
         // End of Frame
         renderer.swap_buffers(false);
     }
 
+    // Free Date and stop processes
     renderer.terminate_glfw();
     return 0;
 }
