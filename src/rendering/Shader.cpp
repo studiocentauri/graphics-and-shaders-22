@@ -17,8 +17,8 @@ void Shader::create_shader(const char *vertexPath, const char *fragmentPath)
     std::ifstream vertexShaderFile;
     std::ifstream fragmentShaderFile;
 
-    vertexShaderFile.exceptions(std::ifstream::failbit || std::ifstream::badbit);
-    fragmentShaderFile.exceptions(std::ifstream::failbit || std::ifstream::badbit);
+    vertexShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    fragmentShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
     try
     {
