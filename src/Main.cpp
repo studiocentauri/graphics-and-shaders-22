@@ -72,6 +72,20 @@ int main()
         {
             glClearColor(0.2f, 0.1f, 0.3f, 1.0f);
         }
+
+        if( renderer.check_key(GLFW_KEY_P))
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+        }
+        else if( renderer.check_key(GLFW_KEY_L))
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        }
+        else
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
+
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Drawing Shapes and Objects
