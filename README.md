@@ -4,7 +4,11 @@ Repository for the graphics and shaders project for Summer 2022.
 - Change the output text to your github username
 - Show the commands which you will use to build and run your application through the terminal using CMake
 ```
-Insert code here
+$ cd C:\Users\ADMIN\OneDrive\Documents\GitHub\graphics-and-shaders-22
+$ mkdir Build1
+$ cd Build1
+$ cmake ..
+$ cmake ..Build1 .
 ```
 ### Deadline : 3rd June, 2022 11:59pm
 ### Instructions for submissions:
