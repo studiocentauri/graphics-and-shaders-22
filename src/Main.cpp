@@ -55,9 +55,14 @@ int main()
 
     // Start Render Loop
     renderer.start_timer();
+
+    float totalTime = 0;
+
     while (!renderer.close_window())
     {
         renderer.new_frame();
+        totalTime+= renderer.deltaTime;
+        totalTime = totalTime > 1.0f ? totalTime - 1.0f : totalTime;
         // std::cout << renderer.deltaTime << " " << (int)(1.0f / renderer.deltaTime) << std::endl;
         if (renderer.check_key(GLFW_KEY_ESCAPE))
         {
@@ -94,6 +99,10 @@ int main()
         }
 
         glClear(GL_COLOR_BUFFER_BIT);
+
+        shdr.use();
+        glUniform1f(glGetUniformLocation(shdr.id, "Time"), totalTime);
+
 
         // Drawing Shapes and Objects
         shdr.use();
