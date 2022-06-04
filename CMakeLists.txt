@@ -22,8 +22,10 @@ add_executable(
     
     src/Main.cpp
     src/thirdparty/glad.c
+    src/thirdparty/stb_image.cpp
     src/rendering/Renderer.cpp
     src/rendering/Shader.cpp
+    src/rendering/Texture.cpp
     src/utility/FileSystem.cpp
 )
 

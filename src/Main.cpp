@@ -1,6 +1,7 @@
 #include "Config.h"
 #include "rendering/Renderer.h"
 #include "rendering/Shader.h"
+#include "rendering/Texture.h"
 #include "utility/FileSystem.h"
 
 #include <iostream>
@@ -13,9 +14,10 @@ Renderer renderer;
 //     0.0f, 0.5f, 0.0f};
 
 float vertices[] = {
-    -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-    0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f};
+    -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+    0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 
+    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f
+    };
 
 // float vertices[] = {
 //     -0.5f, 0.5f, 0.0f,
@@ -42,15 +44,18 @@ int main()
 
     varray.generate_buffers();
     varray.bind_vao();
-    varray.bind_vbo(3, 6 * sizeof(float), vertices);
+    varray.bind_vbo(3, 8 * sizeof(float), vertices);
     // varray.bind_ebo(6, indices);
-    varray.set_attribute_array(0, 3, 6 * sizeof(float));
-    varray.set_attribute_array(1, 3, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+    varray.set_attribute_array(0, 3, 8 * sizeof(float));
+    varray.set_attribute_array(1, 3, 8 * sizeof(float), (void *)(3 * sizeof(float)));
+    varray.set_attribute_array(2, 2, 8 * sizeof(float), (void *)(6 * sizeof(float)));
     varray.unbind_vbo();
     varray.unbind_vao();
 
     // Setup Shader
-    Shader shdr(FileSystem::get_path("shaders/defaultShader.vs").c_str(), FileSystem::get_path("shaders/defaultShader.fs").c_str());
+    Shader shdr(FileSystem::get_path("shaders/textureShader.vs").c_str(), FileSystem::get_path("shaders/textureShader.fs").c_str());
+    Texture tex(FileSystem::get_path("resources/textures/iitk_logo.png"));
+    
 
     // Start Render Loop
     renderer.start_timer();
@@ -119,7 +124,7 @@ int main()
         glUniform1f(glGetUniformLocation(shdr.id, "Time"), totalTime);
         glUniform1f(glGetUniformLocation(shdr.id, "XAxis"), xAxis);
         glUniform1f(glGetUniformLocation(shdr.id, "YAxis"), yAxis);
-
+        tex.bind_texture();
         // Drawing Shapes and Objects
         shdr.use();
         varray.draw_triangle(3, 0);
