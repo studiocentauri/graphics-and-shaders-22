@@ -15,8 +15,7 @@ Renderer renderer;
 float vertices[] = {
     -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
     0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f
-};
+    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f};
 
 // float vertices[] = {
 //     -0.5f, 0.5f, 0.0f,
@@ -46,7 +45,7 @@ int main()
     varray.bind_vbo(3, 6 * sizeof(float), vertices);
     // varray.bind_ebo(6, indices);
     varray.set_attribute_array(0, 3, 6 * sizeof(float));
-    varray.set_attribute_array(1, 3, 6 * sizeof(float), (void *)(3*sizeof(float)));
+    varray.set_attribute_array(1, 3, 6 * sizeof(float), (void *)(3 * sizeof(float)));
     varray.unbind_vbo();
     varray.unbind_vao();
 
@@ -57,11 +56,12 @@ int main()
     renderer.start_timer();
 
     float totalTime = 0;
-
+    float xAxis = 0, yAxis = 0;
+    float translationSpeed = 1.0f;
     while (!renderer.close_window())
     {
         renderer.new_frame();
-        totalTime+= renderer.deltaTime;
+        totalTime += renderer.deltaTime;
         totalTime = totalTime > 1.0f ? totalTime - 1.0f : totalTime;
         // std::cout << renderer.deltaTime << " " << (int)(1.0f / renderer.deltaTime) << std::endl;
         if (renderer.check_key(GLFW_KEY_ESCAPE))
@@ -85,11 +85,11 @@ int main()
             glClearColor(0.2f, 0.1f, 0.3f, 1.0f);
         }
 
-        if( renderer.check_key(GLFW_KEY_P))
+        if (renderer.check_key(GLFW_KEY_P))
         {
             glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
         }
-        else if( renderer.check_key(GLFW_KEY_L))
+        else if (renderer.check_key(GLFW_KEY_L))
         {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         }
@@ -97,12 +97,28 @@ int main()
         {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
-
+        if (renderer.check_key(GLFW_KEY_W))
+        {
+            yAxis += translationSpeed * renderer.deltaTime;
+        }
+        else if (renderer.check_key(GLFW_KEY_A))
+        {
+            xAxis -= translationSpeed * renderer.deltaTime;
+        }
+        else if (renderer.check_key(GLFW_KEY_S))
+        {
+            yAxis -= translationSpeed * renderer.deltaTime;
+        }
+        else if (renderer.check_key(GLFW_KEY_D))
+        {
+            xAxis += translationSpeed * renderer.deltaTime;
+        }
         glClear(GL_COLOR_BUFFER_BIT);
 
         shdr.use();
         glUniform1f(glGetUniformLocation(shdr.id, "Time"), totalTime);
-
+        glUniform1f(glGetUniformLocation(shdr.id, "XAxis"), xAxis);
+        glUniform1f(glGetUniformLocation(shdr.id, "YAxis"), yAxis);
 
         // Drawing Shapes and Objects
         shdr.use();
