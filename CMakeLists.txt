@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION "3.16.3")
 
 project(graphics-and-shaders)
+
 set(CMAKE_CXX_STANDARD 17)
 if(MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}/std:c++17")
 endif(MSVC)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 find_package(OpenGL REQUIRED)
@@ -13,6 +15,8 @@ find_package(GLFW3 REQUIRED)
 include_directories(includes)
 include_directories(includes/thirdparty)
 include_directories(configuration)
+configure_file(configuration/root_directory.h.in configuration/root_directory.h)
+include_directories(${CMAKE_BINARY_DIR}/configuration)
 if(WIN32)
 link_directories(lib)
 endif()
@@ -32,7 +36,6 @@ add_executable(
 target_link_libraries(
     graphics-and-shaders ${CMAKE_DL_LIBS}
 )
-
 if(WIN32)
 target_link_libraries(
         graphics-and-shaders
@@ -42,6 +45,3 @@ target_link_libraries(graphics-and-shaders glfw3)
 else()
 target_link_libraries(graphics-and-shaders glfw)
 endif()
-
-configure_file(configuration/root_directory.h.in configuration/root_directory.h)
-include_directories(${CMAKE_BINARY_DIR}/configuration)

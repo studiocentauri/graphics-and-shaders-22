@@ -8,7 +8,7 @@
 
 class Texture
 {
-    public:
+public:
     unsigned int id;
     std::string path;
 
@@ -19,7 +19,7 @@ class Texture
     void bind_texture();
     void unbind_texture();
 
-    private:
+private:
 };
 
 void set_active_texture(int index);

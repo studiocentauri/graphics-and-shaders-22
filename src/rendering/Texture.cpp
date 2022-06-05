@@ -2,7 +2,6 @@
 
 Texture::Texture()
 {
-
 }
 
 Texture::Texture(std::string _path) : path(_path)
@@ -20,20 +19,20 @@ void Texture::load_texture_from_path()
     generate_texture();
     int width, height, nrComponents;
     stbi_set_flip_vertically_on_load(true);
-    unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
-    if(data)
+    unsigned char *data = stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
+    if (data)
     {
         GLenum format;
 
-        if(nrComponents == 1)
+        if (nrComponents == 1)
         {
             format = GL_RED;
         }
-        else if(nrComponents == 3)
+        else if (nrComponents == 3)
         {
             format = GL_RGB;
         }
-        else if(nrComponents == 4)
+        else if (nrComponents == 4)
         {
             format = GL_RGBA;
         }
@@ -45,11 +44,10 @@ void Texture::load_texture_from_path()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
     }
     else
     {
-        std::cout<<"Failed to load Texture"<<std::endl;
+        std::cout << "Failed to load Texture" << std::endl;
     }
 
     stbi_image_free(data);

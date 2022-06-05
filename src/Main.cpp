@@ -15,9 +15,8 @@ Renderer renderer;
 
 float vertices[] = {
     -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-    0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 
-    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f
-    };
+    0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f};
 
 // float vertices[] = {
 //     -0.5f, 0.5f, 0.0f,
@@ -41,7 +40,6 @@ int main()
     renderer.setup_window_data();
 
     // Setup Vertex Array
-
     varray.generate_buffers();
     varray.bind_vao();
     varray.bind_vbo(3, 8 * sizeof(float), vertices);
@@ -52,27 +50,32 @@ int main()
     varray.unbind_vbo();
     varray.unbind_vao();
 
-    // Setup Shader
+    // Setup Shaders and Textures
     Shader shdr(FileSystem::get_path("shaders/textureShader.vs").c_str(), FileSystem::get_path("shaders/textureShader.fs").c_str());
     Texture tex(FileSystem::get_path("resources/textures/iitk_logo.png"));
-    
 
-    // Start Render Loop
-    renderer.start_timer();
-
+    // Setup Data
     float totalTime = 0;
     float xAxis = 0, yAxis = 0;
     float translationSpeed = 1.0f;
+
+    // Start Render Loop
+    renderer.start_timer();
     while (!renderer.close_window())
     {
+        // Frame Start
         renderer.new_frame();
         totalTime += renderer.deltaTime;
-        totalTime = totalTime > 1.0f ? totalTime - 1.0f : totalTime;
+        totalTime = (totalTime > 1.0f) ? (totalTime - 1.0f) : totalTime;
         // std::cout << renderer.deltaTime << " " << (int)(1.0f / renderer.deltaTime) << std::endl;
+
+        // Check for Inputs
         if (renderer.check_key(GLFW_KEY_ESCAPE))
         {
             glfwSetWindowShouldClose(renderer.window, true);
         }
+
+        // Setup Background Color
         if (renderer.check_key(GLFW_KEY_R))
         {
             glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
@@ -89,7 +92,9 @@ int main()
         {
             glClearColor(0.2f, 0.1f, 0.3f, 1.0f);
         }
+        glClear(GL_COLOR_BUFFER_BIT);
 
+        // Set Draw Mode
         if (renderer.check_key(GLFW_KEY_P))
         {
             glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
@@ -102,29 +107,32 @@ int main()
         {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
+
+        // Move Asset
         if (renderer.check_key(GLFW_KEY_W))
         {
             yAxis += translationSpeed * renderer.deltaTime;
         }
-        else if (renderer.check_key(GLFW_KEY_A))
-        {
-            xAxis -= translationSpeed * renderer.deltaTime;
-        }
-        else if (renderer.check_key(GLFW_KEY_S))
+        if (renderer.check_key(GLFW_KEY_S))
         {
             yAxis -= translationSpeed * renderer.deltaTime;
         }
-        else if (renderer.check_key(GLFW_KEY_D))
+        if (renderer.check_key(GLFW_KEY_D))
         {
             xAxis += translationSpeed * renderer.deltaTime;
         }
-        glClear(GL_COLOR_BUFFER_BIT);
+        if (renderer.check_key(GLFW_KEY_A))
+        {
+            xAxis -= translationSpeed * renderer.deltaTime;
+        }
 
+        // Setup Shader Uniforms
         shdr.use();
         glUniform1f(glGetUniformLocation(shdr.id, "Time"), totalTime);
         glUniform1f(glGetUniformLocation(shdr.id, "XAxis"), xAxis);
         glUniform1f(glGetUniformLocation(shdr.id, "YAxis"), yAxis);
         tex.bind_texture();
+
         // Drawing Shapes and Objects
         shdr.use();
         varray.draw_triangle(3, 0);
@@ -136,5 +144,7 @@ int main()
 
     // Free Date and stop processes
     renderer.terminate_glfw();
+    shdr.free_data();
+    varray.free_data();
     return 0;
 }
