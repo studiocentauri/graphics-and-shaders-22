@@ -26,7 +26,11 @@ void Renderer::terminate_glfw()
 
 bool Renderer::create_window()
 {
-    window = glfwCreateWindow(width, height, WINDOW_NAME, NULL, NULL);
+    window = glfwCreateWindow(width, height, WINDOW_NAME, NULL, NULL);  // USE glfwGetPrimaryMonitor() in place of first NULL to get fullscreen
+
+    glfwSetWindowAspectRatio(window, 1, 1);
+
+    glfwSetWindowSizeLimits(window, 600, 600, 800, 800);
 
     if (window == NULL)
     {
