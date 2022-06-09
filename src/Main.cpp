@@ -64,7 +64,7 @@ int main()
     varray.unbind_vao();
 
     // Setup Shaders and Textures
-    Shader shdr(FileSystem::get_path("shaders/textureShader.vs").c_str(), FileSystem::get_path("shaders/textureShader.fs").c_str());
+    Shader shdr(FileSystem::get_path("shaders/2dshaders/defaultShader.vs").c_str(), FileSystem::get_path("shaders/2dshaders/colorShader.fs").c_str());
     Texture tex(FileSystem::get_path("resources/textures/iitk_logo.png"));
     Texture tex1(FileSystem::get_path("resources/textures/logo4.png"));
     Texture tex2(FileSystem::get_path("resources/textures/council_logo.png"));
@@ -73,6 +73,7 @@ int main()
     float totalTime = 0;
     float xAxis = 0, yAxis = 0;
     float translationSpeed = 1.0f;
+    ImVec4 objectColor(0.8f, 0.5f, 0.2f, 1.0f);
     ImVec4 bkgColor(0.2f, 0.3f, 0.2f, 1.0f);
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
     int drawOption = 2;
@@ -116,6 +117,7 @@ int main()
 
         // Setup Shader Uniforms
         shdr.use();
+        shdr.set_vec3("col", objectColor.x, objectColor.y, objectColor.z);
         shdr.set_float("Time", totalTime);
         shdr.set_vec2("offset", xAxis, yAxis);
         shdr.set_texture("tex", &tex);
@@ -128,6 +130,7 @@ int main()
         // varray.draw_indices(6);
         // Setup UI Windows
         ImGui::Begin("UI Box");
+        ImGui::ColorEdit3("Object Color", &objectColor.x);
         ImGui::ColorEdit3("Background Color", &bkgColor.x);
         ImGui::SliderFloat("SliderX", &xAxis, -0.5f, 0.5f);
         ImGui::SliderFloat("SliderY", &yAxis, -0.5f, 0.5f);
