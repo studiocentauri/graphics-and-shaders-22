@@ -128,9 +128,8 @@ int main()
 
         // Setup Shader Uniforms
         shdr.use();
-        glUniform1f(glGetUniformLocation(shdr.id, "Time"), totalTime);
-        glUniform1f(glGetUniformLocation(shdr.id, "XAxis"), xAxis);
-        glUniform1f(glGetUniformLocation(shdr.id, "YAxis"), yAxis);
+        shdr.set_float("Time", totalTime);
+        shdr.set_vec2("offset", xAxis, yAxis);
         tex.bind_texture();
 
         // Drawing Shapes and Objects

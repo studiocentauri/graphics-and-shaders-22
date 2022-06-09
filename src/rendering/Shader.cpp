@@ -105,6 +105,28 @@ void Shader::free_data()
     glDeleteProgram(id);
 }
 
+void Shader::set_bool(const std::string name, bool value)
+{
+    glUniform1i(glGetUniformLocation(id, name.c_str()), int(value));
+}
+
+void Shader::set_int(const std::string name, int value)
+{
+    glUniform1i(glGetUniformLocation(id, name.c_str()), int(value));
+}
+void Shader::set_float(const std::string name, float value)
+{
+    glUniform1f(glGetUniformLocation(id, name.c_str()), value);
+}
+void Shader::set_vec2(const std::string name, float x, float y)
+{
+    glUniform2f(glGetUniformLocation(id, name.c_str()), x, y);
+}
+void Shader::set_vec3(const std::string name, float x, float y, float z)
+{
+    glUniform3f(glGetUniformLocation(id, name.c_str()), x, y, z);
+}
+
 bool Shader::check_compile_errors(unsigned int shader, SHADER_TYPE type)
 {
     int success;

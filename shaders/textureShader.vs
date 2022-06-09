@@ -6,10 +6,10 @@ layout (location = 2) in vec2 aUV;
 
 out vec3 color_vertex;
 out vec2 texUV;
-uniform float XAxis,YAxis;
+uniform vec2 offset;
 void main()
 {
-    gl_Position = vec4(aPos.x+XAxis, aPos.y+YAxis, aPos.z, 1.0f);
+    gl_Position = vec4(aPos.x+offset.x, aPos.y+offset.y, aPos.z, 1.0f);
     color_vertex = aCol;
     texUV = aUV;
 }

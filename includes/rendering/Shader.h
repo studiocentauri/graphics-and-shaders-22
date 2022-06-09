@@ -29,6 +29,11 @@ public:
     unsigned int compile_shader(const char *code, SHADER_TYPE type);
     void use();
     void free_data();
+    void set_bool(const std::string name, bool value);
+    void set_int(const std::string name, int value);
+    void set_float(const std::string name, float value);
+    void set_vec2(const std::string name, float x, float y);
+    void set_vec3(const std::string name, float x, float y, float z);
 
 private:
     bool check_compile_errors(unsigned int shader, SHADER_TYPE type);
