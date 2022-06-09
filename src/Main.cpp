@@ -53,6 +53,8 @@ int main()
     // Setup Shaders and Textures
     Shader shdr(FileSystem::get_path("shaders/textureShader.vs").c_str(), FileSystem::get_path("shaders/textureShader.fs").c_str());
     Texture tex(FileSystem::get_path("resources/textures/iitk_logo.png"));
+    Texture tex1(FileSystem::get_path("resources/textures/logo4.png"));
+    Texture tex2(FileSystem::get_path("resources/textures/council_logo.png"));
 
     // Setup Data
     float totalTime = 0;
@@ -130,10 +132,12 @@ int main()
         shdr.use();
         shdr.set_float("Time", totalTime);
         shdr.set_vec2("offset", xAxis, yAxis);
-        tex.bind_texture();
+        shdr.set_texture("tex", &tex);
+        shdr.set_texture("tex1", &tex2);
 
         // Drawing Shapes and Objects
         shdr.use();
+        set_active_texture(0);
         varray.draw_triangle(3, 0);
         // varray.draw_indices(6);
 

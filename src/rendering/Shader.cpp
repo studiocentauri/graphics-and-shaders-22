@@ -126,7 +126,12 @@ void Shader::set_vec3(const std::string name, float x, float y, float z)
 {
     glUniform3f(glGetUniformLocation(id, name.c_str()), x, y, z);
 }
-
+void Shader::set_texture(const std::string name, Texture *tex)
+{
+    set_active_texture(tex->id);
+    set_int(name, tex->id);
+    tex->bind_texture();
+}
 bool Shader::check_compile_errors(unsigned int shader, SHADER_TYPE type)
 {
     int success;

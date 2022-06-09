@@ -2,7 +2,7 @@
 #define SHADER_H
 
 #include "thirdparty/glad/glad.h"
-
+#include "rendering/Texture.h"
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -34,6 +34,7 @@ public:
     void set_float(const std::string name, float value);
     void set_vec2(const std::string name, float x, float y);
     void set_vec3(const std::string name, float x, float y, float z);
+    void set_texture(const std::string name, Texture *tex);
 
 private:
     bool check_compile_errors(unsigned int shader, SHADER_TYPE type);
