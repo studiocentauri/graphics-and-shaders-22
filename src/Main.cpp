@@ -3,6 +3,9 @@
 #include "rendering/Shader.h"
 #include "rendering/Texture.h"
 #include "utility/FileSystem.h"
+#include "thirdparty/imgui/imgui.h"
+#include "thirdparty/imgui/imgui_impl_glfw.h"
+#include "thirdparty/imgui/imgui_impl_opengl3.h"
 
 #include <iostream>
 
@@ -38,6 +41,16 @@ int main()
         return -1;
     }
     renderer.setup_window_data();
+    // Setting up imgui
+    std::string versionText = "#version " + std::to_string(renderer.major) + std::to_string(renderer.minor) + "0";
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui_ImplGlfw_InitForOpenGL(renderer.window, true);
+    ImGui_ImplOpenGL3_Init(versionText.c_str());
+    // Render ImGui
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
+    ImGui::StyleColorsDark();
 
     // Setup Vertex Array
     varray.generate_buffers();
@@ -60,7 +73,7 @@ int main()
     float totalTime = 0;
     float xAxis = 0, yAxis = 0;
     float translationSpeed = 1.0f;
-
+    ImVec4 bkgColor(0.2f, 0.3f, 0.2f, 1.0f);
     // Start Render Loop
     renderer.start_timer();
     while (!renderer.close_window())
@@ -70,6 +83,10 @@ int main()
         totalTime += renderer.deltaTime;
         totalTime = (totalTime > 1.0f) ? (totalTime - 1.0f) : totalTime;
         // std::cout << renderer.deltaTime << " " << (int)(1.0f / renderer.deltaTime) << std::endl;
+        // New UI Frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
         // Check for Inputs
         if (renderer.check_key(GLFW_KEY_ESCAPE))
@@ -78,22 +95,7 @@ int main()
         }
 
         // Setup Background Color
-        if (renderer.check_key(GLFW_KEY_R))
-        {
-            glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-        }
-        else if (renderer.check_key(GLFW_KEY_G))
-        {
-            glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
-        }
-        else if (renderer.check_key(GLFW_KEY_B))
-        {
-            glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-        }
-        else
-        {
-            glClearColor(0.2f, 0.1f, 0.3f, 1.0f);
-        }
+        glClearColor(bkgColor.x, bkgColor.y, bkgColor.z, bkgColor.w);
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Set Draw Mode
@@ -140,14 +142,23 @@ int main()
         set_active_texture(0);
         varray.draw_triangle(3, 0);
         // varray.draw_indices(6);
-
+        // Setup UI Windows
+        ImGui::Begin("UI Box");
+        ImGui::ColorEdit3("Background Color", &bkgColor.x);
+        ImGui::End();
+        // Draw UI
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         // End of Frame
         renderer.swap_buffers(false);
     }
 
     // Free Date and stop processes
-    renderer.terminate_glfw();
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     shdr.free_data();
     varray.free_data();
+    renderer.terminate_glfw();
     return 0;
 }
