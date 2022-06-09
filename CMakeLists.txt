@@ -31,6 +31,13 @@ add_executable(
     src/rendering/Shader.cpp
     src/rendering/Texture.cpp
     src/utility/FileSystem.cpp
+    includes/thirdparty/imgui/imgui.cpp
+    includes/thirdparty/imgui/imgui_draw.cpp
+    includes/thirdparty/imgui/imgui_demo.cpp
+    includes/thirdparty/imgui/imgui_widgets.cpp
+    includes/thirdparty/imgui/imgui_tables.cpp
+    includes/thirdparty/imgui/imgui_impl_glfw.cpp
+    includes/thirdparty/imgui/imgui_impl_opengl3.cpp
 )
 
 target_link_libraries(
