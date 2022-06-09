@@ -74,6 +74,8 @@ int main()
     float xAxis = 0, yAxis = 0;
     float translationSpeed = 1.0f;
     ImVec4 bkgColor(0.2f, 0.3f, 0.2f, 1.0f);
+    const char *drawOptions[3] = {"Point", "Line", "Fill"};
+    int drawOption = 2;
     // Start Render Loop
     renderer.start_timer();
     while (!renderer.close_window())
@@ -99,35 +101,17 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Set Draw Mode
-        if (renderer.check_key(GLFW_KEY_P))
+        if (drawOption == 0)
         {
             glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
         }
-        else if (renderer.check_key(GLFW_KEY_L))
+        else if (drawOption == 1)
         {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         }
         else
         {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        }
-
-        // Move Asset
-        if (renderer.check_key(GLFW_KEY_W))
-        {
-            yAxis += translationSpeed * renderer.deltaTime;
-        }
-        if (renderer.check_key(GLFW_KEY_S))
-        {
-            yAxis -= translationSpeed * renderer.deltaTime;
-        }
-        if (renderer.check_key(GLFW_KEY_D))
-        {
-            xAxis += translationSpeed * renderer.deltaTime;
-        }
-        if (renderer.check_key(GLFW_KEY_A))
-        {
-            xAxis -= translationSpeed * renderer.deltaTime;
         }
 
         // Setup Shader Uniforms
@@ -145,6 +129,9 @@ int main()
         // Setup UI Windows
         ImGui::Begin("UI Box");
         ImGui::ColorEdit3("Background Color", &bkgColor.x);
+        ImGui::SliderFloat("SliderX", &xAxis, -0.5f, 0.5f);
+        ImGui::SliderFloat("SliderY", &yAxis, -0.5f, 0.5f);
+        ImGui::Combo("RenderMode", &drawOption, &drawOptions[0], 3);
         ImGui::End();
         // Draw UI
         ImGui::Render();
