@@ -6,6 +6,7 @@
 #include "thirdparty/imgui/imgui.h"
 #include "thirdparty/imgui/imgui_impl_glfw.h"
 #include "thirdparty/imgui/imgui_impl_opengl3.h"
+#include "thirdparty/glm/glm.hpp"
 
 #include <iostream>
 
