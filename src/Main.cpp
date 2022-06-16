@@ -7,6 +7,8 @@
 #include "thirdparty/imgui/imgui_impl_glfw.h"
 #include "thirdparty/imgui/imgui_impl_opengl3.h"
 #include "thirdparty/glm/glm.hpp"
+#include "thirdparty/glm/gtc/matrix_transform.hpp"
+#include "thirdparty/glm/gtc/type_ptr.hpp"
 
 #include <iostream>
 
@@ -18,9 +20,9 @@ Renderer renderer;
 //     0.0f, 0.5f, 0.0f};
 
 float vertices[] = {
-    -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-    0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f};
+    -0.866f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+    0.866f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f};
 
 // float vertices[] = {
 //     -0.5f, 0.5f, 0.0f,
@@ -65,7 +67,7 @@ int main()
     varray.unbind_vao();
 
     // Setup Shaders and Textures
-    Shader shdr(FileSystem::get_path("shaders/2dshaders/defaultShader.vs").c_str(), FileSystem::get_path("shaders/2dshaders/colorShader.fs").c_str());
+    Shader shdr(FileSystem::get_path("shaders/2dshaders/2dShader.vs").c_str(), FileSystem::get_path("shaders/2dshaders/colorShader.fs").c_str());
     Texture tex(FileSystem::get_path("resources/textures/iitk_logo.png"));
     Texture tex1(FileSystem::get_path("resources/textures/logo4.png"));
     Texture tex2(FileSystem::get_path("resources/textures/council_logo.png"));
@@ -74,6 +76,9 @@ int main()
     float totalTime = 0;
     float xAxis = 0, yAxis = 0;
     float translationSpeed = 1.0f;
+    float rotation = 90;
+    glm::vec3 centroid = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec2 scale = glm::vec2(1.0f);
     ImVec4 objectColor(0.8f, 0.5f, 0.2f, 1.0f);
     ImVec4 bkgColor(0.2f, 0.3f, 0.2f, 1.0f);
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
@@ -115,12 +120,17 @@ int main()
         {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
-
+        // Do Calculations
+        glm::mat4 model(1.0f);
+        model = glm::translate(model, centroid);
+        model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::scale(model, glm::vec3(scale, 1.0f));
         // Setup Shader Uniforms
         shdr.use();
         shdr.set_vec3("col", objectColor.x, objectColor.y, objectColor.z);
         shdr.set_float("Time", totalTime);
         shdr.set_vec2("offset", xAxis, yAxis);
+        shdr.set_mat4("model", model);
         shdr.set_texture("tex", &tex);
         shdr.set_texture("tex1", &tex2);
 
@@ -137,6 +147,13 @@ int main()
         ImGui::SliderFloat("SliderY", &yAxis, -0.5f, 0.5f);
         ImGui::Combo("RenderMode", &drawOption, &drawOptions[0], 3);
         ImGui::End();
+        // Object Property UI
+        ImGui::Begin("Object Property");
+        ImGui::SliderFloat("Rotation", &rotation, -180.0f, 180.0f);
+        ImGui::SliderFloat3("Position", &centroid.x, -0.5f, 0.5f);
+        ImGui::SliderFloat2("Scale", &scale.x, -3.0f, 3.0f);
+        ImGui::End();
+
         // Draw UI
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

@@ -126,6 +126,10 @@ void Shader::set_vec3(const std::string name, float x, float y, float z)
 {
     glUniform3f(glGetUniformLocation(id, name.c_str()), x, y, z);
 }
+void Shader::set_mat4(const std::string name, glm::mat4 value)
+{
+    glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, &value[0][0]);
+}
 void Shader::set_texture(const std::string name, Texture *tex)
 {
     set_active_texture(tex->id);

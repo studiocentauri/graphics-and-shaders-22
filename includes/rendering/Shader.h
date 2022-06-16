@@ -3,6 +3,9 @@
 
 #include "thirdparty/glad/glad.h"
 #include "rendering/Texture.h"
+#include "thirdparty/glm/glm.hpp"
+#include "thirdparty/glm/gtc/matrix_transform.hpp"
+#include "thirdparty/glm/gtc/type_ptr.hpp"
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -34,6 +37,7 @@ public:
     void set_float(const std::string name, float value);
     void set_vec2(const std::string name, float x, float y);
     void set_vec3(const std::string name, float x, float y, float z);
+    void set_mat4(const std::string name, glm::mat4 value);
     void set_texture(const std::string name, Texture *tex);
 
 private:
