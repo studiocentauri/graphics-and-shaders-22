@@ -67,7 +67,7 @@ int main()
     varray.unbind_vao();
 
     // Setup Shaders and Textures
-    Shader shdr(FileSystem::get_path("shaders/2dshaders/2dShader.vs").c_str(), FileSystem::get_path("shaders/2dshaders/colorShader.fs").c_str());
+    Shader shdr(FileSystem::get_path("shaders/3dshaders/colorShader.vs").c_str(), FileSystem::get_path("shaders/3dshaders/colorShader.fs").c_str());
     Texture tex(FileSystem::get_path("resources/textures/iitk_logo.png"));
     Texture tex1(FileSystem::get_path("resources/textures/logo4.png"));
     Texture tex2(FileSystem::get_path("resources/textures/council_logo.png"));
@@ -76,7 +76,7 @@ int main()
     float totalTime = 0;
     float xAxis = 0, yAxis = 0;
     float translationSpeed = 1.0f;
-    float rotation = 90;
+    float rotation = 0;
     glm::vec3 centroid = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec2 scale = glm::vec2(1.0f);
     ImVec4 objectColor(0.8f, 0.5f, 0.2f, 1.0f);
@@ -125,12 +125,22 @@ int main()
         model = glm::translate(model, centroid);
         model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
         model = glm::scale(model, glm::vec3(scale, 1.0f));
+
+        glm::mat4 view(1.0f);
+
+        glm::mat4 projection(1.0f);
+        int currentWidth, currentHeight;
+        glfwGetWindowSize(renderer.window, &currentWidth, &currentHeight);
+        projection = glm::perspective((float)glm::radians(60.0f), (((float)currentWidth)/((float)currentHeight)), 0.1f, 100.0f);
+
         // Setup Shader Uniforms
         shdr.use();
         shdr.set_vec3("col", objectColor.x, objectColor.y, objectColor.z);
         shdr.set_float("Time", totalTime);
         shdr.set_vec2("offset", xAxis, yAxis);
         shdr.set_mat4("model", model);
+        shdr.set_mat4("view", view);
+        shdr.set_mat4("projection", projection);
         shdr.set_texture("tex", &tex);
         shdr.set_texture("tex1", &tex2);
 
