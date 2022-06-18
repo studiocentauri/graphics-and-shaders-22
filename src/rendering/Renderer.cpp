@@ -46,6 +46,7 @@ void Renderer::setup_window_data()
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
+    glEnable(GL_DEPTH_TEST);
 }
 
 bool Renderer::close_window()

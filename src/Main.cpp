@@ -29,51 +29,48 @@ Renderer renderer;
 //     0, 1, 2,
 //     2, 3, 0};
 
-
-
 float vertices[] = {
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+    0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+    0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+    0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+    -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
 
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+    0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+    0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+    0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+    -0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+    -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
 
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+    -0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+    -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+    -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
 
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+    0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+    0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+    0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+    0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+    0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+    0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
+    0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+    0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+    -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-};
+    -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+    0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+    0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+    0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+    -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+    -0.5f, 0.5f, -0.5f, 0.0f, 1.0f};
 
 VertexArray varray;
 int main()
@@ -117,8 +114,8 @@ int main()
     float xAxis = 0, yAxis = 0;
     float translationSpeed = 1.0f;
     float rotation = 0;
-    glm::vec3 centroid = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::vec2 scale = glm::vec2(1.0f);
+    glm::vec3 centroid = glm::vec3(0.0f, 0.0f, -5.0f);
+    glm::vec3 scale = glm::vec3(1.0f);
     ImVec4 objectColor(1.0f, 1.0f, 1.0f, 1.0f);
     ImVec4 bkgColor(0.2f, 0.3f, 0.2f, 1.0f);
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
@@ -146,7 +143,7 @@ int main()
 
         // Setup Background Color
         glClearColor(bkgColor.x, bkgColor.y, bkgColor.z, bkgColor.w);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Set Draw Mode
         if (drawOption == 0)
@@ -165,7 +162,7 @@ int main()
         glm::mat4 model(1.0f);
         model = glm::translate(model, centroid);
         model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-        model = glm::scale(model, glm::vec3(scale, 1.0f));
+        model = glm::scale(model, scale);
 
         glm::mat4 view(1.0f);
 
@@ -173,16 +170,16 @@ int main()
         int currentWidth, currentHeight;
         glfwGetWindowSize(renderer.window, &currentWidth, &currentHeight);
 
-        if(isPrserpective)
+        if (isPrserpective)
         {
-            projection = glm::perspective((float)glm::radians(60.0f), (((float)currentWidth)/((float)currentHeight)), 0.1f, 100.0f);
+            projection = glm::perspective((float)glm::radians(90.0f), (((float)currentWidth) / ((float)currentHeight)), 0.1f, 100.0f);
         }
         else
         {
-            float aspect = (((float)currentWidth)/((float)currentHeight));
+            float aspect = (((float)currentWidth) / ((float)currentHeight));
             float camSize = 5.0f;
-            glm::vec2 camDim(aspect*camSize, camSize);
-            projection = glm::ortho(-camDim.x/2.0f, camDim.x/2.0f, -camDim.y/2.0f, camDim.y/2.0f, 0.01f, 100.0f);
+            glm::vec2 camDim(aspect * camSize, camSize);
+            projection = glm::ortho(-camDim.x / 2.0f, camDim.x / 2.0f, -camDim.y / 2.0f, camDim.y / 2.0f, 0.01f, 100.0f);
         }
 
         // Setup Shader Uniforms
@@ -193,8 +190,8 @@ int main()
         shdr.set_mat4("model", model);
         shdr.set_mat4("view", view);
         shdr.set_mat4("projection", projection);
-        shdr.set_texture("tex", &tex1);
-        shdr.set_texture("tex1", &tex2);
+        shdr.set_texture("tex", &tex);
+        // shdr.set_texture("tex1", &tex2);
 
         // Drawing Shapes and Objects
         shdr.use();
@@ -205,15 +202,13 @@ int main()
         ImGui::Begin("UI Box");
         ImGui::ColorEdit3("Object Color", &objectColor.x);
         ImGui::ColorEdit3("Background Color", &bkgColor.x);
-        ImGui::SliderFloat("SliderX", &xAxis, -0.5f, 0.5f);
-        ImGui::SliderFloat("SliderY", &yAxis, -0.5f, 0.5f);
         ImGui::Combo("RenderMode", &drawOption, &drawOptions[0], 3);
         ImGui::End();
         // Object Property UI
         ImGui::Begin("Object Property");
         ImGui::SliderFloat("Rotation", &rotation, -180.0f, 180.0f);
         ImGui::SliderFloat3("Position", &centroid.x, -0.5f, 0.5f);
-        ImGui::SliderFloat2("Scale", &scale.x, -3.0f, 3.0f);
+        ImGui::SliderFloat3("Scale", &scale.x, -3.0f, 3.0f);
         ImGui::Checkbox("IsPerspective", &isPrserpective);
         ImGui::End();
 
