@@ -15,14 +15,9 @@
 Renderer renderer;
 
 // float vertices[] = {
-//     -0.5f, -0.5f, 0.0f,
-//     0.5f, -0.5f, 0.0f,
-//     0.0f, 0.5f, 0.0f};
-
-float vertices[] = {
-    -0.866f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-    0.866f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-    0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f};
+//     -0.866f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+//     0.866f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+//     0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f};
 
 // float vertices[] = {
 //     -0.5f, 0.5f, 0.0f,
@@ -33,6 +28,52 @@ float vertices[] = {
 // unsigned int indices[] = {
 //     0, 1, 2,
 //     2, 3, 0};
+
+
+
+float vertices[] = {
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+};
 
 VertexArray varray;
 int main()
@@ -58,16 +99,15 @@ int main()
     // Setup Vertex Array
     varray.generate_buffers();
     varray.bind_vao();
-    varray.bind_vbo(3, 8 * sizeof(float), vertices);
+    varray.bind_vbo(36, 5 * sizeof(float), vertices);
     // varray.bind_ebo(6, indices);
-    varray.set_attribute_array(0, 3, 8 * sizeof(float));
-    varray.set_attribute_array(1, 3, 8 * sizeof(float), (void *)(3 * sizeof(float)));
-    varray.set_attribute_array(2, 2, 8 * sizeof(float), (void *)(6 * sizeof(float)));
+    varray.set_attribute_array(0, 3, 5 * sizeof(float));
+    varray.set_attribute_array(1, 2, 5 * sizeof(float), (void *)(3 * sizeof(float)));
     varray.unbind_vbo();
     varray.unbind_vao();
 
     // Setup Shaders and Textures
-    Shader shdr(FileSystem::get_path("shaders/3dshaders/colorShader.vs").c_str(), FileSystem::get_path("shaders/3dshaders/colorShader.fs").c_str());
+    Shader shdr(FileSystem::get_path("shaders/3dshaders/colorShader.vs").c_str(), FileSystem::get_path("shaders/3dshaders/textureShader.fs").c_str());
     Texture tex(FileSystem::get_path("resources/textures/iitk_logo.png"));
     Texture tex1(FileSystem::get_path("resources/textures/logo4.png"));
     Texture tex2(FileSystem::get_path("resources/textures/council_logo.png"));
@@ -79,10 +119,11 @@ int main()
     float rotation = 0;
     glm::vec3 centroid = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec2 scale = glm::vec2(1.0f);
-    ImVec4 objectColor(0.8f, 0.5f, 0.2f, 1.0f);
+    ImVec4 objectColor(1.0f, 1.0f, 1.0f, 1.0f);
     ImVec4 bkgColor(0.2f, 0.3f, 0.2f, 1.0f);
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
     int drawOption = 2;
+    bool isPrserpective = true;
     // Start Render Loop
     renderer.start_timer();
     while (!renderer.close_window())
@@ -131,7 +172,18 @@ int main()
         glm::mat4 projection(1.0f);
         int currentWidth, currentHeight;
         glfwGetWindowSize(renderer.window, &currentWidth, &currentHeight);
-        projection = glm::perspective((float)glm::radians(60.0f), (((float)currentWidth)/((float)currentHeight)), 0.1f, 100.0f);
+
+        if(isPrserpective)
+        {
+            projection = glm::perspective((float)glm::radians(60.0f), (((float)currentWidth)/((float)currentHeight)), 0.1f, 100.0f);
+        }
+        else
+        {
+            float aspect = (((float)currentWidth)/((float)currentHeight));
+            float camSize = 5.0f;
+            glm::vec2 camDim(aspect*camSize, camSize);
+            projection = glm::ortho(-camDim.x/2.0f, camDim.x/2.0f, -camDim.y/2.0f, camDim.y/2.0f, 0.01f, 100.0f);
+        }
 
         // Setup Shader Uniforms
         shdr.use();
@@ -141,13 +193,13 @@ int main()
         shdr.set_mat4("model", model);
         shdr.set_mat4("view", view);
         shdr.set_mat4("projection", projection);
-        shdr.set_texture("tex", &tex);
+        shdr.set_texture("tex", &tex1);
         shdr.set_texture("tex1", &tex2);
 
         // Drawing Shapes and Objects
         shdr.use();
         set_active_texture(0);
-        varray.draw_triangle(3, 0);
+        varray.draw_triangle(36, 0);
         // varray.draw_indices(6);
         // Setup UI Windows
         ImGui::Begin("UI Box");
@@ -162,6 +214,7 @@ int main()
         ImGui::SliderFloat("Rotation", &rotation, -180.0f, 180.0f);
         ImGui::SliderFloat3("Position", &centroid.x, -0.5f, 0.5f);
         ImGui::SliderFloat2("Scale", &scale.x, -3.0f, 3.0f);
+        ImGui::Checkbox("IsPerspective", &isPrserpective);
         ImGui::End();
 
         // Draw UI
