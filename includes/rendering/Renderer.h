@@ -1,11 +1,21 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
+#include "rendering/Camera.h"
 #include "Config.h"
 #include "thirdparty/glad/glad.h"
 #include "thirdparty/GLFW/glfw3.h"
 
 #include <iostream>
+
+// Struct for callback
+struct RenderCamera
+{
+    Camera cam;
+    float lastX, lastY;
+    bool isFirstMouse;
+    float xOffset, yOffset;
+};
 
 // Vertex Array Class
 class VertexArray
@@ -52,8 +62,13 @@ public:
     bool check_key(int key);
     void start_timer();
     void new_frame();
+    void set_camera(Camera cam);
+    Camera *get_camera();
+    void set_mouse();
 };
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+void mouse_callback(GLFWwindow *window, double xpos, double ypos);
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 
 #endif

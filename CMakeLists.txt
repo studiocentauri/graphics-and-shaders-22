@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION "3.16.3")
 project(graphics-and-shaders)
 
 set(CMAKE_CXX_STANDARD 17)
+
 if(MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}/std:c++17")
 endif(MSVC)
@@ -17,38 +18,41 @@ include_directories(includes/thirdparty)
 include_directories(configuration)
 configure_file(configuration/root_directory.h.in configuration/root_directory.h)
 include_directories(${CMAKE_BINARY_DIR}/configuration)
+
 if(WIN32)
-link_directories(lib)
+  link_directories(lib)
 endif()
 
 add_executable(
-    graphics-and-shaders
-    
-    src/Main.cpp
-    src/thirdparty/glad.c
-    src/thirdparty/stb_image.cpp
-    src/rendering/Renderer.cpp
-    src/rendering/Shader.cpp
-    src/rendering/Texture.cpp
-    src/utility/FileSystem.cpp
-    includes/thirdparty/imgui/imgui.cpp
-    includes/thirdparty/imgui/imgui_draw.cpp
-    includes/thirdparty/imgui/imgui_demo.cpp
-    includes/thirdparty/imgui/imgui_widgets.cpp
-    includes/thirdparty/imgui/imgui_tables.cpp
-    includes/thirdparty/imgui/imgui_impl_glfw.cpp
-    includes/thirdparty/imgui/imgui_impl_opengl3.cpp
+  graphics-and-shaders
+
+  src/Main.cpp
+  src/thirdparty/glad.c
+  src/thirdparty/stb_image.cpp
+  src/rendering/Camera.cpp
+  src/rendering/Renderer.cpp
+  src/rendering/Shader.cpp
+  src/rendering/Texture.cpp
+  src/utility/FileSystem.cpp
+  includes/thirdparty/imgui/imgui.cpp
+  includes/thirdparty/imgui/imgui_draw.cpp
+  includes/thirdparty/imgui/imgui_demo.cpp
+  includes/thirdparty/imgui/imgui_widgets.cpp
+  includes/thirdparty/imgui/imgui_tables.cpp
+  includes/thirdparty/imgui/imgui_impl_glfw.cpp
+  includes/thirdparty/imgui/imgui_impl_opengl3.cpp
 )
 
 target_link_libraries(
-    graphics-and-shaders ${CMAKE_DL_LIBS}
+  graphics-and-shaders ${CMAKE_DL_LIBS}
 )
+
 if(WIN32)
-target_link_libraries(
-        graphics-and-shaders
-        ${glfw_LIBRARIES}
-)
-target_link_libraries(graphics-and-shaders glfw3)
+  target_link_libraries(
+    graphics-and-shaders
+    ${glfw_LIBRARIES}
+  )
+  target_link_libraries(graphics-and-shaders glfw3)
 else()
-target_link_libraries(graphics-and-shaders glfw)
+  target_link_libraries(graphics-and-shaders glfw)
 endif()

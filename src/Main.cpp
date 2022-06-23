@@ -1,4 +1,5 @@
 #include "Config.h"
+#include "rendering/Camera.h"
 #include "rendering/Renderer.h"
 #include "rendering/Shader.h"
 #include "rendering/Texture.h"
@@ -13,6 +14,7 @@
 #include <iostream>
 
 Renderer renderer;
+Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 
 // float vertices[] = {
 //     -0.866f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -82,6 +84,8 @@ int main()
         return -1;
     }
     renderer.setup_window_data();
+    renderer.set_camera(camera);
+    renderer.set_mouse();
     // Setting up imgui
     std::string versionText = "#version " + std::to_string(renderer.major) + std::to_string(renderer.minor) + "0";
     IMGUI_CHECKVERSION();
@@ -126,7 +130,7 @@ int main()
     ImVec4 bkgColor(0.2f, 0.3f, 0.2f, 1.0f);
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
     int drawOption = 2;
-    bool isPrserpective = true;
+    bool isPerspective = true;
     // Start Render Loop
     renderer.start_timer();
     while (!renderer.close_window())
@@ -145,6 +149,30 @@ int main()
         if (renderer.check_key(GLFW_KEY_ESCAPE))
         {
             glfwSetWindowShouldClose(renderer.window, true);
+        }
+        if (renderer.check_key(GLFW_KEY_W))
+        {
+            renderer.get_camera()->process_keyboard(CAM_FORWARD, renderer.deltaTime);
+        }
+        if (renderer.check_key(GLFW_KEY_S))
+        {
+            renderer.get_camera()->process_keyboard(CAM_BACKWARD, renderer.deltaTime);
+        }
+        if (renderer.check_key(GLFW_KEY_A))
+        {
+            renderer.get_camera()->process_keyboard(CAM_LEFT, renderer.deltaTime);
+        }
+        if (renderer.check_key(GLFW_KEY_D))
+        {
+            renderer.get_camera()->process_keyboard(CAM_RIGHT, renderer.deltaTime);
+        }
+        if (renderer.check_key(GLFW_KEY_Q))
+        {
+            renderer.get_camera()->process_keyboard(CAM_UP, renderer.deltaTime);
+        }
+        if (renderer.check_key(GLFW_KEY_E))
+        {
+            renderer.get_camera()->process_keyboard(CAM_DOWN, renderer.deltaTime);
         }
 
         // Setup Background Color
@@ -166,15 +194,19 @@ int main()
         }
         // Do Calculations
 
-        glm::mat4 view(1.0f);
+        glm::mat4 view = renderer.get_camera()->get_view_matrix();
 
         glm::mat4 projection(1.0f);
         int currentWidth, currentHeight;
         glfwGetWindowSize(renderer.window, &currentWidth, &currentHeight);
-
-        if (isPrserpective)
+        if (currentHeight == 0 || currentWidth == 0)
         {
-            projection = glm::perspective((float)glm::radians(90.0f), (((float)currentWidth) / ((float)currentHeight)), 0.1f, 100.0f);
+            currentHeight = 1.0f;
+            currentWidth = 1.0f;
+        }
+        if (isPerspective)
+        {
+            projection = glm::perspective((float)glm::radians(renderer.get_camera()->fieldOfView), (((float)currentWidth) / ((float)currentHeight)), 0.1f, 100.0f);
         }
         else
         {
@@ -221,7 +253,7 @@ int main()
         }
         ImGui::SliderFloat("Rotation", &rotation, -180.0f, 180.0f);
         ImGui::SliderFloat3("Scale", &scale.x, -3.0f, 3.0f);
-        ImGui::Checkbox("IsPerspective", &isPrserpective);
+        ImGui::Checkbox("IsPerspective", &isPerspective);
         ImGui::End();
 
         // Draw UI

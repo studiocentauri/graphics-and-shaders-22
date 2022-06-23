@@ -7,4 +7,14 @@
 #define WINDOW_HEIGHT 600
 #define WINDOW_WIDTH 800
 
+#define YAW -90.0f
+#define PITCH 0.0f
+#define CAM_SPEED 4.0f
+#define CAM_SENSITIVITY 0.1f
+#define CAM_FOV 45.0f
+#define MAX_FOV 90.0f
+#define MIN_FOV 1.0f
+#define WORLD_UP glm::vec3(0.0f, 1.0f, 0.0f)
+#define FPS_CAM 0
+
 #endif

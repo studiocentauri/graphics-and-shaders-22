@@ -1,5 +1,7 @@
 #include "rendering/Renderer.h"
 
+static RenderCamera rCam;
+
 Renderer::Renderer(int major_, int minor_, int width_, int height_)
 {
     major = major_;
@@ -41,7 +43,8 @@ void Renderer::setup_window_data()
 {
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
@@ -88,11 +91,39 @@ void Renderer::new_frame()
     previousTime = currentTime;
 }
 
+void Renderer::set_camera(Camera cam)
+{
+    rCam.cam = Camera(cam.position);
+    rCam.lastX = width / 2.0f;
+    rCam.lastY = height / 2.0f;
+    rCam.isFirstMouse = true;
+    rCam.xOffset = 0.0f;
+    rCam.yOffset = 0.0f;
+}
+
+Camera *Renderer::get_camera()
+{
+    return &(rCam.cam);
+}
+
+void Renderer::set_mouse()
+{
+}
+
 //------------------------------------------------------------
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
+}
+
+void mouse_callback(GLFWwindow *window, double xpos, double ypos)
+{
+}
+
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
+{
+    rCam.cam.process_scroll(yoffset);
 }
 
 //---------------------------------------------------------
