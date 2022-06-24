@@ -106,8 +106,32 @@ Camera *Renderer::get_camera()
     return &(rCam.cam);
 }
 
-void Renderer::set_mouse()
+void Renderer::set_cursor(bool status)
 {
+    if (status)
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+    else
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }
+}
+
+void Renderer::process_mouse(bool isActive)
+{
+    if (isActive)
+    {
+        rCam.cam.process_mouse(rCam.xOffset, rCam.yOffset, deltaTime);
+        set_cursor(false);
+    }
+    else
+    {
+        set_cursor(true);
+    }
+
+    rCam.xOffset = 0.0f;
+    rCam.yOffset = 0.0f;
 }
 
 //------------------------------------------------------------
@@ -119,6 +143,10 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 
 void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 {
+    rCam.xOffset = xpos - rCam.lastX;
+    rCam.yOffset = ypos - rCam.lastY;
+    rCam.lastX = xpos;
+    rCam.lastY = ypos;
 }
 
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)

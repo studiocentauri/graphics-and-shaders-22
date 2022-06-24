@@ -85,7 +85,6 @@ int main()
     }
     renderer.setup_window_data();
     renderer.set_camera(camera);
-    renderer.set_mouse();
     // Setting up imgui
     std::string versionText = "#version " + std::to_string(renderer.major) + std::to_string(renderer.minor) + "0";
     IMGUI_CHECKVERSION();
@@ -131,6 +130,7 @@ int main()
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
     int drawOption = 2;
     bool isPerspective = true;
+    bool freeRoam = false;
     // Start Render Loop
     renderer.start_timer();
     while (!renderer.close_window())
@@ -150,30 +150,42 @@ int main()
         {
             glfwSetWindowShouldClose(renderer.window, true);
         }
-        if (renderer.check_key(GLFW_KEY_W))
+        if (renderer.check_key(GLFW_KEY_SPACE))
         {
-            renderer.get_camera()->process_keyboard(CAM_FORWARD, renderer.deltaTime);
+            freeRoam = true;
         }
-        if (renderer.check_key(GLFW_KEY_S))
+        if (renderer.check_key(GLFW_KEY_LEFT_SHIFT))
         {
-            renderer.get_camera()->process_keyboard(CAM_BACKWARD, renderer.deltaTime);
+            freeRoam = false;
         }
-        if (renderer.check_key(GLFW_KEY_A))
+        if (freeRoam)
         {
-            renderer.get_camera()->process_keyboard(CAM_LEFT, renderer.deltaTime);
+            if (renderer.check_key(GLFW_KEY_W))
+            {
+                renderer.get_camera()->process_keyboard(CAM_FORWARD, renderer.deltaTime);
+            }
+            if (renderer.check_key(GLFW_KEY_S))
+            {
+                renderer.get_camera()->process_keyboard(CAM_BACKWARD, renderer.deltaTime);
+            }
+            if (renderer.check_key(GLFW_KEY_A))
+            {
+                renderer.get_camera()->process_keyboard(CAM_LEFT, renderer.deltaTime);
+            }
+            if (renderer.check_key(GLFW_KEY_D))
+            {
+                renderer.get_camera()->process_keyboard(CAM_RIGHT, renderer.deltaTime);
+            }
+            if (renderer.check_key(GLFW_KEY_Q))
+            {
+                renderer.get_camera()->process_keyboard(CAM_UP, renderer.deltaTime);
+            }
+            if (renderer.check_key(GLFW_KEY_E))
+            {
+                renderer.get_camera()->process_keyboard(CAM_DOWN, renderer.deltaTime);
+            }
         }
-        if (renderer.check_key(GLFW_KEY_D))
-        {
-            renderer.get_camera()->process_keyboard(CAM_RIGHT, renderer.deltaTime);
-        }
-        if (renderer.check_key(GLFW_KEY_Q))
-        {
-            renderer.get_camera()->process_keyboard(CAM_UP, renderer.deltaTime);
-        }
-        if (renderer.check_key(GLFW_KEY_E))
-        {
-            renderer.get_camera()->process_keyboard(CAM_DOWN, renderer.deltaTime);
-        }
+        renderer.process_mouse(freeRoam);
 
         // Setup Background Color
         glClearColor(bkgColor.x, bkgColor.y, bkgColor.z, bkgColor.w);
@@ -238,23 +250,26 @@ int main()
             shdr.set_mat4("model", model);
             varray.draw_triangle(36, 0);
         }
-        // varray.draw_indices(6);
-        // Setup UI Windows
-        ImGui::Begin("UI Box");
-        ImGui::ColorEdit3("Object Color", &objectColor.x);
-        ImGui::ColorEdit3("Background Color", &bkgColor.x);
-        ImGui::Combo("RenderMode", &drawOption, &drawOptions[0], 3);
-        ImGui::End();
-        // Object Property UI
-        ImGui::Begin("Object Property");
-        for (int i = 0; i < 5; i++)
+
+        if (!freeRoam)
         {
-            ImGui::SliderFloat3(("Position " + std::to_string(i) + " : ").c_str(), &(positions[i].x), -5.5f, 5.5f);
+            // Setup UI Windows
+            ImGui::Begin("UI Box");
+            ImGui::ColorEdit3("Object Color", &objectColor.x);
+            ImGui::ColorEdit3("Background Color", &bkgColor.x);
+            ImGui::Combo("RenderMode", &drawOption, &drawOptions[0], 3);
+            ImGui::End();
+            // Object Property UI
+            ImGui::Begin("Object Property");
+            for (int i = 0; i < 5; i++)
+            {
+                ImGui::SliderFloat3(("Position " + std::to_string(i) + " : ").c_str(), &(positions[i].x), -5.5f, 5.5f);
+            }
+            ImGui::SliderFloat("Rotation", &rotation, -180.0f, 180.0f);
+            ImGui::SliderFloat3("Scale", &scale.x, -3.0f, 3.0f);
+            ImGui::Checkbox("IsPerspective", &isPerspective);
+            ImGui::End();
         }
-        ImGui::SliderFloat("Rotation", &rotation, -180.0f, 180.0f);
-        ImGui::SliderFloat3("Scale", &scale.x, -3.0f, 3.0f);
-        ImGui::Checkbox("IsPerspective", &isPerspective);
-        ImGui::End();
 
         // Draw UI
         ImGui::Render();

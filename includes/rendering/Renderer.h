@@ -64,7 +64,8 @@ public:
     void new_frame();
     void set_camera(Camera cam);
     Camera *get_camera();
-    void set_mouse();
+    void set_cursor(bool status);
+    void process_mouse(bool isActive);
 };
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
