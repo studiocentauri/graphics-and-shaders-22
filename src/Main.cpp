@@ -4,6 +4,7 @@
 #include "rendering/Shader.h"
 #include "rendering/Texture.h"
 #include "utility/FileSystem.h"
+#include "object/Transform.h"
 #include "thirdparty/imgui/imgui.h"
 #include "thirdparty/imgui/imgui_impl_glfw.h"
 #include "thirdparty/imgui/imgui_impl_opengl3.h"
@@ -114,17 +115,21 @@ int main()
 
     // Setup Data
     float totalTime = 0;
-    float xAxis = 0, yAxis = 0;
-    float translationSpeed = 1.0f;
-    float rotation = 0;
-    // glm::vec3 centroid = glm::vec3(0.0f, 0.0f, -5.0f);
-    glm::vec3 positions[] = {glm::vec3(0.0f, 0.0f, -5.0f),
-                             glm::vec3(1.0f, 0.0f, -4.0f),
-                             glm::vec3(-1.0f, 0.0f, -3.0f),
-                             glm::vec3(0.0f, 1.0f, -2.0f),
-                             glm::vec3(0.0f, -1.0f, -1.0f)};
+    Transform transforms[] = {Transform(glm::vec3(0.0f, 0.0f, -5.0f)),
+                              Transform(glm::vec3(1.0f, 0.0f, -4.0f)),
+                              Transform(glm::vec3(-1.0f, 0.0f, -3.0f)),
+                              Transform(glm::vec3(0.0f, 1.0f, -2.0f)),
+                              Transform(glm::vec3(0.0f, -1.0f, -1.0f))};
+    // float xAxis = 0, yAxis = 0;
+    // float translationSpeed = 1.0f;
+    // float rotation = 0;
+    // glm::vec3 positions[] = {glm::vec3(0.0f, 0.0f, -5.0f),
+    //                          glm::vec3(1.0f, 0.0f, -4.0f),
+    //                          glm::vec3(-1.0f, 0.0f, -3.0f),
+    //                          glm::vec3(0.0f, 1.0f, -2.0f),
+    //                          glm::vec3(0.0f, -1.0f, -1.0f)};
 
-    glm::vec3 scale = glm::vec3(1.0f);
+    // glm::vec3 scale = glm::vec3(1.0f);
     ImVec4 objectColor(1.0f, 1.0f, 1.0f, 1.0f);
     ImVec4 bkgColor(0.2f, 0.3f, 0.2f, 1.0f);
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
@@ -234,7 +239,6 @@ int main()
         shdr.use();
         shdr.set_vec3("col", objectColor.x, objectColor.y, objectColor.z);
         shdr.set_float("Time", totalTime);
-        shdr.set_vec2("offset", xAxis, yAxis);
         shdr.set_mat4("view", view);
         shdr.set_mat4("projection", projection);
         shdr.set_texture("tex", &tex);
@@ -245,11 +249,7 @@ int main()
         set_active_texture(0);
         for (int i = 0; i < 5; i++)
         {
-            glm::mat4 model(1.0f);
-            model = glm::translate(model, positions[i]);
-            model = glm::rotate(model, glm::radians(rotation + (i * 22)), glm::vec3(0.0f, 1.0f, 1.0f));
-            model = glm::scale(model, scale);
-            shdr.set_mat4("model", model);
+            shdr.set_mat4("model", transforms[i].get_model_matrix());
             varray.draw_triangle(36, 0);
         }
 
@@ -271,10 +271,15 @@ int main()
             ImGui::Begin("Object Property");
             for (int i = 0; i < 5; i++)
             {
-                ImGui::SliderFloat3(("Position " + std::to_string(i) + " : ").c_str(), &(positions[i].x), -5.5f, 5.5f);
+                ImGui::Text("Object %d : ", i);
+                ImGui::SliderFloat3(("Position##" + std::to_string(i) + " : ").c_str(), &(transforms[i].position.x), -15.5f, 15.5f);
+                ImGui::SliderFloat3(("Rotation##" + std::to_string(i) + " : ").c_str(), &(transforms[i].rotation.x), -180.0f, 180.0f);
+                ImGui::SliderFloat3(("Scale##" + std::to_string(i) + " : ").c_str(), &(transforms[i].scale.x), -5.0f, 5.0f);
+                if (ImGui::Button(("Reset Transforms##" + std::to_string(i) + " : ").c_str()))
+                {
+                    transforms[i].reset_transform();
+                }
             }
-            ImGui::SliderFloat("Rotation", &rotation, -180.0f, 180.0f);
-            ImGui::SliderFloat3("Scale", &scale.x, -3.0f, 3.0f);
             ImGui::Checkbox("IsPerspective", &isPerspective);
             ImGui::End();
         }
