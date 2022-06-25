@@ -28,7 +28,11 @@ void Renderer::terminate_glfw()
 
 bool Renderer::create_window()
 {
+#if ENABLE_FULLSCREEN
+    window = glfwCreateWindow(width, height, WINDOW_NAME, glfwGetPrimaryMonitor(), NULL);
+#else
     window = glfwCreateWindow(width, height, WINDOW_NAME, NULL, NULL);
+#endif
 
     if (window == NULL)
     {
@@ -45,6 +49,10 @@ void Renderer::setup_window_data()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+    std::cout << " dsa";
+#if ((!ENABLE_FULLSCREEN) * ENABLE_FIXED_ASPECT_RATIO)
+    glfwSetWindowAspectRatio(window, ASPECT_RATIO_X, ASPECT_RATIO_Y);
+#endif
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;

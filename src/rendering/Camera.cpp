@@ -54,7 +54,7 @@ void Camera::process_mouse(float xoffset, float yoffset, float deltaTime, GLbool
     xoffset *= mouseSensitivity * deltaTime * 60.0f;
     yaw += xoffset;
     yoffset *= mouseSensitivity * deltaTime * 60.0f;
-    pitch += yoffset;
+    pitch -= yoffset;
     if (constraintPitch)
     {
         pitch = glm::clamp(pitch, -89.0f, 89.0f);

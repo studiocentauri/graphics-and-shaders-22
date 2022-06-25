@@ -131,6 +131,8 @@ int main()
     int drawOption = 2;
     bool isPerspective = true;
     bool freeRoam = false;
+    bool showFrameRate = false;
+    bool lockFrameRate = false;
     // Start Render Loop
     renderer.start_timer();
     while (!renderer.close_window())
@@ -258,6 +260,12 @@ int main()
             ImGui::ColorEdit3("Object Color", &objectColor.x);
             ImGui::ColorEdit3("Background Color", &bkgColor.x);
             ImGui::Combo("RenderMode", &drawOption, &drawOptions[0], 3);
+            ImGui::Checkbox("VSync", &lockFrameRate);
+            ImGui::Checkbox("Show FPS", &showFrameRate);
+            if (showFrameRate)
+            {
+                ImGui::Text("%d FPS", (int)(1 / renderer.deltaTime));
+            }
             ImGui::End();
             // Object Property UI
             ImGui::Begin("Object Property");
@@ -275,7 +283,7 @@ int main()
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         // End of Frame
-        renderer.swap_buffers(false);
+        renderer.swap_buffers(lockFrameRate);
     }
 
     // Free Date and stop processes
