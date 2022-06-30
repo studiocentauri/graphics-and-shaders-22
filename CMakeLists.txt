@@ -26,8 +26,9 @@ endif()
 add_executable(
   graphics-and-shaders
 
-  # src/Main.cpp
-  src/ShaderToy.cpp
+  src/Main.cpp
+
+  # src/ShaderToy.cpp
   src/thirdparty/glad.c
   src/thirdparty/stb_image.cpp
   src/rendering/Camera.cpp

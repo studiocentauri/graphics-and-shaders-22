@@ -16,7 +16,7 @@ Renderer renderer;
 float vertices[] = {
     -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
     1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-    1.0f, -1.0f, 0.0f, 1.0f,0.0f,
+    1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
     -1.0f, -1.0f, 0.0f, 0.0f, 0.0f};
 
 unsigned int indices[] = {
@@ -26,13 +26,13 @@ unsigned int indices[] = {
 VertexArray varray;
 int main()
 {
-  renderer.initialise_glfw();
+    renderer.initialise_glfw();
     if (!renderer.create_window())
     {
         return -1;
     }
     renderer.setup_window_data();
-        // Setting up imgui
+    // Setting up imgui
     std::string versionText = "#version " + std::to_string(renderer.major) + std::to_string(renderer.minor) + "0";
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -43,7 +43,7 @@ int main()
     (void)io;
     ImGui::StyleColorsDark();
 
-     // Setup Vertex Array
+    // Setup Vertex Array
     varray.generate_buffers();
     varray.bind_vao();
     varray.bind_vbo(4, 5 * sizeof(float), vertices);
@@ -124,7 +124,7 @@ int main()
         shdr.use();
         set_active_texture(0);
         varray.draw_indices(6);
-        
+
         // Setup UI Windows
         ImGui::Begin("UI Box");
         ImGui::ColorEdit3("Background Color", &bkgColor.x);
