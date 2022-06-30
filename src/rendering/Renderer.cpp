@@ -49,7 +49,6 @@ void Renderer::setup_window_data()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
-    std::cout << " dsa";
 #if ((!ENABLE_FULLSCREEN) * ENABLE_FIXED_ASPECT_RATIO)
     glfwSetWindowAspectRatio(window, ASPECT_RATIO_X, ASPECT_RATIO_Y);
 #endif
