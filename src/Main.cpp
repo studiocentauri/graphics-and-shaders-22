@@ -110,6 +110,7 @@ int main()
 
     // Setup Shaders and Textures
     Shader shdr(FileSystem::get_path("shaders/3dshaders/lighting.vs").c_str(), FileSystem::get_path("shaders/3dshaders/lighting.fs").c_str());
+    Shader lightshdr(FileSystem::get_path("shaders/3dshaders/colorShader.vs").c_str(), FileSystem::get_path("shaders/3dshaders/colorShader.fs").c_str());
     Texture tex(FileSystem::get_path("resources/textures/iitk_logo.png"));
     Texture tex1(FileSystem::get_path("resources/textures/logo4.png"));
     Texture tex2(FileSystem::get_path("resources/textures/council_logo.png"));
@@ -121,6 +122,7 @@ int main()
                               Transform(glm::vec3(-1.0f, 0.0f, -3.0f)),
                               Transform(glm::vec3(0.0f, 1.0f, -2.0f)),
                               Transform(glm::vec3(0.0f, -1.0f, -1.0f))};
+    Transform lights[] = {Transform(glm::vec3(0.7f, 1.0f, 1.0f), glm::vec3(0.0f), glm::vec3(0.2f))};
     // float xAxis = 0, yAxis = 0;
     // float translationSpeed = 1.0f;
     // float rotation = 0;
@@ -133,7 +135,7 @@ int main()
     // glm::vec3 scale = glm::vec3(1.0f);
     ImVec4 objectColor(1.0f, 1.0f, 1.0f, 1.0f);
     ImVec4 bkgColor(0.2f, 0.3f, 0.2f, 1.0f);
-    ImVec4 ambientColor(1.0f, 1.0f, 1.0f, 1.0f);
+    ImVec4 ambientColors[] = {ImVec4(1.0f, 1.0f, 1.0f, 1.0f)};
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
     int drawOption = 2;
     bool isPerspective = true;
@@ -240,7 +242,7 @@ int main()
         // Setup Shader Uniforms
         shdr.use();
         shdr.set_vec3("col", objectColor.x, objectColor.y, objectColor.z);
-        shdr.set_vec3("ambience", ambientColor.x, ambientColor.y, ambientColor.z);
+        shdr.set_vec3("ambience", ambientColors[0].x, ambientColors[0].y, ambientColors[0].z);
         shdr.set_float("Time", totalTime);
         shdr.set_mat4("view", view);
         shdr.set_mat4("projection", projection);
@@ -248,11 +250,20 @@ int main()
         // shdr.set_texture("tex1", &tex2);
 
         // Drawing Shapes and Objects
-        shdr.use();
+        // shdr.use();
         set_active_texture(0);
         for (int i = 0; i < 5; i++)
         {
             shdr.set_mat4("model", transforms[i].get_model_matrix());
+            varray.draw_triangle(36, 0);
+        }
+        lightshdr.use();
+        lightshdr.set_mat4("view", view);
+        lightshdr.set_mat4("projection", projection);
+        for (int i = 0; i < 1; i++)
+        {
+            lightshdr.set_mat4("model", lights[i].get_model_matrix());
+            lightshdr.set_vec3("col", ambientColors[i].x, ambientColors[i].y, ambientColors[i].z);
             varray.draw_triangle(36, 0);
         }
 
@@ -261,7 +272,7 @@ int main()
             // Setup UI Windows
             ImGui::Begin("UI Box");
             ImGui::ColorEdit3("Object Color", &objectColor.x);
-            ImGui::ColorEdit3("Ambient Color", &ambientColor.x);
+            ImGui::ColorEdit3("Ambient Colors", &ambientColors[0].x);
             ImGui::ColorEdit3("Background Color", &bkgColor.x);
             ImGui::Combo("RenderMode", &drawOption, &drawOptions[0], 3);
             ImGui::Checkbox("VSync", &lockFrameRate);
