@@ -5,9 +5,11 @@
 #include "rendering/Texture.h"
 #include "utility/FileSystem.h"
 #include "object/Transform.h"
+
 #include "thirdparty/imgui/imgui.h"
 #include "thirdparty/imgui/imgui_impl_glfw.h"
 #include "thirdparty/imgui/imgui_impl_opengl3.h"
+
 #include "thirdparty/glm/glm.hpp"
 #include "thirdparty/glm/gtc/matrix_transform.hpp"
 #include "thirdparty/glm/gtc/type_ptr.hpp"
@@ -15,22 +17,13 @@
 #include <iostream>
 
 Renderer renderer;
+
 Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 
 // float vertices[] = {
 //     -0.866f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 //     0.866f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
 //     0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f};
-
-// float vertices[] = {
-//     -0.5f, 0.5f, 0.0f,
-//     0.5f, 0.5f, 0.0f,
-//     0.5f, -0.5f, 0.0f,
-//     -0.5f, -0.5f, 0.0f};
-
-// unsigned int indices[] = {
-//     0, 1, 2,
-//     2, 3, 0};
 
 float vertices[] = {
     -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
@@ -76,6 +69,7 @@ float vertices[] = {
     -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f};
 
 VertexArray varray;
+
 int main()
 {
     // Setup Renderer
@@ -86,6 +80,7 @@ int main()
     }
     renderer.setup_window_data();
     renderer.set_camera(camera);
+
     // Setting up imgui
     std::string versionText = "#version " + std::to_string(renderer.major) + std::to_string(renderer.minor) + "0";
     IMGUI_CHECKVERSION();
@@ -112,36 +107,25 @@ int main()
     Shader shdr(FileSystem::get_path("shaders/3dshaders/lighting.vs").c_str(), FileSystem::get_path("shaders/3dshaders/lighting.fs").c_str());
     Shader lightshdr(FileSystem::get_path("shaders/3dshaders/colorShader.vs").c_str(), FileSystem::get_path("shaders/3dshaders/colorShader.fs").c_str());
     Texture tex(FileSystem::get_path("resources/textures/iitk_logo.png"));
-    Texture tex1(FileSystem::get_path("resources/textures/logo4.png"));
-    Texture tex2(FileSystem::get_path("resources/textures/council_logo.png"));
 
     // Setup Data
     float totalTime = 0;
     Transform transforms[] = {Transform(glm::vec3(0.0f, 0.0f, -5.0f)),
-                              Transform(glm::vec3(1.0f, 0.0f, -4.0f)),
-                              Transform(glm::vec3(-1.0f, 0.0f, -3.0f)),
-                              Transform(glm::vec3(0.0f, 1.0f, -2.0f)),
-                              Transform(glm::vec3(0.0f, -1.0f, -1.0f))};
+                              Transform(glm::vec3(1.5f, 1.0f, -4.0f)),
+                              Transform(glm::vec3(-1.0f, -1.0f, -3.0f)),
+                              Transform(glm::vec3(-2.0f, 2.0f, -2.0f)),
+                              Transform(glm::vec3(2.0f, -2.0f, -1.0f))};
     Transform lights[] = {Transform(glm::vec3(0.7f, 1.0f, 1.0f), glm::vec3(0.0f), glm::vec3(0.2f))};
-    // float xAxis = 0, yAxis = 0;
-    // float translationSpeed = 1.0f;
-    // float rotation = 0;
-    // glm::vec3 positions[] = {glm::vec3(0.0f, 0.0f, -5.0f),
-    //                          glm::vec3(1.0f, 0.0f, -4.0f),
-    //                          glm::vec3(-1.0f, 0.0f, -3.0f),
-    //                          glm::vec3(0.0f, 1.0f, -2.0f),
-    //                          glm::vec3(0.0f, -1.0f, -1.0f)};
-
-    // glm::vec3 scale = glm::vec3(1.0f);
     ImVec4 objectColor(1.0f, 1.0f, 1.0f, 1.0f);
-    ImVec4 bkgColor(0.2f, 0.3f, 0.2f, 1.0f);
+    ImVec4 bkgColor(0.1f, 0.2f, 0.25f, 1.0f);
     ImVec4 ambientColors[] = {ImVec4(1.0f, 1.0f, 1.0f, 1.0f)};
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
     int drawOption = 2;
     bool isPerspective = true;
     bool freeRoam = false;
     bool showFrameRate = false;
-    bool lockFrameRate = false;
+    bool lockFrameRate = true;
+
     // Start Render Loop
     renderer.start_timer();
     while (!renderer.close_window())
@@ -150,7 +134,7 @@ int main()
         renderer.new_frame();
         totalTime += renderer.deltaTime;
         totalTime = (totalTime > 1.0f) ? (totalTime - 1.0f) : totalTime;
-        // std::cout << renderer.deltaTime << " " << (int)(1.0f / renderer.deltaTime) << std::endl;
+
         // New UI Frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -215,8 +199,8 @@ int main()
         {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
-        // Do Calculations
 
+        // Do Calculations
         glm::mat4 view = renderer.get_camera()->get_view_matrix();
 
         glm::mat4 projection(1.0f);
@@ -243,20 +227,19 @@ int main()
         shdr.use();
         shdr.set_vec3("col", objectColor.x, objectColor.y, objectColor.z);
         shdr.set_vec3("ambience", ambientColors[0].x, ambientColors[0].y, ambientColors[0].z);
-        shdr.set_float("Time", totalTime);
         shdr.set_mat4("view", view);
         shdr.set_mat4("projection", projection);
         shdr.set_texture("tex", &tex);
-        // shdr.set_texture("tex1", &tex2);
 
         // Drawing Shapes and Objects
-        // shdr.use();
+        shdr.use();
         set_active_texture(0);
         for (int i = 0; i < 5; i++)
         {
             shdr.set_mat4("model", transforms[i].get_model_matrix());
             varray.draw_triangle(36, 0);
         }
+
         lightshdr.use();
         lightshdr.set_mat4("view", view);
         lightshdr.set_mat4("projection", projection);
@@ -267,9 +250,10 @@ int main()
             varray.draw_triangle(36, 0);
         }
 
+        // Setup UI Windows
         if (!freeRoam)
         {
-            // Setup UI Windows
+            // Scene UI
             ImGui::Begin("UI Box");
             ImGui::ColorEdit3("Object Color", &objectColor.x);
             ImGui::ColorEdit3("Ambient Colors", &ambientColors[0].x);
@@ -282,6 +266,7 @@ int main()
                 ImGui::Text("%d FPS", (int)(1 / renderer.deltaTime));
             }
             ImGui::End();
+
             // Object Property UI
             ImGui::Begin("Object Property");
             for (int i = 0; i < 5; i++)
@@ -302,6 +287,7 @@ int main()
         // Draw UI
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         // End of Frame
         renderer.swap_buffers(lockFrameRate);
     }
@@ -310,6 +296,7 @@ int main()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+
     shdr.free_data();
     varray.free_data();
     renderer.terminate_glfw();

@@ -3,14 +3,17 @@
 #include "rendering/Shader.h"
 #include "rendering/Texture.h"
 #include "utility/FileSystem.h"
+
 #include "thirdparty/imgui/imgui.h"
 #include "thirdparty/imgui/imgui_impl_glfw.h"
 #include "thirdparty/imgui/imgui_impl_opengl3.h"
+
 #include "thirdparty/glm/glm.hpp"
 #include "thirdparty/glm/gtc/matrix_transform.hpp"
 #include "thirdparty/glm/gtc/type_ptr.hpp"
 
 #include <iostream>
+
 Renderer renderer;
 
 float vertices[] = {
@@ -24,14 +27,17 @@ unsigned int indices[] = {
     2, 3, 0};
 
 VertexArray varray;
+
 int main()
 {
+    // Setup Renderer
     renderer.initialise_glfw();
     if (!renderer.create_window())
     {
         return -1;
     }
     renderer.setup_window_data();
+
     // Setting up imgui
     std::string versionText = "#version " + std::to_string(renderer.major) + std::to_string(renderer.minor) + "0";
     IMGUI_CHECKVERSION();
@@ -55,17 +61,16 @@ int main()
 
     // Setup Shaders and Textures
     Shader shdr(FileSystem::get_path("shaders/2dshaders/shaderToy.vs").c_str(), FileSystem::get_path("shaders/2dshaders/shaderToy.fs").c_str());
-
     Texture tex(FileSystem::get_path("resources/textures/iitk_logo.png"));
 
     // Setup Data
     float totalTime = 0;
-
     ImVec4 bkgColor(0.2f, 0.3f, 0.2f, 1.0f);
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
     int drawOption = 2;
     bool showFrameRate = false;
     bool lockFrameRate = false;
+
     // Start Render Loop
     renderer.start_timer();
     while (!renderer.close_window())
@@ -104,7 +109,6 @@ int main()
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
         // Do Calculations
-
         int currentWidth, currentHeight;
         glfwGetWindowSize(renderer.window, &currentWidth, &currentHeight);
         if (currentHeight == 0 || currentWidth == 0)
@@ -140,6 +144,7 @@ int main()
         // Draw UI
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         // End of Frame
         renderer.swap_buffers(lockFrameRate);
     }
@@ -148,6 +153,7 @@ int main()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+
     shdr.free_data();
     varray.free_data();
     renderer.terminate_glfw();
