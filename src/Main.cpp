@@ -98,7 +98,7 @@ int main()
     varray.bind_vbo(36, 8 * sizeof(float), vertices);
     // varray.bind_ebo(6, indices);
     varray.set_attribute_array(0, 3, 8 * sizeof(float));
-    varray.set_attribute_array(1, 3, 8 * sizeof(float), (void *)(6 * sizeof(float)));
+    varray.set_attribute_array(1, 3, 8 * sizeof(float), (void *)(3 * sizeof(float)));
     varray.set_attribute_array(2, 2, 8 * sizeof(float), (void *)(6 * sizeof(float)));
     varray.unbind_vbo();
     varray.unbind_vao();
@@ -116,8 +116,9 @@ int main()
                               Transform(glm::vec3(-2.0f, 2.0f, -2.0f)),
                               Transform(glm::vec3(2.0f, -2.0f, -1.0f))};
     Transform lights[] = {Transform(glm::vec3(0.7f, 1.0f, 1.0f), glm::vec3(0.0f), glm::vec3(0.2f))};
-    ImVec4 objectColor(1.0f, 1.0f, 1.0f, 1.0f);
+    ImVec4 objectColor(135.0f / 255.0f, 225.0f / 255.0f, 222.0f / 255.0f, 1.0f);
     float objectAmbience(0.1f);
+    float objectDiffuse(0.7f);
     ImVec4 bkgColor(0.1f, 0.2f, 0.25f, 1.0f);
     ImVec4 ambientColors[] = {ImVec4(1.0f, 1.0f, 1.0f, 1.0f)};
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
@@ -229,6 +230,8 @@ int main()
         shdr.set_vec3("col", objectColor.x, objectColor.y, objectColor.z);
         shdr.set_vec3("ambientLight", ambientColors[0].x, ambientColors[0].y, ambientColors[0].z);
         shdr.set_float("mat.ambience", objectAmbience);
+        shdr.set_float("mat.diffuse", objectDiffuse);
+        shdr.set_vec3("lightPos", lights[0].position.x, lights[0].position.y, lights[0].position.z);
         shdr.set_mat4("view", view);
         shdr.set_mat4("projection", projection);
         shdr.set_texture("tex", &tex);
@@ -259,8 +262,7 @@ int main()
             ImGui::Begin("UI Box");
             ImGui::ColorEdit3("Object Color", &objectColor.x);
             ImGui::SliderFloat("Object Ambience", &objectAmbience, 0.0f, 1.0f);
-            ImGui::ColorEdit3("Ambient Colors", &ambientColors[0].x);
-            ImGui::ColorEdit3("Background Color", &bkgColor.x);
+            ImGui::SliderFloat("Object Diffuse", &objectDiffuse, 0.0f, 1.0f);
             ImGui::Combo("RenderMode", &drawOption, &drawOptions[0], 3);
             ImGui::Checkbox("VSync", &lockFrameRate);
             ImGui::Checkbox("Show FPS", &showFrameRate);
@@ -272,7 +274,7 @@ int main()
 
             // Object Property UI
             ImGui::Begin("Object Property");
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < sizeof(transforms) / sizeof(Transform); i++)
             {
                 ImGui::Text("Object %d : ", i);
                 ImGui::SliderFloat3(("Position##" + std::to_string(i) + " : ").c_str(), &(transforms[i].position.x), -15.5f, 15.5f);
@@ -284,6 +286,13 @@ int main()
                 }
             }
             ImGui::Checkbox("IsPerspective", &isPerspective);
+            ImGui::End();
+
+            // Lighting UI
+            ImGui::Begin("Lighting UI");
+            ImGui::SliderFloat3("Light Position", &lights[0].position.x, -10.0f, 10.0f);
+            ImGui::ColorEdit3("Ambient Colors", &ambientColors[0].x);
+            ImGui::ColorEdit3("Background Color", &bkgColor.x);
             ImGui::End();
         }
 
