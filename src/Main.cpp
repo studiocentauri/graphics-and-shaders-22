@@ -116,10 +116,12 @@ int main()
                               Transform(glm::vec3(-2.0f, 2.0f, -2.0f)),
                               Transform(glm::vec3(2.0f, -2.0f, -1.0f))};
     Transform lights[] = {Transform(glm::vec3(0.7f, 1.0f, 1.0f), glm::vec3(0.0f), glm::vec3(0.2f))};
-    ImVec4 objectColor(135.0f / 255.0f, 225.0f / 255.0f, 222.0f / 255.0f, 1.0f);
+    ImVec4 objectColor(245.0f / 255.0f, 160.0f / 255.0f, 130.0f / 255.0f, 1.0f);
     float objectAmbience(0.1f);
     float objectDiffuse(0.7f);
-    ImVec4 bkgColor(0.1f, 0.2f, 0.25f, 1.0f);
+    float objectSpecular(0.3f);
+    float objectShininess(64.0f);
+    ImVec4 bkgColor(135.0f / 255.0f, 225.0f / 255.0f, 222.0f / 255.0f, 1.0f);
     ImVec4 ambientColors[] = {ImVec4(1.0f, 1.0f, 1.0f, 1.0f)};
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
     int drawOption = 2;
@@ -231,7 +233,10 @@ int main()
         shdr.set_vec3("ambientLight", ambientColors[0].x, ambientColors[0].y, ambientColors[0].z);
         shdr.set_float("mat.ambience", objectAmbience);
         shdr.set_float("mat.diffuse", objectDiffuse);
+        shdr.set_float("mat.specular", objectSpecular);
+        shdr.set_float("mat.shininess", objectShininess);
         shdr.set_vec3("lightPos", lights[0].position.x, lights[0].position.y, lights[0].position.z);
+        shdr.set_vec3("viewPos", renderer.get_camera()->position.x, renderer.get_camera()->position.y, renderer.get_camera()->position.z);
         shdr.set_mat4("view", view);
         shdr.set_mat4("projection", projection);
         shdr.set_texture("tex", &tex);
@@ -263,6 +268,8 @@ int main()
             ImGui::ColorEdit3("Object Color", &objectColor.x);
             ImGui::SliderFloat("Object Ambience", &objectAmbience, 0.0f, 1.0f);
             ImGui::SliderFloat("Object Diffuse", &objectDiffuse, 0.0f, 1.0f);
+            ImGui::SliderFloat("Object Specular", &objectSpecular, 0.0f, 1.0f);
+            ImGui::SliderFloat("Object Shininess", &objectShininess, 1.0f, 256.0f);
             ImGui::Combo("RenderMode", &drawOption, &drawOptions[0], 3);
             ImGui::Checkbox("VSync", &lockFrameRate);
             ImGui::Checkbox("Show FPS", &showFrameRate);
