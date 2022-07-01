@@ -117,6 +117,7 @@ int main()
                               Transform(glm::vec3(2.0f, -2.0f, -1.0f))};
     Transform lights[] = {Transform(glm::vec3(0.7f, 1.0f, 1.0f), glm::vec3(0.0f), glm::vec3(0.2f))};
     ImVec4 objectColor(1.0f, 1.0f, 1.0f, 1.0f);
+    float objectAmbience(0.1f);
     ImVec4 bkgColor(0.1f, 0.2f, 0.25f, 1.0f);
     ImVec4 ambientColors[] = {ImVec4(1.0f, 1.0f, 1.0f, 1.0f)};
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
@@ -226,7 +227,8 @@ int main()
         // Setup Shader Uniforms
         shdr.use();
         shdr.set_vec3("col", objectColor.x, objectColor.y, objectColor.z);
-        shdr.set_vec3("ambience", ambientColors[0].x, ambientColors[0].y, ambientColors[0].z);
+        shdr.set_vec3("ambientLight", ambientColors[0].x, ambientColors[0].y, ambientColors[0].z);
+        shdr.set_float("mat.ambience", objectAmbience);
         shdr.set_mat4("view", view);
         shdr.set_mat4("projection", projection);
         shdr.set_texture("tex", &tex);
@@ -256,6 +258,7 @@ int main()
             // Scene UI
             ImGui::Begin("UI Box");
             ImGui::ColorEdit3("Object Color", &objectColor.x);
+            ImGui::SliderFloat("Object Ambience", &objectAmbience, 0.0f, 1.0f);
             ImGui::ColorEdit3("Ambient Colors", &ambientColors[0].x);
             ImGui::ColorEdit3("Background Color", &bkgColor.x);
             ImGui::Combo("RenderMode", &drawOption, &drawOptions[0], 3);
