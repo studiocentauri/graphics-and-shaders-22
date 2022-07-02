@@ -63,7 +63,7 @@ void Camera::process_mouse(float xoffset, float yoffset, float deltaTime, GLbool
     pitch -= yoffset;
     if (constraintPitch)
     {
-        pitch = glm::clamp(pitch, -89.0f, 89.0f);
+        pitch = glm::clamp(pitch, -CAMERA_MAX_PITCH, CAMERA_MAX_PITCH);
     }
 
     update_camera_vectors();

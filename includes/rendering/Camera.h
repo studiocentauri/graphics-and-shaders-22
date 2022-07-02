@@ -36,7 +36,7 @@ public:
     float fieldOfView;      // FOV or Zoom for camera
 
     // Camera Constructor
-    Camera(glm::vec3 position_ = glm::vec3(0.0f), glm::vec3 worldUp_ = WORLD_UP, float yaw_ = YAW, float pitch_ = PITCH);
+    Camera(glm::vec3 position_ = CAMERA_ORIGIN, glm::vec3 worldUp_ = WORLD_UP, float yaw_ = YAW, float pitch_ = PITCH);
     // Returns the camera's view matrix
     glm::mat4 get_view_matrix();
     // Processes movement for the camera

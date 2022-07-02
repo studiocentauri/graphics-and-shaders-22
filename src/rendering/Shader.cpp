@@ -231,10 +231,10 @@ Material::Material(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, 
 
 LightSource::LightSource()
 {
-    ambient = glm::vec3(1.0f);
-    diffuse = glm::vec3(1.0f);
-    specular = glm::vec3(1.0f);
-    position = glm::vec3(0.0f);
+    ambient = DEFAULT_LIGHT_COLOR;
+    diffuse = DEFAULT_LIGHT_COLOR;
+    specular = DEFAULT_LIGHT_COLOR;
+    position = WORLD_ORIGIN;
 }
 
 LightSource::LightSource(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 position_)

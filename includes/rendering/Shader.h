@@ -9,6 +9,7 @@
 
 // Custom Headers
 #include "rendering/Texture.h"
+#include "Config.h"
 
 // Standard Headers
 #include <iostream>
@@ -87,7 +88,7 @@ struct MaterialField
     Texture tex;     // Texture for the field
 
     // Default MaterialField Constructor
-    MaterialField(glm::vec3 color_ = glm::vec3(1.0f, 0.0f, 1.0f)) : color(color_) {}
+    MaterialField(glm::vec3 color_ = DEFAULT_SHADER_COLOR) : color(color_) {}
 };
 
 // Material Class for Actor

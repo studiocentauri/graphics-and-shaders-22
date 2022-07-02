@@ -246,14 +246,14 @@ int main()
         }
         if (isPerspective)
         {
-            projection = glm::perspective((float)glm::radians(renderer.get_camera()->fieldOfView), (((float)currentWidth) / ((float)currentHeight)), 0.1f, 100.0f);
+            projection = glm::perspective((float)glm::radians(renderer.get_camera()->fieldOfView), (((float)currentWidth) / ((float)currentHeight)), CAMERA_NEAR_PLANE, CAMERA_FAR_PLANE);
         }
         else
         {
             float aspect = (((float)currentWidth) / ((float)currentHeight));
             float camSize = 5.0f;
             glm::vec2 camDim(aspect * camSize, camSize);
-            projection = glm::ortho(-camDim.x / 2.0f, camDim.x / 2.0f, -camDim.y / 2.0f, camDim.y / 2.0f, 0.01f, 100.0f);
+            projection = glm::ortho(-camDim.x / 2.0f, camDim.x / 2.0f, -camDim.y / 2.0f, camDim.y / 2.0f, CAMERA_NEAR_PLANE, CAMERA_FAR_PLANE);
         }
 
         // Setup Shader Uniforms
