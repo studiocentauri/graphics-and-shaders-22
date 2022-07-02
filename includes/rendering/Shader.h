@@ -58,10 +58,22 @@ public:
     void set_vec3(const std::string name, float x, float y, float z);
     // Set a vec3 uniform in shader
     void set_vec3(const std::string name, glm::vec3 value);
+    // Set a vec4 uniform in shader
+    void set_vec4(const std::string name, float x, float y, float z, float w);
+    // Set a vec4 uniform in shader
+    void set_vec4(const std::string name, glm::vec4 value);
+    // Set a mat2 uniform in shader
+    void set_mat2(const std::string name, glm::mat2 value);
+    // Set a mat3 uniform in shader
+    void set_mat3(const std::string name, glm::mat3 value);
     // Set a mat4 uniform in shader
     void set_mat4(const std::string name, glm::mat4 value);
     // Set a texture uniform in shader
     void set_texture(const std::string name, Texture *tex);
+    // Sets the matrices for a 3D object
+    void set_matrices(glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+    // Sets the material for a 3D object
+    void set_material(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, float shininess);
 
 private:
     // Check for compilation errors in shader

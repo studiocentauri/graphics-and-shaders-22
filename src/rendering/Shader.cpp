@@ -138,6 +138,26 @@ void Shader::set_vec3(const std::string name, glm::vec3 value)
     glUniform3f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z);
 }
 
+void Shader::set_vec4(const std::string name, float x, float y, float z, float w)
+{
+    glUniform4f(glGetUniformLocation(id, name.c_str()), x, y, z, w);
+}
+
+void Shader::set_vec4(const std::string name, glm::vec4 value)
+{
+    glUniform4f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z, value.w);
+}
+
+void Shader::set_mat2(const std::string name, glm::mat2 value)
+{
+    glUniformMatrix2fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, &value[0][0]);
+}
+
+void Shader::set_mat3(const std::string name, glm::mat3 value)
+{
+    glUniformMatrix3fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, &value[0][0]);
+}
+
 void Shader::set_mat4(const std::string name, glm::mat4 value)
 {
     glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, &value[0][0]);
@@ -148,6 +168,21 @@ void Shader::set_texture(const std::string name, Texture *tex)
     set_active_texture(tex->id);
     set_int(name, tex->id);
     tex->bind_texture();
+}
+
+void Shader::set_matrices(glm::mat4 model, glm::mat4 view, glm::mat4 projection)
+{
+    set_mat4("model", model);
+    set_mat4("view", view);
+    set_mat4("projection", projection);
+}
+
+void Shader::set_material(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, float shininess)
+{
+    set_vec3("mat.ambient", ambient);
+    set_vec3("mat.diffuse", diffuse);
+    set_vec3("mat.specular", specular);
+    set_float("mat.shininess", shininess);
 }
 
 bool Shader::check_compile_errors(unsigned int shader, SHADER_TYPE type)

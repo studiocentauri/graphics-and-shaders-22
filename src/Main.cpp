@@ -274,11 +274,9 @@ int main()
         set_active_texture(0);
         for (int i = 0; i < actors.size(); i++)
         {
-            shdr.set_vec3("mat.ambient", actors[i].mat.ambient.color);
-            shdr.set_vec3("mat.diffuse", actors[i].mat.diffuse.color);
-            shdr.set_vec3("mat.specular", actors[i].mat.specular.color);
-            shdr.set_float("mat.shininess", actors[i].mat.shininess);
-            shdr.set_mat4("model", transforms[i].get_model_matrix());
+            shdr.set_matrices(transforms[i].get_model_matrix(), view, projection);
+            shdr.set_material(actors[i].mat.ambient.color, actors[i].mat.diffuse.color,
+                              actors[i].mat.specular.color, actors[i].mat.shininess);
             varray.draw_triangle(36, 0);
         }
 
@@ -288,7 +286,7 @@ int main()
         lightshdr.set_mat4("projection", projection);
         for (int i = 0; i < lightActors.size(); i++)
         {
-            lightshdr.set_mat4("model", lightActors[i].tr.get_model_matrix());
+            lightshdr.set_matrices(lightActors[i].tr.get_model_matrix(), view, projection);
             lightshdr.set_vec3("col", lightActors[i].mat.diffuse.color);
             varray.draw_triangle(36, 0);
         }
