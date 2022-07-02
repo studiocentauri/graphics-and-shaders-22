@@ -1,7 +1,4 @@
 // Third-party Headers
-#include "thirdparty/imgui/imgui.h"
-#include "thirdparty/imgui/imgui_impl_glfw.h"
-#include "thirdparty/imgui/imgui_impl_opengl3.h"
 #include "thirdparty/glm/glm.hpp"
 #include "thirdparty/glm/gtc/matrix_transform.hpp"
 #include "thirdparty/glm/gtc/type_ptr.hpp"
@@ -12,6 +9,7 @@
 #include "rendering/Shader.h"
 #include "rendering/Texture.h"
 #include "utility/FileSystem.h"
+#include "gui/GUI.h"
 
 // Standard Headers
 #include <iostream>
@@ -43,15 +41,7 @@ int main()
     renderer.setup_window_data();
 
     // Setting up imgui
-    std::string versionText = "#version " + std::to_string(renderer.major) + std::to_string(renderer.minor) + "0";
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui_ImplGlfw_InitForOpenGL(renderer.window, true);
-    ImGui_ImplOpenGL3_Init(versionText.c_str());
-    // Render ImGui
-    ImGuiIO &io = ImGui::GetIO();
-    (void)io;
-    ImGui::StyleColorsDark();
+    GUI gui(renderer.window, renderer.major, renderer.minor);
 
     // Setup Vertex Array
     varray.generate_buffers();
@@ -72,8 +62,8 @@ int main()
     ImVec4 bkgColor(0.2f, 0.3f, 0.2f, 1.0f);
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
     int drawOption = 2;
-    bool showFrameRate = false;
-    bool lockFrameRate = false;
+    bool showFrameRate = true;
+    bool lockFrameRate = true;
 
     // Start Render Loop
     renderer.start_timer();
@@ -85,9 +75,7 @@ int main()
         totalTime = (totalTime > 300.0f) ? (totalTime - 300.0f) : totalTime;
 
         // New UI Frame
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        gui.new_frame();
 
         // Check for Inputs
         if (renderer.check_key(GLFW_KEY_ESCAPE))
@@ -147,17 +135,14 @@ int main()
         ImGui::End();
 
         // Draw UI
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        gui.render_gui();
 
         // End of Frame
         renderer.swap_buffers(lockFrameRate);
     }
 
     // Free Date and stop processes
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+    gui.terminate_gui();
 
     shdr.free_data();
     varray.free_data();

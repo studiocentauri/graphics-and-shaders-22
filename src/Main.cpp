@@ -1,7 +1,4 @@
 // Third-party Headers
-#include "thirdparty/imgui/imgui.h"
-#include "thirdparty/imgui/imgui_impl_glfw.h"
-#include "thirdparty/imgui/imgui_impl_opengl3.h"
 #include "thirdparty/glm/glm.hpp"
 #include "thirdparty/glm/gtc/matrix_transform.hpp"
 #include "thirdparty/glm/gtc/type_ptr.hpp"
@@ -15,6 +12,7 @@
 #include "utility/FileSystem.h"
 #include "object/Transform.h"
 #include "object/Actor.h"
+#include "gui/GUI.h"
 
 // Standard Headers
 #include <iostream>
@@ -90,15 +88,7 @@ int main()
     renderer.set_camera(camera);
 
     // Setting up imgui
-    std::string versionText = "#version " + std::to_string(renderer.major) + std::to_string(renderer.minor) + "0";
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui_ImplGlfw_InitForOpenGL(renderer.window, true);
-    ImGui_ImplOpenGL3_Init(versionText.c_str());
-    // Render ImGui
-    ImGuiIO &io = ImGui::GetIO();
-    (void)io;
-    ImGui::StyleColorsDark();
+    GUI gui(renderer.window, renderer.major, renderer.minor);
 
     // Setup Vertex Array
     varray.generate_buffers();
@@ -169,9 +159,7 @@ int main()
         totalTime = (totalTime > 1.0f) ? (totalTime - 1.0f) : totalTime;
 
         // New UI Frame
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        gui.new_frame();
 
         // Check for Inputs
         if (renderer.check_key(GLFW_KEY_ESCAPE))
@@ -335,17 +323,14 @@ int main()
         }
 
         // Draw UI
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        gui.render_gui();
 
         // End of Frame
         renderer.swap_buffers(lockFrameRate);
     }
 
     // Free Date and stop processes
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+    gui.terminate_gui();
 
     lightshdr.free_data();
     shdr.free_data();
