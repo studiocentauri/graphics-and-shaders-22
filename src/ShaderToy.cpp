@@ -1,19 +1,23 @@
+// Third-party Headers
+#include "thirdparty/imgui/imgui.h"
+#include "thirdparty/imgui/imgui_impl_glfw.h"
+#include "thirdparty/imgui/imgui_impl_opengl3.h"
+#include "thirdparty/glm/glm.hpp"
+#include "thirdparty/glm/gtc/matrix_transform.hpp"
+#include "thirdparty/glm/gtc/type_ptr.hpp"
+
+// Custom Headers
 #include "Config.h"
 #include "rendering/Renderer.h"
 #include "rendering/Shader.h"
 #include "rendering/Texture.h"
 #include "utility/FileSystem.h"
 
-#include "thirdparty/imgui/imgui.h"
-#include "thirdparty/imgui/imgui_impl_glfw.h"
-#include "thirdparty/imgui/imgui_impl_opengl3.h"
-
-#include "thirdparty/glm/glm.hpp"
-#include "thirdparty/glm/gtc/matrix_transform.hpp"
-#include "thirdparty/glm/gtc/type_ptr.hpp"
-
+// Standard Headers
 #include <iostream>
 
+// Renderer Data Setup
+//----------------------
 Renderer renderer;
 
 float vertices[] = {
@@ -91,7 +95,7 @@ int main()
             glfwSetWindowShouldClose(renderer.window, true);
         }
 
-        // Setup Background Color
+        // Clear Previous Frame
         glClearColor(bkgColor.x, bkgColor.y, bkgColor.z, bkgColor.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -108,6 +112,7 @@ int main()
         {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
+
         // Do Calculations
         int currentWidth, currentHeight;
         glfwGetWindowSize(renderer.window, &currentWidth, &currentHeight);

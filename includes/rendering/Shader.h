@@ -52,10 +52,12 @@ public:
     void set_float(const std::string name, float value);
     // Set a vec2 uniform in shader
     void set_vec2(const std::string name, float x, float y);
+    // Set a vec2 uniform in shader
+    void set_vec2(const std::string name, glm::vec2 value);
     // Set a vec3 uniform in shader
     void set_vec3(const std::string name, float x, float y, float z);
     // Set a vec3 uniform in shader
-    void set_vec3(const std::string name, glm::vec3 col);
+    void set_vec3(const std::string name, glm::vec3 value);
     // Set a mat4 uniform in shader
     void set_mat4(const std::string name, glm::mat4 value);
     // Set a texture uniform in shader

@@ -6,7 +6,6 @@ Shader::Shader()
 
 Shader::Shader(std::string vertexPath, std::string fragmentPath)
 {
-
     std::cout << vertexPath << fragmentPath;
     create_shader(vertexPath.c_str(), fragmentPath.c_str());
 }
@@ -49,14 +48,14 @@ void Shader::create_shader(const char *vertexPath, const char *fragmentPath)
     }
 
     unsigned int vertex, fragment;
-    vertex = compile_shader(vertexCode.c_str(), VERTEX_SHADER);
 
+    vertex = compile_shader(vertexCode.c_str(), VERTEX_SHADER);
     if (check_compile_errors(vertex, VERTEX_SHADER))
     {
         return;
     }
-    fragment = compile_shader(fragmentCode.c_str(), FRAGMENT_SHADER);
 
+    fragment = compile_shader(fragmentCode.c_str(), FRAGMENT_SHADER);
     if (check_compile_errors(fragment, FRAGMENT_SHADER))
     {
         return;
@@ -67,7 +66,6 @@ void Shader::create_shader(const char *vertexPath, const char *fragmentPath)
     glAttachShader(id, fragment);
 
     glLinkProgram(id);
-
     if (check_compile_errors(id, COMBINED_SHADER))
     {
         return;
@@ -114,32 +112,44 @@ void Shader::set_int(const std::string name, int value)
 {
     glUniform1i(glGetUniformLocation(id, name.c_str()), int(value));
 }
+
 void Shader::set_float(const std::string name, float value)
 {
     glUniform1f(glGetUniformLocation(id, name.c_str()), value);
 }
+
 void Shader::set_vec2(const std::string name, float x, float y)
 {
     glUniform2f(glGetUniformLocation(id, name.c_str()), x, y);
 }
+
+void Shader::set_vec2(const std::string name, glm::vec2 value)
+{
+    glUniform2f(glGetUniformLocation(id, name.c_str()), value.x, value.y);
+}
+
 void Shader::set_vec3(const std::string name, float x, float y, float z)
 {
     glUniform3f(glGetUniformLocation(id, name.c_str()), x, y, z);
 }
-void Shader::set_vec3(const std::string name, glm::vec3 col)
+
+void Shader::set_vec3(const std::string name, glm::vec3 value)
 {
-    glUniform3f(glGetUniformLocation(id, name.c_str()), col.x, col.y, col.z);
+    glUniform3f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z);
 }
+
 void Shader::set_mat4(const std::string name, glm::mat4 value)
 {
     glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, &value[0][0]);
 }
+
 void Shader::set_texture(const std::string name, Texture *tex)
 {
     set_active_texture(tex->id);
     set_int(name, tex->id);
     tex->bind_texture();
 }
+
 bool Shader::check_compile_errors(unsigned int shader, SHADER_TYPE type)
 {
     int success;

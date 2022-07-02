@@ -1,4 +1,5 @@
 #include "rendering/Camera.h"
+
 Camera::Camera(glm::vec3 position_, glm::vec3 worldUp_, float yaw_, float pitch_)
 {
     position = position_;
@@ -9,6 +10,7 @@ Camera::Camera(glm::vec3 position_, glm::vec3 worldUp_, float yaw_, float pitch_
     movementSpeed = CAM_SPEED;
     mouseSensitivity = CAM_SENSITIVITY;
     fieldOfView = CAM_FOV;
+
     update_camera_vectors();
 }
 
@@ -20,6 +22,7 @@ glm::mat4 Camera::get_view_matrix()
 void Camera::process_keyboard(CAMERA_MOVEMENT direction, float deltaTime)
 {
     glm::vec3 displacement(0.0f);
+
     switch (direction)
     {
     case CAM_FORWARD:
@@ -43,9 +46,11 @@ void Camera::process_keyboard(CAMERA_MOVEMENT direction, float deltaTime)
     default:
         break;
     }
+
 #if FPS_CAM
     displacement.y = 0.0f;
 #endif
+
     position += displacement;
 }
 
@@ -53,12 +58,14 @@ void Camera::process_mouse(float xoffset, float yoffset, float deltaTime, GLbool
 {
     xoffset *= mouseSensitivity * deltaTime * 60.0f;
     yaw += xoffset;
+
     yoffset *= mouseSensitivity * deltaTime * 60.0f;
     pitch -= yoffset;
     if (constraintPitch)
     {
         pitch = glm::clamp(pitch, -89.0f, 89.0f);
     }
+
     update_camera_vectors();
 }
 

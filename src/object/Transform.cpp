@@ -13,6 +13,7 @@ void Transform::reset_transform()
     rotation = glm::vec3(0.0f);
     scale = glm::vec3(1.0f);
 }
+
 glm::mat4 Transform::get_model_matrix()
 {
     glm::mat4 model(1.0f);

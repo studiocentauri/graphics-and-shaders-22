@@ -1,3 +1,12 @@
+// Third-party Headers
+#include "thirdparty/imgui/imgui.h"
+#include "thirdparty/imgui/imgui_impl_glfw.h"
+#include "thirdparty/imgui/imgui_impl_opengl3.h"
+#include "thirdparty/glm/glm.hpp"
+#include "thirdparty/glm/gtc/matrix_transform.hpp"
+#include "thirdparty/glm/gtc/type_ptr.hpp"
+
+// Custom Headers
 #include "Config.h"
 #include "rendering/Camera.h"
 #include "rendering/Renderer.h"
@@ -7,19 +16,13 @@
 #include "object/Transform.h"
 #include "object/Actor.h"
 
-#include "thirdparty/imgui/imgui.h"
-#include "thirdparty/imgui/imgui_impl_glfw.h"
-#include "thirdparty/imgui/imgui_impl_opengl3.h"
-
-#include "thirdparty/glm/glm.hpp"
-#include "thirdparty/glm/gtc/matrix_transform.hpp"
-#include "thirdparty/glm/gtc/type_ptr.hpp"
-
+// Standard Headers
 #include <iostream>
 #include <vector>
 
+// Renderer Data Setup
+//----------------------
 Renderer renderer;
-
 Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 
 // float vertices[] = {
@@ -71,7 +74,6 @@ float vertices[] = {
     -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f};
 
 VertexArray varray;
-
 std::vector<RenderActor> actors;
 std::vector<RenderActor> lightActors;
 std::vector<LightSource> lights;
@@ -202,18 +204,18 @@ int main()
             {
                 renderer.get_camera()->process_keyboard(CAM_RIGHT, renderer.deltaTime);
             }
-            if (renderer.check_key(GLFW_KEY_Q))
+            if (renderer.check_key(GLFW_KEY_E))
             {
                 renderer.get_camera()->process_keyboard(CAM_UP, renderer.deltaTime);
             }
-            if (renderer.check_key(GLFW_KEY_E))
+            if (renderer.check_key(GLFW_KEY_Q))
             {
                 renderer.get_camera()->process_keyboard(CAM_DOWN, renderer.deltaTime);
             }
         }
         renderer.process_mouse(freeRoam);
 
-        // Setup Background Color
+        // Clear Previous Frame
         glClearColor(bkgColor.x, bkgColor.y, bkgColor.z, bkgColor.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -266,6 +268,8 @@ int main()
         shdr.set_texture("tex", &tex);
 
         // Drawing Shapes and Objects
+
+        // Drawing Objects
         shdr.use();
         set_active_texture(0);
         for (int i = 0; i < actors.size(); i++)
@@ -278,6 +282,7 @@ int main()
             varray.draw_triangle(36, 0);
         }
 
+        // Drawing Lights
         lightshdr.use();
         lightshdr.set_mat4("view", view);
         lightshdr.set_mat4("projection", projection);
@@ -344,6 +349,7 @@ int main()
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
+    lightshdr.free_data();
     shdr.free_data();
     varray.free_data();
     renderer.terminate_glfw();

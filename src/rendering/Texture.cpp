@@ -4,22 +4,20 @@ Texture::Texture()
 {
 }
 
-Texture::Texture(std::string _path) : path(_path)
+Texture::Texture(std::string path_)
 {
+    path = path_;
     load_texture_from_path();
-}
-
-void Texture::generate_texture()
-{
-    glGenTextures(1, &id);
 }
 
 void Texture::load_texture_from_path()
 {
     generate_texture();
+
     int width, height, nrComponents;
     stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
+
     if (data)
     {
         GLenum format;
@@ -51,6 +49,11 @@ void Texture::load_texture_from_path()
     }
 
     stbi_image_free(data);
+}
+
+void Texture::generate_texture()
+{
+    glGenTextures(1, &id);
 }
 
 void Texture::bind_texture()

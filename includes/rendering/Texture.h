@@ -19,7 +19,7 @@ public:
     // Default Texture Constructor
     Texture();
     // Path constructor for the Texture
-    Texture(std::string _path);
+    Texture(std::string path_);
     // Loads the textures from local path
     void load_texture_from_path();
     // Generates Texture ID
