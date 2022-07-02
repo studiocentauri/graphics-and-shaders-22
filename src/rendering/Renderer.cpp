@@ -141,6 +141,7 @@ void Renderer::process_mouse(bool isActive)
     }
     else
     {
+        rCam.isFirstMouse = true;
         set_cursor(true);
     }
 
