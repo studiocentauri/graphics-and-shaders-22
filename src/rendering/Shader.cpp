@@ -126,6 +126,10 @@ void Shader::set_vec3(const std::string name, float x, float y, float z)
 {
     glUniform3f(glGetUniformLocation(id, name.c_str()), x, y, z);
 }
+void Shader::set_vec3(const std::string name, glm::vec3 col)
+{
+    glUniform3f(glGetUniformLocation(id, name.c_str()), col.x, col.y, col.z);
+}
 void Shader::set_mat4(const std::string name, glm::mat4 value)
 {
     glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, &value[0][0]);
@@ -165,4 +169,33 @@ bool Shader::check_compile_errors(unsigned int shader, SHADER_TYPE type)
         }
     }
     return success == 0;
+}
+
+Material::Material()
+{
+    shininess = 64.0f;
+}
+
+Material::Material(glm::vec3 ambience_, glm::vec3 diffuse_, glm::vec3 specular_, float shininess_)
+{
+    ambience = MaterialField(ambience_);
+    diffuse = MaterialField(diffuse_);
+    specular = MaterialField(specular_);
+    shininess = shininess_;
+}
+
+LightSource::LightSource()
+{
+    ambience = glm::vec3(1.0f);
+    diffuse = glm::vec3(1.0f);
+    specular = glm::vec3(1.0f);
+    position = glm::vec3(0.0f);
+}
+
+LightSource::LightSource(glm::vec3 ambience_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 position_)
+{
+    ambience = ambience_;
+    diffuse = diffuse_;
+    specular = specular_;
+    position = position_;
 }

@@ -37,6 +37,7 @@ add_executable(
   src/rendering/Texture.cpp
   src/utility/FileSystem.cpp
   src/object/Transform.cpp
+  src/object/Actor.cpp
   includes/thirdparty/imgui/imgui.cpp
   includes/thirdparty/imgui/imgui_draw.cpp
   includes/thirdparty/imgui/imgui_demo.cpp

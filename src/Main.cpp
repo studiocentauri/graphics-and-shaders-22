@@ -5,6 +5,7 @@
 #include "rendering/Texture.h"
 #include "utility/FileSystem.h"
 #include "object/Transform.h"
+#include "object/Actor.h"
 
 #include "thirdparty/imgui/imgui.h"
 #include "thirdparty/imgui/imgui_impl_glfw.h"
@@ -15,6 +16,7 @@
 #include "thirdparty/glm/gtc/type_ptr.hpp"
 
 #include <iostream>
+#include <vector>
 
 Renderer renderer;
 
@@ -70,6 +72,10 @@ float vertices[] = {
 
 VertexArray varray;
 
+std::vector<RenderActor> actors;
+std::vector<RenderActor> lightActors;
+std::vector<LightSource> lights;
+
 int main()
 {
     // Setup Renderer
@@ -115,14 +121,35 @@ int main()
                               Transform(glm::vec3(-1.0f, -1.0f, -3.0f)),
                               Transform(glm::vec3(-2.0f, 2.0f, -2.0f)),
                               Transform(glm::vec3(2.0f, -2.0f, -1.0f))};
-    Transform lights[] = {Transform(glm::vec3(0.7f, 1.0f, 1.0f), glm::vec3(0.0f), glm::vec3(0.2f))};
-    ImVec4 objectColor(245.0f / 255.0f, 160.0f / 255.0f, 130.0f / 255.0f, 1.0f);
-    float objectAmbience(0.1f);
-    float objectDiffuse(0.7f);
-    float objectSpecular(0.3f);
-    float objectShininess(64.0f);
+
+    for (int i = 0; i < 5; i++)
+    {
+        RenderActor Ac("Cube" + std::to_string(i));
+        Material mat(glm::vec3(245.0f / 255.0f, 160.0f / 255.0f, 130.0f / 255.0f), glm::vec3(245.0f / 255.0f, 160.0f / 255.0f, 130.0f / 255.0f), glm::vec3(1.0f));
+        Ac.mat = mat;
+        Ac.tr = transforms[i];
+        actors.push_back(Ac);
+    }
+
+    Transform lightstr[] = {Transform(glm::vec3(0.7f, 1.0f, 1.0f), glm::vec3(0.0f), glm::vec3(0.2f))};
+
+    for (int i = 0; i < 1; i++)
+    {
+        RenderActor rc("Light" + std::to_string(i));
+        Material mat(glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f));
+        rc.mat = mat;
+        rc.tr = lightstr[i];
+        lightActors.push_back(rc);
+    }
+
+    for (int i = 0; i < lightActors.size(); i++)
+    {
+        LightSource ls;
+        ls.position = lightActors[i].tr.position;
+        lights.push_back(ls);
+    }
+
     ImVec4 bkgColor(135.0f / 255.0f, 225.0f / 255.0f, 222.0f / 255.0f, 1.0f);
-    ImVec4 ambientColors[] = {ImVec4(1.0f, 1.0f, 1.0f, 1.0f)};
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
     int drawOption = 2;
     bool isPerspective = true;
@@ -229,13 +256,10 @@ int main()
 
         // Setup Shader Uniforms
         shdr.use();
-        shdr.set_vec3("col", objectColor.x, objectColor.y, objectColor.z);
-        shdr.set_vec3("ambientLight", ambientColors[0].x, ambientColors[0].y, ambientColors[0].z);
-        shdr.set_float("mat.ambience", objectAmbience);
-        shdr.set_float("mat.diffuse", objectDiffuse);
-        shdr.set_float("mat.specular", objectSpecular);
-        shdr.set_float("mat.shininess", objectShininess);
-        shdr.set_vec3("lightPos", lights[0].position.x, lights[0].position.y, lights[0].position.z);
+        shdr.set_vec3("light.amb", lights[0].ambience);
+        shdr.set_vec3("light.diff", lights[0].diffuse);
+        shdr.set_vec3("light.spec", lights[0].specular);
+        shdr.set_vec3("light.pos", lights[0].position);
         shdr.set_vec3("viewPos", renderer.get_camera()->position.x, renderer.get_camera()->position.y, renderer.get_camera()->position.z);
         shdr.set_mat4("view", view);
         shdr.set_mat4("projection", projection);
@@ -244,8 +268,12 @@ int main()
         // Drawing Shapes and Objects
         shdr.use();
         set_active_texture(0);
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < actors.size(); i++)
         {
+            shdr.set_vec3("mat.ambience", actors[i].mat.ambience.color);
+            shdr.set_vec3("mat.diffuse", actors[i].mat.diffuse.color);
+            shdr.set_vec3("mat.specular", actors[i].mat.specular.color);
+            shdr.set_float("mat.shininess", actors[i].mat.shininess);
             shdr.set_mat4("model", transforms[i].get_model_matrix());
             varray.draw_triangle(36, 0);
         }
@@ -253,10 +281,10 @@ int main()
         lightshdr.use();
         lightshdr.set_mat4("view", view);
         lightshdr.set_mat4("projection", projection);
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < lightActors.size(); i++)
         {
-            lightshdr.set_mat4("model", lights[i].get_model_matrix());
-            lightshdr.set_vec3("col", ambientColors[i].x, ambientColors[i].y, ambientColors[i].z);
+            lightshdr.set_mat4("model", lightActors[i].tr.get_model_matrix());
+            lightshdr.set_vec3("col", lightActors[i].mat.diffuse.color);
             varray.draw_triangle(36, 0);
         }
 
@@ -265,11 +293,11 @@ int main()
         {
             // Scene UI
             ImGui::Begin("UI Box");
-            ImGui::ColorEdit3("Object Color", &objectColor.x);
-            ImGui::SliderFloat("Object Ambience", &objectAmbience, 0.0f, 1.0f);
-            ImGui::SliderFloat("Object Diffuse", &objectDiffuse, 0.0f, 1.0f);
-            ImGui::SliderFloat("Object Specular", &objectSpecular, 0.0f, 1.0f);
-            ImGui::SliderFloat("Object Shininess", &objectShininess, 1.0f, 256.0f);
+            // ImGui::ColorEdit3("Object Color", &objectColor.x);
+            //  ImGui::SliderFloat("Object Ambience", &objectAmbience, 0.0f, 1.0f);
+            //  ImGui::SliderFloat("Object Diffuse", &objectDiffuse, 0.0f, 1.0f);
+            //  ImGui::SliderFloat("Object Specular", &objectSpecular, 0.0f, 1.0f);
+            //  ImGui::SliderFloat("Object Shininess", &objectShininess, 1.0f, 256.0f);
             ImGui::Combo("RenderMode", &drawOption, &drawOptions[0], 3);
             ImGui::Checkbox("VSync", &lockFrameRate);
             ImGui::Checkbox("Show FPS", &showFrameRate);
@@ -298,7 +326,7 @@ int main()
             // Lighting UI
             ImGui::Begin("Lighting UI");
             ImGui::SliderFloat3("Light Position", &lights[0].position.x, -10.0f, 10.0f);
-            ImGui::ColorEdit3("Ambient Colors", &ambientColors[0].x);
+            // ImGui::ColorEdit3("Ambient Colors", &ambientColors[0].x);
             ImGui::ColorEdit3("Background Color", &bkgColor.x);
             ImGui::End();
         }
