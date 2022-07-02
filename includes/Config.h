@@ -1,9 +1,12 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define WINDOW_NAME "Graphics And Shaders"
+// Renderer Settings
 #define OPENGL_MAJOR_VERSION 3
 #define OPENGL_MINOR_VERSION 3
+
+// Window Settings
+#define WINDOW_NAME "Graphics And Shaders"
 #define WINDOW_HEIGHT 500
 #define WINDOW_WIDTH 800
 #define ENABLE_FULLSCREEN 0
@@ -11,6 +14,7 @@
 #define ASPECT_RATIO_X 16
 #define ASPECT_RATIO_Y 10
 
+// Camera Settings
 #define YAW -90.0f
 #define PITCH 0.0f
 #define CAM_SPEED 8.0f
@@ -21,4 +25,4 @@
 #define WORLD_UP glm::vec3(0.0f, 1.0f, 0.0f)
 #define FPS_CAM 0
 
-#endif
+#endif // !CONFIG_H

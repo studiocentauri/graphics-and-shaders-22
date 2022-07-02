@@ -256,7 +256,7 @@ int main()
 
         // Setup Shader Uniforms
         shdr.use();
-        shdr.set_vec3("light.amb", lights[0].ambience);
+        shdr.set_vec3("light.amb", lights[0].ambient);
         shdr.set_vec3("light.diff", lights[0].diffuse);
         shdr.set_vec3("light.spec", lights[0].specular);
         shdr.set_vec3("light.pos", lights[0].position);
@@ -270,7 +270,7 @@ int main()
         set_active_texture(0);
         for (int i = 0; i < actors.size(); i++)
         {
-            shdr.set_vec3("mat.ambience", actors[i].mat.ambience.color);
+            shdr.set_vec3("mat.ambient", actors[i].mat.ambient.color);
             shdr.set_vec3("mat.diffuse", actors[i].mat.diffuse.color);
             shdr.set_vec3("mat.specular", actors[i].mat.specular.color);
             shdr.set_float("mat.shininess", actors[i].mat.shininess);

@@ -103,7 +103,6 @@ void Renderer::set_camera(Camera cam)
     rCam.cam = Camera(cam.position);
     rCam.lastX = width / 2.0f;
     rCam.lastY = height / 2.0f;
-    rCam.isFirstMouse = true;
     rCam.xOffset = 0.0f;
     rCam.yOffset = 0.0f;
 }

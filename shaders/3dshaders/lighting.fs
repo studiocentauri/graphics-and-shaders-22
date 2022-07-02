@@ -1,7 +1,7 @@
 #version 330 core
 
 struct Material {
-    vec3 ambience;
+    vec3 ambient;
     vec3 diffuse;
     vec3 specular;
     float shininess;
@@ -24,7 +24,7 @@ in vec2 uv;
 in vec3 position;
 uniform sampler2D tex;
 void main() {
-    vec3 ambient = mat.ambience * light.amb;
+    vec3 ambient = mat.ambient * light.amb;
 
     vec3 norm = normalize(normal);
     vec3 incident = normalize(light.pos - position);

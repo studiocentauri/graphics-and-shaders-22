@@ -176,9 +176,9 @@ Material::Material()
     shininess = 64.0f;
 }
 
-Material::Material(glm::vec3 ambience_, glm::vec3 diffuse_, glm::vec3 specular_, float shininess_)
+Material::Material(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, float shininess_)
 {
-    ambience = MaterialField(ambience_);
+    ambient = MaterialField(ambient_);
     diffuse = MaterialField(diffuse_);
     specular = MaterialField(specular_);
     shininess = shininess_;
@@ -186,15 +186,15 @@ Material::Material(glm::vec3 ambience_, glm::vec3 diffuse_, glm::vec3 specular_,
 
 LightSource::LightSource()
 {
-    ambience = glm::vec3(1.0f);
+    ambient = glm::vec3(1.0f);
     diffuse = glm::vec3(1.0f);
     specular = glm::vec3(1.0f);
     position = glm::vec3(0.0f);
 }
 
-LightSource::LightSource(glm::vec3 ambience_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 position_)
+LightSource::LightSource(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 position_)
 {
-    ambience = ambience_;
+    ambient = ambient_;
     diffuse = diffuse_;
     specular = specular_;
     position = position_;
