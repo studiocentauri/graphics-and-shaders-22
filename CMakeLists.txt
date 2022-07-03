@@ -38,6 +38,7 @@ add_executable(
   src/object/Transform.cpp
   src/object/Actor.cpp
   src/gui/GUI.cpp
+  src/gui/Widgets.cpp
   includes/thirdparty/imgui/imgui.cpp
   includes/thirdparty/imgui/imgui_draw.cpp
   includes/thirdparty/imgui/imgui_demo.cpp
