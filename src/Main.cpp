@@ -76,7 +76,8 @@ VertexArray varray;
 std::vector<RenderActor> actors;
 std::vector<RenderActor> lightActors;
 std::vector<LightSource> lights;
-bool renderScene = false;
+bool renderScene = true;
+bool showActorUI = true;
 
 int main()
 {
@@ -110,39 +111,6 @@ int main()
 
     // Setup Data
     float totalTime = 0;
-    Transform transforms[] = {Transform(glm::vec3(0.0f, 0.0f, -5.0f)),
-                              Transform(glm::vec3(1.5f, 1.0f, -4.0f)),
-                              Transform(glm::vec3(-1.0f, -1.0f, -3.0f)),
-                              Transform(glm::vec3(-2.0f, 2.0f, -2.0f)),
-                              Transform(glm::vec3(2.0f, -2.0f, -1.0f))};
-
-    for (int i = 0; i < 5; i++)
-    {
-        RenderActor Ac("Cube" + std::to_string(i));
-        Material mat(glm::vec3(245.0f / 255.0f, 160.0f / 255.0f, 130.0f / 255.0f), glm::vec3(245.0f / 255.0f, 160.0f / 255.0f, 130.0f / 255.0f), glm::vec3(1.0f));
-        Ac.mat = mat;
-        Ac.tr = transforms[i];
-        actors.push_back(Ac);
-    }
-
-    Transform lightstr[] = {Transform(glm::vec3(0.7f, 1.0f, 1.0f), glm::vec3(0.0f), glm::vec3(0.2f))};
-
-    for (int i = 0; i < 1; i++)
-    {
-        RenderActor rc("Light" + std::to_string(i));
-        Material mat(glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f));
-        rc.mat = mat;
-        rc.tr = lightstr[i];
-        lightActors.push_back(rc);
-    }
-
-    for (int i = 0; i < lightActors.size(); i++)
-    {
-        LightSource ls;
-        ls.position = lightActors[i].tr.position;
-        lights.push_back(ls);
-    }
-
     ImVec4 bkgColor(135.0f / 255.0f, 225.0f / 255.0f, 222.0f / 255.0f, 1.0f);
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
     int drawOption = 2;
@@ -150,6 +118,41 @@ int main()
     bool freeRoam = false;
     bool showFrameRate = false;
     bool lockFrameRate = true;
+
+    Transform transforms[] = {Transform(glm::vec3(0.0f, 0.0f, -5.0f)),
+                              Transform(glm::vec3(1.5f, 1.0f, -4.0f)),
+                              Transform(glm::vec3(-1.0f, -1.0f, -3.0f)),
+                              Transform(glm::vec3(-2.0f, 2.0f, -2.0f)),
+                              Transform(glm::vec3(2.0f, -2.0f, -1.0f))};
+    for (int i = 0; i < 5; i++)
+    {
+        RenderActor rc("Cube " + std::to_string(i + 1));
+        Material mat(glm::vec3(245.0f / 255.0f, 160.0f / 255.0f, 130.0f / 255.0f), glm::vec3(245.0f / 255.0f, 160.0f / 255.0f, 130.0f / 255.0f), glm::vec3(0.5f));
+        rc.mat = mat;
+        rc.tr = transforms[i];
+        rc.type = OBJECT_ACTOR;
+        actors.push_back(rc);
+    }
+
+    Transform lightstr[] = {Transform(glm::vec3(0.7f, 1.0f, 1.0f), glm::vec3(0.0f), glm::vec3(0.2f))};
+    for (int i = 0; i < 1; i++)
+    {
+        RenderActor rc("Light " + std::to_string(i + 1));
+        Material mat(glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f));
+        rc.mat = mat;
+        rc.tr = lightstr[i];
+        rc.type = LIGHT_ACTOR;
+        lightActors.push_back(rc);
+    }
+    for (int i = 0; i < lightActors.size(); i++)
+    {
+        LightSource ls;
+        ls.position = lightActors[i].tr.position;
+        ls.ambient = lightActors[i].mat.ambient.color;
+        ls.diffuse = lightActors[i].mat.diffuse.color;
+        ls.specular = lightActors[i].mat.specular.color;
+        lights.push_back(ls);
+    }
 
     // Start Render Loop
     renderer.start_timer();
@@ -247,6 +250,13 @@ int main()
                 glm::vec2 camDim(aspect * camSize, camSize);
                 projection = glm::ortho(-camDim.x / 2.0f, camDim.x / 2.0f, -camDim.y / 2.0f, camDim.y / 2.0f, CAMERA_NEAR_PLANE, CAMERA_FAR_PLANE);
             }
+            for (int i = 0; i < lightActors.size(); i++)
+            {
+                lights[i].position = lightActors[i].tr.position;
+                lights[i].ambient = lightActors[i].mat.ambient.color;
+                lights[i].diffuse = lightActors[i].mat.diffuse.color;
+                lights[i].specular = lightActors[i].mat.specular.color;
+            }
 
             // Setup Shader Uniforms
             shdr.use();
@@ -254,9 +264,7 @@ int main()
             shdr.set_vec3("light.diff", lights[0].diffuse);
             shdr.set_vec3("light.spec", lights[0].specular);
             shdr.set_vec3("light.pos", lights[0].position);
-            shdr.set_vec3("viewPos", renderer.get_camera()->position.x, renderer.get_camera()->position.y, renderer.get_camera()->position.z);
-            shdr.set_mat4("view", view);
-            shdr.set_mat4("projection", projection);
+            shdr.set_vec3("viewPos", renderer.get_camera()->position);
             shdr.set_texture("tex", &tex);
 
             // Drawing Shapes and Objects
@@ -266,10 +274,13 @@ int main()
             set_active_texture(0);
             for (int i = 0; i < actors.size(); i++)
             {
-                shdr.set_matrices(transforms[i].get_model_matrix(), view, projection);
-                shdr.set_material(actors[i].mat.ambient.color, actors[i].mat.diffuse.color,
-                                  actors[i].mat.specular.color, actors[i].mat.shininess);
-                varray.draw_triangle(36, 0);
+                if (actors[i].toRender)
+                {
+                    shdr.set_matrices(actors[i].tr.get_model_matrix(), view, projection);
+                    shdr.set_material(actors[i].mat.ambient.color, actors[i].mat.diffuse.color,
+                                      actors[i].mat.specular.color, actors[i].mat.shininess);
+                    varray.draw_triangle(36, 0);
+                }
             }
 
             // Drawing Lights
@@ -278,51 +289,32 @@ int main()
             lightshdr.set_mat4("projection", projection);
             for (int i = 0; i < lightActors.size(); i++)
             {
-                lightshdr.set_matrices(lightActors[i].tr.get_model_matrix(), view, projection);
-                lightshdr.set_vec3("col", lightActors[i].mat.diffuse.color);
-                varray.draw_triangle(36, 0);
+                if (lightActors[i].toRender)
+                {
+                    lightshdr.set_matrices(lightActors[i].tr.get_model_matrix(), view, projection);
+                    lightshdr.set_vec3("col", lightActors[i].mat.ambient.color);
+                    varray.draw_triangle(36, 0);
+                }
             }
 
             // Setup UI Windows
             if (!freeRoam)
             {
+                if (showActorUI)
+                {
+                    show_actor_ui(&actors, &lightActors, &showActorUI);
+                }
                 // Scene UI
-                ImGui::Begin("UI Box");
-                // ImGui::ColorEdit3("Object Color", &objectColor.x);
-                //  ImGui::SliderFloat("Object Ambience", &objectAmbience, 0.0f, 1.0f);
-                //  ImGui::SliderFloat("Object Diffuse", &objectDiffuse, 0.0f, 1.0f);
-                //  ImGui::SliderFloat("Object Specular", &objectSpecular, 0.0f, 1.0f);
-                //  ImGui::SliderFloat("Object Shininess", &objectShininess, 1.0f, 256.0f);
+                ImGui::Begin("Scene UI");
+                ImGui::ColorEdit3("Background Color", &bkgColor.x);
                 ImGui::Combo("RenderMode", &drawOption, &drawOptions[0], 3);
+                ImGui::Checkbox("IsPerspective", &isPerspective);
                 ImGui::Checkbox("VSync", &lockFrameRate);
                 ImGui::Checkbox("Show FPS", &showFrameRate);
                 if (showFrameRate)
                 {
                     ImGui::Text("%d FPS", (int)(1 / renderer.deltaTime));
                 }
-                ImGui::End();
-
-                // Object Property UI
-                ImGui::Begin("Object Property");
-                for (int i = 0; i < sizeof(transforms) / sizeof(Transform); i++)
-                {
-                    ImGui::Text("Object %d : ", i);
-                    ImGui::SliderFloat3(("Position##" + std::to_string(i) + " : ").c_str(), &(transforms[i].position.x), -15.5f, 15.5f);
-                    ImGui::SliderFloat3(("Rotation##" + std::to_string(i) + " : ").c_str(), &(transforms[i].rotation.x), -180.0f, 180.0f);
-                    ImGui::SliderFloat3(("Scale##" + std::to_string(i) + " : ").c_str(), &(transforms[i].scale.x), -5.0f, 5.0f);
-                    if (ImGui::Button(("Reset Transforms##" + std::to_string(i) + " : ").c_str()))
-                    {
-                        transforms[i].reset_transform();
-                    }
-                }
-                ImGui::Checkbox("IsPerspective", &isPerspective);
-                ImGui::End();
-
-                // Lighting UI
-                ImGui::Begin("Lighting UI");
-                ImGui::SliderFloat3("Light Position", &lights[0].position.x, -10.0f, 10.0f);
-                // ImGui::ColorEdit3("Ambient Colors", &ambientColors[0].x);
-                ImGui::ColorEdit3("Background Color", &bkgColor.x);
                 ImGui::End();
             }
         }
@@ -332,7 +324,7 @@ int main()
             glClearColor(DEFAULT_BACKGROUND_COLOR.x, DEFAULT_BACKGROUND_COLOR.y, DEFAULT_BACKGROUND_COLOR.z, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
-        show_main_menu_bar(&renderer, &renderScene);
+        show_main_menu_bar(&renderer, &renderScene, &showActorUI);
 
         // Draw UI
         gui.render_gui();

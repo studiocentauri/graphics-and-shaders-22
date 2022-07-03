@@ -21,17 +21,25 @@ public:
 private:
 };
 
+// Types of actors
+enum ACTOR_TYPE
+{
+    OBJECT_ACTOR,
+    LIGHT_ACTOR,
+};
+
 // RenderActor class for actors which are rendered in a Scene
 class RenderActor : public Actor
 {
 public:
     bool toRender = true; // Whether to render this actor
     Material mat;         // Material for the actor
+    ACTOR_TYPE type;      // Defines type of render actor
 
     // Default RenderActor constructor
     RenderActor(std::string name_ = "New RenderActor");
     // Mat constructor for RenderActor
-    RenderActor(Material mat_, std::string name_ = "New RenderActor");
+    RenderActor(Material mat_, ACTOR_TYPE type_ = OBJECT_ACTOR, std::string name_ = "New RenderActor");
 };
 
 #endif // !ACTOR_H
