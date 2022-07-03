@@ -111,7 +111,7 @@ int main()
 
     // Setup Data
     float totalTime = 0;
-    ImVec4 bkgColor(135.0f / 255.0f, 225.0f / 255.0f, 222.0f / 255.0f, 1.0f);
+    ImVec4 bkgColor(55.0f / 255.0f, 100.0f / 255.0f, 110.0f / 255.0f, 1.0f);
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
     int drawOption = 2;
     bool isPerspective = true;
@@ -138,7 +138,7 @@ int main()
     for (int i = 0; i < 1; i++)
     {
         RenderActor rc("Light " + std::to_string(i + 1));
-        Material mat(glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f));
+        Material mat(glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.4f));
         rc.mat = mat;
         rc.tr = lightstr[i];
         rc.type = LIGHT_ACTOR;
@@ -161,7 +161,7 @@ int main()
         // Frame Start
         renderer.new_frame();
         totalTime += renderer.deltaTime;
-        totalTime = (totalTime > 1.0f) ? (totalTime - 1.0f) : totalTime;
+        totalTime = (totalTime > 300.0f) ? (totalTime - 300.0f) : totalTime;
 
         // New UI Frame
         gui.new_frame();
@@ -285,8 +285,6 @@ int main()
 
             // Drawing Lights
             lightshdr.use();
-            lightshdr.set_mat4("view", view);
-            lightshdr.set_mat4("projection", projection);
             for (int i = 0; i < lightActors.size(); i++)
             {
                 if (lightActors[i].toRender)
