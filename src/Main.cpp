@@ -106,8 +106,11 @@ int main()
 
     // Setup Shaders and Textures
     Shader shdr(FileSystem::get_path("shaders/3dshaders/lighting.vs").c_str(), FileSystem::get_path("shaders/3dshaders/lighting.fs").c_str());
+    Shader shdr1(FileSystem::get_path("shaders/3dshaders/lighting.vs").c_str(), FileSystem::get_path("shaders/3dshaders/lighting_texture.fs").c_str());
     Shader lightshdr(FileSystem::get_path("shaders/3dshaders/colorShader.vs").c_str(), FileSystem::get_path("shaders/3dshaders/colorShader.fs").c_str());
-    Texture tex(FileSystem::get_path("resources/textures/iitk_logo.png"));
+    Texture tex(FileSystem::get_path("resources/textures/container.png"));
+    Texture tex1(FileSystem::get_path("resources/textures/container_specular.png"));
+    Texture tex2(FileSystem::get_path("resources/textures/matrix.jpg"));
 
     // Setup Data
     float totalTime = 0;
@@ -267,6 +270,16 @@ int main()
             shdr.set_vec3("viewPos", renderer.get_camera()->position);
             shdr.set_texture("tex", &tex);
 
+            shdr1.use();
+            shdr1.set_vec3("light.amb", lights[0].ambient);
+            shdr1.set_vec3("light.diff", lights[0].diffuse);
+            shdr1.set_vec3("light.spec", lights[0].specular);
+            shdr1.set_vec3("light.pos", lights[0].position);
+            shdr1.set_vec3("viewPos", renderer.get_camera()->position);
+            shdr1.set_texture("mat.diffuse", &tex);
+            shdr1.set_texture("mat.specular", &tex1);
+            shdr1.set_texture("mat.emission", &tex2);
+
             // Drawing Shapes and Objects
 
             // Drawing Objects
@@ -276,9 +289,14 @@ int main()
             {
                 if (actors[i].toRender)
                 {
+                    shdr.use();
                     shdr.set_matrices(actors[i].tr.get_model_matrix(), view, projection);
                     shdr.set_material(actors[i].mat.ambient.color, actors[i].mat.diffuse.color,
                                       actors[i].mat.specular.color, actors[i].mat.shininess);
+                    shdr1.use();
+                    shdr1.set_float("mat.shininess", actors[i].mat.shininess);
+                    shdr1.set_matrices(actors[i].tr.get_model_matrix(), view, projection);
+
                     varray.draw_triangle(36, 0);
                 }
             }
