@@ -93,17 +93,21 @@ struct MaterialField
     MaterialField(glm::vec3 color_ = DEFAULT_SHADER_COLOR) : color(color_) {}
 };
 
+// Templates of shader
+enum SHADER_TEMPLATE
+{
+    COLOR_SHADER_3D,
+    TEXTURE_SHADER_3D,
+};
+
 // Array of file name for the vertex shaders
 extern std::string vShaderNames[LOADED_SHADERS_COUNT];
 
 // Array of file name for the fragment shaders
 extern std::string fShaderNames[LOADED_SHADERS_COUNT];
 
-// Array of the template shaders
-static std::vector<Shader> templateShaders;
-
-// Sets the template shaders via path
-void load_template_shaders();
+// Shader names to use for UI
+static const char *shaderNames[] = {"Color Shader", "Texture Shader"};
 
 // Material Class for Actor
 class Material
@@ -113,6 +117,7 @@ public:
     MaterialField diffuse;  // Diffuse color for Mat
     MaterialField specular; // Specular color for Mat
     float shininess;        // Shininess factor for Mat
+    SHADER_TEMPLATE shader; // Type of shader used by this material
 
     // Default Material Constructor
     Material();

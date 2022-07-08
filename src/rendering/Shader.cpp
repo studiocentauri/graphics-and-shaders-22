@@ -6,7 +6,6 @@ Shader::Shader()
 
 Shader::Shader(std::string vertexPath, std::string fragmentPath)
 {
-    std::cout << vertexPath << fragmentPath;
     create_shader(vertexPath.c_str(), fragmentPath.c_str());
 }
 
@@ -222,18 +221,10 @@ std::string vShaderNames[] = {"shaders/3dshaders/lighting.vs",
 std::string fShaderNames[] = {"shaders/3dshaders/lighting.fs",
                               "shaders/3dshaders/lighting_texture.fs"};
 
-void load_template_shaders()
-{
-    for (int i = 0; i < LOADED_SHADERS_COUNT; i++)
-    {
-        Shader shdr(FileSystem::get_path(vShaderNames[i]), FileSystem::get_path(fShaderNames[i]));
-        templateShaders.push_back(shdr);
-    }
-}
-
 Material::Material()
 {
     shininess = 64.0f;
+    shader = COLOR_SHADER_3D;
 }
 
 Material::Material(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, float shininess_)
@@ -242,6 +233,7 @@ Material::Material(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, 
     diffuse = MaterialField(diffuse_);
     specular = MaterialField(specular_);
     shininess = shininess_;
+    shader = COLOR_SHADER_3D;
 }
 
 LightSource::LightSource()

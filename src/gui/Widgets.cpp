@@ -122,10 +122,25 @@ void show_actor_ui(std::vector<RenderActor> *actors, std::vector<RenderActor> *l
                     actor->tr.reset_transform();
                 }
                 show_section_header("MATERIAL");
-                ImGui::ColorEdit3("Ambient Col: ", &(actor->mat.ambient.color.x));
-                ImGui::ColorEdit3("Diffuse Col: ", &(actor->mat.diffuse.color.x));
-                ImGui::ColorEdit3("Specular Col: ", &(actor->mat.specular.color.x));
-                ImGui::SliderFloat("Shininess: ", &(actor->mat.shininess), 1.0f, 256.0f);
+                int shaderTemplate = int(actor->mat.shader);
+                if (ImGui::Combo("Shader: ", &(shaderTemplate), &shaderNames[0], LOADED_SHADERS_COUNT))
+                {
+                    actor->mat.shader = static_cast<SHADER_TEMPLATE>(shaderTemplate);
+                }
+                switch (actor->mat.shader)
+                {
+                case COLOR_SHADER_3D:
+                    ImGui::ColorEdit3("Ambient Col: ", &(actor->mat.ambient.color.x));
+                    ImGui::ColorEdit3("Diffuse Col: ", &(actor->mat.diffuse.color.x));
+                    ImGui::ColorEdit3("Specular Col: ", &(actor->mat.specular.color.x));
+                    ImGui::SliderFloat("Shininess: ", &(actor->mat.shininess), 1.0f, 256.0f);
+                    break;
+                case TEXTURE_SHADER_3D:
+                    ImGui::SliderFloat("Shininess: ", &(actor->mat.shininess), 1.0f, 256.0f);
+                    break;
+                default:
+                    break;
+                }
             }
             else if (actor->type == LIGHT_ACTOR)
             {

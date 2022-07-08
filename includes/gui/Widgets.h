@@ -4,6 +4,7 @@
 #include "gui/GUI.h"
 #include "rendering/Renderer.h"
 #include "object/Actor.h"
+#include "rendering/Shader.h"
 
 #include <iostream>
 #include <vector>

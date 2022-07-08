@@ -78,6 +78,10 @@ std::vector<RenderActor> lightActors;
 std::vector<LightSource> lights;
 bool renderScene = true;
 bool showActorUI = true;
+std::vector<Shader> templateShaders;
+
+// Sets the template shaders via path
+void load_template_shaders();
 
 int main()
 {
@@ -106,8 +110,6 @@ int main()
     varray.unbind_vao();
 
     // Setup Shaders and Textures
-    Shader shdr(FileSystem::get_path("shaders/3dshaders/lighting.vs").c_str(), FileSystem::get_path("shaders/3dshaders/lighting.fs").c_str());
-    Shader shdr1(FileSystem::get_path("shaders/3dshaders/lighting.vs").c_str(), FileSystem::get_path("shaders/3dshaders/lighting_texture.fs").c_str());
     Shader lightshdr(FileSystem::get_path("shaders/3dshaders/colorShader.vs").c_str(), FileSystem::get_path("shaders/3dshaders/colorShader.fs").c_str());
     Texture tex(FileSystem::get_path("resources/textures/container.png"));
     Texture tex1(FileSystem::get_path("resources/textures/container_specular.png"));
@@ -263,41 +265,41 @@ int main()
             }
 
             // Setup Shader Uniforms
-            shdr.use();
-            shdr.set_vec3("light.amb", lights[0].ambient);
-            shdr.set_vec3("light.diff", lights[0].diffuse);
-            shdr.set_vec3("light.spec", lights[0].specular);
-            shdr.set_vec3("light.pos", lights[0].position);
-            shdr.set_vec3("viewPos", renderer.get_camera()->position);
-            shdr.set_texture("tex", &tex);
-
-            shdr1.use();
-            shdr1.set_vec3("light.amb", lights[0].ambient);
-            shdr1.set_vec3("light.diff", lights[0].diffuse);
-            shdr1.set_vec3("light.spec", lights[0].specular);
-            shdr1.set_vec3("light.pos", lights[0].position);
-            shdr1.set_vec3("viewPos", renderer.get_camera()->position);
-            shdr1.set_texture("mat.diffuse", &tex);
-            shdr1.set_texture("mat.specular", &tex1);
-            shdr1.set_texture("mat.emission", &tex2);
-
-            // Drawing Shapes and Objects
-
-            // Drawing Objects
-            shdr.use();
             set_active_texture(0);
             for (int i = 0; i < actors.size(); i++)
             {
                 if (actors[i].toRender)
                 {
-                    shdr.use();
-                    shdr.set_matrices(actors[i].tr.get_model_matrix(), view, projection);
-                    shdr.set_material(actors[i].mat.ambient.color, actors[i].mat.diffuse.color,
-                                      actors[i].mat.specular.color, actors[i].mat.shininess);
-                    shdr1.use();
-                    shdr1.set_float("mat.shininess", actors[i].mat.shininess);
-                    shdr1.set_matrices(actors[i].tr.get_model_matrix(), view, projection);
-
+                    Shader *shdr = &(templateShaders[int(actors[i].mat.shader)]);
+                    shdr->use();
+                    switch (actors[i].mat.shader)
+                    {
+                    case COLOR_SHADER_3D:
+                        shdr->set_vec3("light.amb", lights[0].ambient);
+                        shdr->set_vec3("light.diff", lights[0].diffuse);
+                        shdr->set_vec3("light.spec", lights[0].specular);
+                        shdr->set_vec3("light.pos", lights[0].position);
+                        shdr->set_vec3("viewPos", renderer.get_camera()->position);
+                        shdr->set_matrices(actors[i].tr.get_model_matrix(), view, projection);
+                        shdr->set_material(actors[i].mat.ambient.color, actors[i].mat.diffuse.color,
+                                           actors[i].mat.specular.color, actors[i].mat.shininess);
+                        break;
+                    case TEXTURE_SHADER_3D:
+                        shdr->set_vec3("light.amb", lights[0].ambient);
+                        shdr->set_vec3("light.diff", lights[0].diffuse);
+                        shdr->set_vec3("light.spec", lights[0].specular);
+                        shdr->set_vec3("light.pos", lights[0].position);
+                        shdr->set_vec3("viewPos", renderer.get_camera()->position);
+                        shdr->set_texture("mat.diffuse", &tex);
+                        shdr->set_texture("mat.specular", &tex1);
+                        shdr->set_texture("mat.emission", &tex2);
+                        shdr->set_float("mat.shininess", actors[i].mat.shininess);
+                        shdr->set_matrices(actors[i].tr.get_model_matrix(), view, projection);
+                        break;
+                    default:
+                        break;
+                    }
+                    // Drawing Objects
                     varray.draw_triangle(36, 0);
                 }
             }
@@ -354,8 +356,16 @@ int main()
     gui.terminate_gui();
 
     lightshdr.free_data();
-    shdr.free_data();
     varray.free_data();
     renderer.terminate_glfw();
     return 0;
+}
+
+void load_template_shaders()
+{
+    for (int i = 0; i < LOADED_SHADERS_COUNT; i++)
+    {
+        Shader shdr(FileSystem::get_path(vShaderNames[i]), FileSystem::get_path(fShaderNames[i]));
+        templateShaders.push_back(shdr);
+    }
 }
