@@ -216,6 +216,21 @@ bool Shader::check_compile_errors(unsigned int shader, SHADER_TYPE type)
     return success == 0;
 }
 
+std::string vShaderNames[] = {"shaders/3dshaders/lighting.vs",
+                              "shaders/3dshaders/lighting.vs"};
+
+std::string fShaderNames[] = {"shaders/3dshaders/lighting.fs",
+                              "shaders/3dshaders/lighting_texture.fs"};
+
+void load_template_shaders()
+{
+    for (int i = 0; i < LOADED_SHADERS_COUNT; i++)
+    {
+        Shader shdr(FileSystem::get_path(vShaderNames[i]), FileSystem::get_path(fShaderNames[i]));
+        templateShaders.push_back(shdr);
+    }
+}
+
 Material::Material()
 {
     shininess = 64.0f;

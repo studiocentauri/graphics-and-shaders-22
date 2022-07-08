@@ -5,6 +5,7 @@
 #define OPENGL_MAJOR_VERSION 3
 #define OPENGL_MINOR_VERSION 3
 #define OPENGL_PROFILE_USED GLFW_OPENGL_CORE_PROFILE
+#define LOADED_SHADERS_COUNT 2
 
 // Window Settings
 #define WINDOW_NAME "Graphics And Shaders"

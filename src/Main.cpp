@@ -89,6 +89,7 @@ int main()
     }
     renderer.setup_window_data();
     renderer.set_camera(camera);
+    load_template_shaders();
 
     // Setting up imgui
     GUI gui(renderer.window, renderer.major, renderer.minor);

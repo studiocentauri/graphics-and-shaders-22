@@ -10,12 +10,14 @@
 // Custom Headers
 #include "rendering/Texture.h"
 #include "Config.h"
+#include "utility/FileSystem.h"
 
 // Standard Headers
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 // Types of Shaders
 enum SHADER_TYPE
@@ -90,6 +92,18 @@ struct MaterialField
     // Default MaterialField Constructor
     MaterialField(glm::vec3 color_ = DEFAULT_SHADER_COLOR) : color(color_) {}
 };
+
+// Array of file name for the vertex shaders
+extern std::string vShaderNames[LOADED_SHADERS_COUNT];
+
+// Array of file name for the fragment shaders
+extern std::string fShaderNames[LOADED_SHADERS_COUNT];
+
+// Array of the template shaders
+static std::vector<Shader> templateShaders;
+
+// Sets the template shaders via path
+void load_template_shaders();
 
 // Material Class for Actor
 class Material
