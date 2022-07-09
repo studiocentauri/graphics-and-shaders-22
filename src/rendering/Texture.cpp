@@ -70,3 +70,15 @@ void set_active_texture(int index)
 {
     glActiveTexture(GL_TEXTURE0 + index);
 }
+
+std::string texturePaths[] = {
+    "resources/textures/bricks.jpg",
+    "resources/textures/brickwall.jpg",
+    "resources/textures/container.jpg",
+    "resources/textures/container.png",
+    "resources/textures/container_specular.png",
+    "resources/textures/matrix.jpg",
+    "resources/textures/metal.png",
+    "resources/textures/wall.jpg",
+    "resources/textures/wood.png",
+};

@@ -79,9 +79,11 @@ std::vector<LightSource> lights;
 bool renderScene = true;
 bool showActorUI = true;
 std::vector<Shader> templateShaders;
+std::vector<Texture> textures;
 
 // Sets the template shaders via path
 void load_template_shaders();
+void load_template_textures();
 
 int main()
 {
@@ -94,7 +96,7 @@ int main()
     renderer.setup_window_data();
     renderer.set_camera(camera);
     load_template_shaders();
-
+    load_template_textures();
     // Setting up imgui
     GUI gui(renderer.window, renderer.major, renderer.minor);
 
@@ -111,10 +113,6 @@ int main()
 
     // Setup Shaders and Textures
     Shader lightshdr(FileSystem::get_path("shaders/3dshaders/colorShader.vs").c_str(), FileSystem::get_path("shaders/3dshaders/colorShader.fs").c_str());
-    Texture tex(FileSystem::get_path("resources/textures/container.png"));
-    Texture tex1(FileSystem::get_path("resources/textures/container_specular.png"));
-    Texture tex2(FileSystem::get_path("resources/textures/matrix.jpg"));
-
     // Setup Data
     float totalTime = 0;
     ImVec4 bkgColor(55.0f / 255.0f, 100.0f / 255.0f, 110.0f / 255.0f, 1.0f);
@@ -133,7 +131,7 @@ int main()
     for (int i = 0; i < 5; i++)
     {
         RenderActor rc("Cube " + std::to_string(i + 1));
-        Material mat(glm::vec3(245.0f / 255.0f, 160.0f / 255.0f, 130.0f / 255.0f), glm::vec3(245.0f / 255.0f, 160.0f / 255.0f, 130.0f / 255.0f), glm::vec3(0.5f));
+        Material mat(3, 4, true, 5, 64.0f);
         rc.mat = mat;
         rc.tr = transforms[i];
         rc.type = OBJECT_ACTOR;
@@ -290,9 +288,9 @@ int main()
                         shdr->set_vec3("light.spec", lights[0].specular);
                         shdr->set_vec3("light.pos", lights[0].position);
                         shdr->set_vec3("viewPos", renderer.get_camera()->position);
-                        shdr->set_texture("mat.diffuse", &tex);
-                        shdr->set_texture("mat.specular", &tex1);
-                        shdr->set_texture("mat.emission", &tex2);
+                        shdr->set_texture("mat.diffuse", &(textures[actors[i].mat.diffuse.tex]));
+                        shdr->set_texture("mat.specular", &(textures[actors[i].mat.specular.tex]));
+                        shdr->set_texture("mat.emission", &(textures[actors[i].mat.emission.tex]));
                         shdr->set_float("mat.shininess", actors[i].mat.shininess);
                         shdr->set_matrices(actors[i].tr.get_model_matrix(), view, projection);
                         break;
@@ -367,5 +365,14 @@ void load_template_shaders()
     {
         Shader shdr(FileSystem::get_path(vShaderNames[i]), FileSystem::get_path(fShaderNames[i]));
         templateShaders.push_back(shdr);
+    }
+}
+
+void load_template_textures()
+{
+    for (int i = 0; i < LOADED_TEXTURES_COUNT; i++)
+    {
+        Texture tex(FileSystem::get_path(texturePaths[i]));
+        textures.push_back(tex);
     }
 }

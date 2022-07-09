@@ -127,6 +127,7 @@ void show_actor_ui(std::vector<RenderActor> *actors, std::vector<RenderActor> *l
                 {
                     actor->mat.shader = static_cast<SHADER_TEMPLATE>(shaderTemplate);
                 }
+                int texID = 0;
                 switch (actor->mat.shader)
                 {
                 case COLOR_SHADER_3D:
@@ -136,6 +137,21 @@ void show_actor_ui(std::vector<RenderActor> *actors, std::vector<RenderActor> *l
                     ImGui::SliderFloat("Shininess: ", &(actor->mat.shininess), 1.0f, 256.0f);
                     break;
                 case TEXTURE_SHADER_3D:
+                    texID = int(actor->mat.diffuse.tex);
+                    if (ImGui::Combo("Diffuse: ", &(texID), &textureNames[0], LOADED_TEXTURES_COUNT))
+                    {
+                        actor->mat.diffuse.tex = unsigned int(texID);
+                    }
+                    texID = int(actor->mat.specular.tex);
+                    if (ImGui::Combo("Specular: ", &(texID), &textureNames[0], LOADED_TEXTURES_COUNT))
+                    {
+                        actor->mat.specular.tex = unsigned int(texID);
+                    }
+                    texID = int(actor->mat.emission.tex);
+                    if (ImGui::Combo("Emission: ", &(texID), &textureNames[0], LOADED_TEXTURES_COUNT))
+                    {
+                        actor->mat.emission.tex = unsigned int(texID);
+                    }
                     ImGui::SliderFloat("Shininess: ", &(actor->mat.shininess), 1.0f, 256.0f);
                     break;
                 default:

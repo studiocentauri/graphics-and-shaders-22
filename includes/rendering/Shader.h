@@ -86,11 +86,12 @@ private:
 // Struct for a Field in Material class
 struct MaterialField
 {
-    glm::vec3 color; // Color for the field
-    Texture tex;     // Texture for the field
+    glm::vec3 color;  // Color for the field
+    unsigned int tex; // Texture for the field
 
     // Default MaterialField Constructor
     MaterialField(glm::vec3 color_ = DEFAULT_SHADER_COLOR) : color(color_) {}
+    MaterialField(unsigned int tex_, glm::vec3 color_ = DEFAULT_SHADER_COLOR) : color(color_), tex(tex_) {}
 };
 
 // Templates of shader
@@ -116,13 +117,16 @@ public:
     MaterialField ambient;  // Ambient color for Mat
     MaterialField diffuse;  // Diffuse color for Mat
     MaterialField specular; // Specular color for Mat
+    MaterialField emission; // Specular color for Mat
     float shininess;        // Shininess factor for Mat
     SHADER_TEMPLATE shader; // Type of shader used by this material
+    bool hasEmission = false;
 
     // Default Material Constructor
     Material();
     // Color Material Constructor
     Material(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, float shininess_ = 64.0f);
+    Material(unsigned int diffuseTex, unsigned int specularTex = 0, bool hasEmission_ = false, unsigned int emissionTex = 0, float shininess_ = 64.0f);
 };
 
 // LightSource class for Shader

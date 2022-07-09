@@ -5,6 +5,7 @@
 #include "thirdparty/glad/glad.h"
 #include "thirdparty/GLFW/glfw3.h"
 #include "thirdparty/stb_image.h"
+#include "Config.h"
 
 // Standard Headers
 #include <iostream>
@@ -34,5 +35,18 @@ private:
 
 // Sets the active texture based on index to the renderer
 void set_active_texture(int index);
+
+extern std::string texturePaths[LOADED_TEXTURES_COUNT];
+static const char *textureNames[] = {
+    "bricks",
+    "brickwall",
+    "container",
+    "continer_but_cooler",
+    "container(specular)",
+    "matrix",
+    "metal",
+    "wall",
+    "wood",
+};
 
 #endif // !TEXTURE_H

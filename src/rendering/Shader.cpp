@@ -235,6 +235,16 @@ Material::Material(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, 
     shininess = shininess_;
     shader = COLOR_SHADER_3D;
 }
+Material::Material(unsigned int diffuseTex, unsigned int specularTex, bool hasEmission_, unsigned int emissionTex, float shininess_)
+{
+    ambient = MaterialField(diffuseTex);
+    diffuse = MaterialField(diffuseTex);
+    specular = MaterialField(specularTex);
+    emission = MaterialField(emissionTex);
+    hasEmission = hasEmission_;
+    shininess = shininess_;
+    shader = TEXTURE_SHADER_3D;
+}
 
 LightSource::LightSource()
 {
