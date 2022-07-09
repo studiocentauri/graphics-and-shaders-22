@@ -251,13 +251,78 @@ LightSource::LightSource()
     ambient = DEFAULT_LIGHT_COLOR;
     diffuse = DEFAULT_LIGHT_COLOR;
     specular = DEFAULT_LIGHT_COLOR;
-    position = WORLD_ORIGIN;
 }
 
-LightSource::LightSource(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 position_)
+LightSource::LightSource(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_)
+{
+    ambient = ambient_;
+    diffuse = diffuse_;
+    specular = specular_;
+}
+
+PointLight::PointLight()
+{
+    ambient = DEFAULT_LIGHT_COLOR;
+    diffuse = DEFAULT_LIGHT_COLOR;
+    specular = DEFAULT_LIGHT_COLOR;
+    position = WORLD_ORIGIN;
+    type = POINT_LIGHT;
+    radius = 2.0f;
+    quadratic = 0.2f;
+    linear = 0.22f;
+    constant = 1.0f;
+}
+
+PointLight::PointLight(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 position_, float radius_, float quadratic_, float linear_, float constant_)
 {
     ambient = ambient_;
     diffuse = diffuse_;
     specular = specular_;
     position = position_;
+    type = POINT_LIGHT;
+    radius = radius_;
+    quadratic = quadratic_;
+    linear = linear_;
+    constant = constant_;
+}
+
+DirectionalLight::DirectionalLight()
+{
+    ambient = DEFAULT_LIGHT_COLOR;
+    diffuse = DEFAULT_LIGHT_COLOR;
+    specular = DEFAULT_LIGHT_COLOR;
+    type = DIRECTIONAL_LIGHT;
+    direction = glm::vec3(-1.0f);
+}
+
+DirectionalLight::DirectionalLight(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 direction_)
+{
+    ambient = ambient_;
+    diffuse = diffuse_;
+    specular = specular_;
+    type = DIRECTIONAL_LIGHT;
+    direction = direction_;
+}
+
+SpotLight::SpotLight()
+{
+    ambient = DEFAULT_LIGHT_COLOR;
+    diffuse = DEFAULT_LIGHT_COLOR;
+    specular = DEFAULT_LIGHT_COLOR;
+    type = SPOT_LIGHT;
+    position = CAMERA_ORIGIN;
+    lookAt = glm::normalize(-CAMERA_ORIGIN);
+    innerFallOff = 5.0f;
+    outerFallOFf = 7.5f;
+}
+SpotLight::SpotLight(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 position_, glm::vec3 lookAt_, float innerFallOff_, int outerFallOff_)
+{
+    ambient = ambient_;
+    diffuse = diffuse_;
+    specular = specular_;
+    position = position_;
+    type = SPOT_LIGHT;
+    lookAt = lookAt_;
+    innerFallOff = innerFallOff_;
+    outerFallOFf = outerFallOff_;
 }

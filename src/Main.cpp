@@ -75,7 +75,7 @@ float vertices[] = {
 VertexArray varray;
 std::vector<RenderActor> actors;
 std::vector<RenderActor> lightActors;
-std::vector<LightSource> lights;
+std::vector<LightSource *> lights;
 bool renderScene = true;
 bool showActorUI = true;
 std::vector<Shader> templateShaders;
@@ -150,12 +150,8 @@ int main()
     }
     for (int i = 0; i < lightActors.size(); i++)
     {
-        LightSource ls;
-        ls.position = lightActors[i].tr.position;
-        ls.ambient = lightActors[i].mat.ambient.color;
-        ls.diffuse = lightActors[i].mat.diffuse.color;
-        ls.specular = lightActors[i].mat.specular.color;
-        lights.push_back(ls);
+        PointLight light(lightActors[i].mat.ambient.color, lightActors[i].mat.diffuse.color, lightActors[i].mat.specular.color, lightActors[i].tr.position);
+        lights.push_back((LightSource *)(&light));
     }
 
     // Start Render Loop
@@ -256,10 +252,30 @@ int main()
             }
             for (int i = 0; i < lightActors.size(); i++)
             {
-                lights[i].position = lightActors[i].tr.position;
-                lights[i].ambient = lightActors[i].mat.ambient.color;
-                lights[i].diffuse = lightActors[i].mat.diffuse.color;
-                lights[i].specular = lightActors[i].mat.specular.color;
+                switch (lights[i]->type)
+                {
+                case POINT_LIGHT:
+                    ((PointLight *)lights[i])->position = lightActors[i].tr.position;
+                    ((PointLight *)lights[i])->ambient = lightActors[i].mat.ambient.color;
+                    ((PointLight *)lights[i])->diffuse = lightActors[i].mat.diffuse.color;
+                    ((PointLight *)lights[i])->specular = lightActors[i].mat.specular.color;
+                    break;
+                case DIRECTIONAL_LIGHT:
+                    ((DirectionalLight *)lights[i])->ambient = lightActors[i].mat.ambient.color;
+                    ((DirectionalLight *)lights[i])->diffuse = lightActors[i].mat.diffuse.color;
+                    ((DirectionalLight *)lights[i])->specular = lightActors[i].mat.specular.color;
+
+                    break;
+                case SPOT_LIGHT:
+                    ((SpotLight *)lights[i])->position = renderer.get_camera()->position;
+                    ((SpotLight *)lights[i])->lookAt = renderer.get_camera()->lookAt;
+                    ((SpotLight *)lights[i])->ambient = lightActors[i].mat.ambient.color;
+                    ((SpotLight *)lights[i])->diffuse = lightActors[i].mat.diffuse.color;
+                    ((SpotLight *)lights[i])->specular = lightActors[i].mat.specular.color;
+                    break;
+                default:
+                    break;
+                }
             }
 
             // Setup Shader Uniforms
@@ -273,20 +289,20 @@ int main()
                     switch (actors[i].mat.shader)
                     {
                     case COLOR_SHADER_3D:
-                        shdr->set_vec3("light.amb", lights[0].ambient);
-                        shdr->set_vec3("light.diff", lights[0].diffuse);
-                        shdr->set_vec3("light.spec", lights[0].specular);
-                        shdr->set_vec3("light.pos", lights[0].position);
+                        shdr->set_vec3("light.amb", ((PointLight *)lights[0])->ambient);
+                        shdr->set_vec3("light.diff", ((PointLight *)lights[0])->diffuse);
+                        shdr->set_vec3("light.spec", ((PointLight *)lights[0])->specular);
+                        shdr->set_vec3("light.pos", ((PointLight *)lights[0])->position);
                         shdr->set_vec3("viewPos", renderer.get_camera()->position);
                         shdr->set_matrices(actors[i].tr.get_model_matrix(), view, projection);
                         shdr->set_material(actors[i].mat.ambient.color, actors[i].mat.diffuse.color,
                                            actors[i].mat.specular.color, actors[i].mat.shininess);
                         break;
                     case TEXTURE_SHADER_3D:
-                        shdr->set_vec3("light.amb", lights[0].ambient);
-                        shdr->set_vec3("light.diff", lights[0].diffuse);
-                        shdr->set_vec3("light.spec", lights[0].specular);
-                        shdr->set_vec3("light.pos", lights[0].position);
+                        shdr->set_vec3("light.amb", ((PointLight *)lights[0])->ambient);
+                        shdr->set_vec3("light.diff", ((PointLight *)lights[0])->diffuse);
+                        shdr->set_vec3("light.spec", ((PointLight *)lights[0])->specular);
+                        shdr->set_vec3("light.pos", ((PointLight *)lights[0])->position);
                         shdr->set_vec3("viewPos", renderer.get_camera()->position);
                         shdr->set_texture("mat.diffuse", &(textures[actors[i].mat.diffuse.tex]));
                         shdr->set_texture("mat.specular", &(textures[actors[i].mat.specular.tex]));

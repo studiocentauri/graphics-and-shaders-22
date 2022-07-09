@@ -129,19 +129,57 @@ public:
     Material(unsigned int diffuseTex, unsigned int specularTex = 0, bool hasEmission_ = false, unsigned int emissionTex = 0, float shininess_ = 64.0f);
 };
 
+enum LIGHT_TYPE
+{
+    POINT_LIGHT,
+    DIRECTIONAL_LIGHT,
+    SPOT_LIGHT,
+};
+
 // LightSource class for Shader
+
 class LightSource
 {
 public:
-    glm::vec3 position; // Position of light source
     glm::vec3 ambient;  // Ambient light col for source
     glm::vec3 diffuse;  // Diffuse light col for source
     glm::vec3 specular; // Specular light col for source
+    LIGHT_TYPE type;
 
     // Default LightSource Constructor
     LightSource();
     // Color LightSource Constructor
-    LightSource(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 position_ = glm::vec3(0.0f, 0.0f, 0.0f));
+    LightSource(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_);
 };
 
+class PointLight : public LightSource
+{
+public:
+    glm::vec3 position;
+    float radius;
+    float quadratic;
+    float linear;
+    float constant;
+    PointLight();
+    PointLight(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 position_, float radius_ = 2.0f, float quadratic_ = 0.2f, float linear_ = 0.22f, float constant_ = 1.0f);
+
+private:
+};
+class DirectionalLight : public LightSource
+{
+public:
+    glm::vec3 direction;
+    DirectionalLight();
+    DirectionalLight(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 direction_ = glm::vec3(-1.0f, -1.0f, -1.0f));
+};
+class SpotLight : public LightSource
+{
+public:
+    glm::vec3 position;
+    glm::vec3 lookAt;
+    float innerFallOff;
+    float outerFallOFf;
+    SpotLight();
+    SpotLight(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 position_, glm::vec3 lookAt_, float innerFallOff_ = 5.0f, int outerFallOff_ = 7.5f);
+};
 #endif // !SHADER_H

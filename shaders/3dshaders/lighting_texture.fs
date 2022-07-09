@@ -29,6 +29,7 @@ void main() {
     vec3 ambient = vec3(texture(mat.diffuse,uv)) * light.amb;
 
     vec3 norm = normalize(normal);
+    // float distance = magnitude(light.position-position);
     vec3 incident = normalize(light.pos - position);
 
     float diffuseFactor = max(0, dot(norm, incident));
