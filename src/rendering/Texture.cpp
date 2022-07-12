@@ -77,6 +77,7 @@ std::string texturePaths[] = {
     "resources/textures/container.jpg",
     "resources/textures/container.png",
     "resources/textures/container_specular.png",
+    "resources/textures/marble.jpg",
     "resources/textures/matrix.jpg",
     "resources/textures/metal.png",
     "resources/textures/wall.jpg",

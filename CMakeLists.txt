@@ -12,6 +12,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 find_package(OpenGL REQUIRED)
 find_package(GLFW3 REQUIRED)
+find_package(ASSIMP REQUIRED)
+
+if(ASSIMP_FOUND)
+  include_directories(${ASSIMP_INCLUDE_DIR})
+endif(ASSIMP_FOUND)
 
 include_directories(includes)
 include_directories(includes/thirdparty)
@@ -37,6 +42,8 @@ add_executable(
   src/utility/FileSystem.cpp
   src/object/Transform.cpp
   src/object/Actor.cpp
+  src/object/Mesh.cpp
+  src/object/Model.cpp
   src/gui/GUI.cpp
   src/gui/Widgets.cpp
   includes/thirdparty/imgui/imgui.cpp
@@ -61,3 +68,12 @@ if(WIN32)
 else()
   target_link_libraries(graphics-and-shaders glfw)
 endif()
+
+  target_link_libraries(graphics-and-shaders assimp)
+
+if(WIN32)
+  add_custom_command(TARGET graphics-and-shaders POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/dll/assimp-vc142-mtd.dll"
+  $<TARGET_FILE_DIR:graphics-and-shaders>
+  )
+endif(WIN32)

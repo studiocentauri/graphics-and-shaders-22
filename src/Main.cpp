@@ -12,6 +12,7 @@
 #include "utility/FileSystem.h"
 #include "object/Transform.h"
 #include "object/Actor.h"
+#include "object/Model.h"
 #include "gui/GUI.h"
 #include "gui/Widgets.h"
 
@@ -73,7 +74,7 @@ float vertices[] = {
     -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f};
 
 VertexArray varray;
-std::vector<RenderActor> actors;
+std::vector<RenderActor *> actors;
 std::vector<RenderActor> lightActors;
 std::vector<LightSource *> lights;
 bool renderScene = true;
@@ -136,20 +137,24 @@ int main()
                               Transform(glm::vec3(2.0f, -2.0f, -1.0f))};
     for (int i = 0; i < 5; i++)
     {
-        RenderActor rc("Cube " + std::to_string(i + 1));
-        Material mat(3, 4, true, 5, 64.0f);
-        rc.mat = mat;
-        rc.tr = transforms[i];
-        rc.type = OBJECT_ACTOR;
+        RenderActor *rc = new RenderActor("Cube " + std::to_string(i + 1));
+        Material mat(3, 4, true, 6, 64.0f);
+        rc->mat = mat;
+        rc->tr = transforms[i];
+        rc->type = OBJECT_ACTOR;
         actors.push_back(rc);
     }
 
+    ModelActor *model = new ModelActor(FileSystem::get_path("resources/models/teapot/teapot.obj"), "teapot");
+    model->mat.shader = MODEL_SHADER_3D;
+    actors.push_back((RenderActor *)model);
+
     Transform lightstr[] = {
-        Transform(glm::vec3(0.0f, 1.0f, 1.0f), glm::vec3(0.0f), glm::vec3(0.2f)),
-        Transform(glm::vec3(1.2f, 0.314f, -1.0f), glm::vec3(0.0f), glm::vec3(0.2f)),
-        Transform(glm::vec3(1.2f, -1.314f, -1.0f), glm::vec3(0.0f), glm::vec3(0.2f)),
-        Transform(glm::vec3(-0.7f, -1.0f, 0.0f), glm::vec3(0.0f), glm::vec3(0.2f)),
-        Transform(glm::vec3(2.7f, 4.0f, 2.0f), glm::vec3(0.0f), glm::vec3(0.2f))};
+        Transform(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f), glm::vec3(0.2f)),
+        Transform(glm::vec3(1.2f, 0.314f, -2.0f), glm::vec3(0.0f), glm::vec3(0.2f)),
+        Transform(glm::vec3(1.2f, -1.314f, -2.0f), glm::vec3(0.0f), glm::vec3(0.2f)),
+        Transform(glm::vec3(-0.7f, -1.0f, -1.0f), glm::vec3(0.0f), glm::vec3(0.2f)),
+        Transform(glm::vec3(2.7f, 4.0f, 3.0f), glm::vec3(0.0f), glm::vec3(0.2f))};
 
     Material lightMat(glm::vec3(0.08f), glm::vec3(0.3f), glm::vec3(0.4f));
 
@@ -329,9 +334,9 @@ int main()
             set_active_texture(0);
             for (int i = 0; i < actors.size(); i++)
             {
-                if (actors[i].toRender)
+                if (actors[i]->toRender)
                 {
-                    Shader *shdr = &(templateShaders[int(actors[i].mat.shader)]);
+                    Shader *shdr = &(templateShaders[int(actors[i]->mat.shader)]);
                     shdr->use();
                     shdr->set_int("pointLightCount", pointLightCount);
                     shdr->set_int("dirLightCount", dirLightCount);
@@ -343,7 +348,7 @@ int main()
                     int pLight = 0;
                     int dLight = 0;
                     int sLight = 0;
-                    switch (actors[i].mat.shader)
+                    switch (actors[i]->mat.shader)
                     {
                     case COLOR_SHADER_3D:
                         for (int i = 0; i < lightActors.size(); i++)
@@ -364,9 +369,9 @@ int main()
                             }
                         }
                         shdr->set_vec3("viewPos", renderer.get_camera()->position);
-                        shdr->set_matrices(actors[i].tr.get_model_matrix(), view, projection);
-                        shdr->set_material(actors[i].mat.ambient.color, actors[i].mat.diffuse.color,
-                                           actors[i].mat.specular.color, actors[i].mat.shininess);
+                        shdr->set_matrices(actors[i]->tr.get_model_matrix(), view, projection);
+                        shdr->set_material(actors[i]->mat.ambient.color, actors[i]->mat.diffuse.color,
+                                           actors[i]->mat.specular.color, actors[i]->mat.shininess);
                         break;
                     case TEXTURE_SHADER_3D:
                         for (int i = 0; i < lightActors.size(); i++)
@@ -387,17 +392,46 @@ int main()
                             }
                         }
                         shdr->set_vec3("viewPos", renderer.get_camera()->position);
-                        shdr->set_texture("mat.diffuse", &(textures[actors[i].mat.diffuse.tex]));
-                        shdr->set_texture("mat.specular", &(textures[actors[i].mat.specular.tex]));
-                        shdr->set_texture("mat.emission", &(textures[actors[i].mat.emission.tex]));
-                        shdr->set_float("mat.shininess", actors[i].mat.shininess);
-                        shdr->set_matrices(actors[i].tr.get_model_matrix(), view, projection);
+                        shdr->set_texture("mat.diffuse", &(textures[actors[i]->mat.diffuse.tex]));
+                        shdr->set_texture("mat.specular", &(textures[actors[i]->mat.specular.tex]));
+                        shdr->set_texture("mat.emission", &(textures[actors[i]->mat.emission.tex]));
+                        shdr->set_float("mat.shininess", actors[i]->mat.shininess);
+                        shdr->set_matrices(actors[i]->tr.get_model_matrix(), view, projection);
+                        break;
+                    case MODEL_SHADER_3D:
+                        for (int i = 0; i < lightActors.size(); i++)
+                        {
+                            switch (lights[i]->type)
+                            {
+                            case POINT_LIGHT:
+                                shdr->set_point_light(pLight++, ((PointLight *)lights[i]));
+                                break;
+                            case DIRECTIONAL_LIGHT:
+                                shdr->set_directional_light(dLight++, ((DirectionalLight *)lights[i]));
+                                break;
+                            case SPOT_LIGHT:
+                                shdr->set_spot_light(sLight++, ((SpotLight *)lights[i]));
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+                        shdr->set_vec3("viewPos", renderer.get_camera()->position);
+                        shdr->set_float("mat.shininess", actors[i]->mat.shininess);
+                        shdr->set_matrices(actors[i]->tr.get_model_matrix(), view, projection);
                         break;
                     default:
                         break;
                     }
                     // Drawing Objects
-                    varray.draw_triangle(36, 0);
+                    if (actors[i]->type == OBJECT_ACTOR)
+                    {
+                        varray.draw_triangle(36, 0);
+                    }
+                    else if (actors[i]->type == MODEL_ACTOR)
+                    {
+                        ((ModelActor *)(actors[i]))->model->draw(shdr);
+                    }
                 }
             }
 
@@ -458,11 +492,18 @@ int main()
     {
         delete lights[i];
     }
+
+    for (int i = 0; i < actors.size(); i++)
+    {
+        delete actors[i];
+    }
+
     gui.terminate_gui();
 
     lightshdr.free_data();
     varray.free_data();
     renderer.terminate_glfw();
+
     return 0;
 }
 

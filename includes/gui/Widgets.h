@@ -17,6 +17,6 @@ void show_main_menu_bar(Renderer *renderer, bool *toRender, bool *showActorUI);
 // Shows a section in Actor UI
 void show_section_header(const char *title);
 // Shows Actor UI window
-void show_actor_ui(std::vector<RenderActor> *actors, std::vector<RenderActor> *lightActors, std::vector<LightSource *> *lights, bool *showUI);
+void show_actor_ui(std::vector<RenderActor *> *actors, std::vector<RenderActor> *lightActors, std::vector<LightSource *> *lights, bool *showUI);
 
 #endif // !WIDGETS_H

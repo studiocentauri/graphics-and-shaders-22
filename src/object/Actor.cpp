@@ -17,3 +17,21 @@ RenderActor::RenderActor(Material mat_, ACTOR_TYPE type_, std::string name_)
     type = type_;
     name = name_;
 }
+
+ModelActor::ModelActor(std::string name_)
+{
+    type = MODEL_ACTOR;
+    name = name_;
+}
+
+ModelActor::ModelActor(std::string path, std::string name_)
+{
+    model = new Model(path);
+    type = MODEL_ACTOR;
+    name = name_;
+}
+
+ModelActor::~ModelActor()
+{
+    delete model;
+}

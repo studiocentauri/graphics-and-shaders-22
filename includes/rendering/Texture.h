@@ -16,6 +16,7 @@ class Texture
 public:
     unsigned int id;  // ID for the texture data
     std::string path; // Local path for the texture file
+    std::string type;
 
     // Default Texture Constructor
     Texture();
@@ -46,6 +47,7 @@ static const char *textureNames[] = {
     "container",
     "continer_but_cooler",
     "container(specular)",
+    "marble",
     "matrix",
     "metal",
     "wall",

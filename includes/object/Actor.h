@@ -4,6 +4,7 @@
 // Custom Headers
 #include "object/Transform.h"
 #include "rendering/Shader.h"
+#include "object/Model.h"
 
 // Standard Headers
 #include <iostream>
@@ -26,6 +27,7 @@ enum ACTOR_TYPE
 {
     OBJECT_ACTOR,
     LIGHT_ACTOR,
+    MODEL_ACTOR,
 };
 
 // RenderActor class for actors which are rendered in a Scene
@@ -40,6 +42,20 @@ public:
     RenderActor(std::string name_ = "New RenderActor");
     // Mat constructor for RenderActor
     RenderActor(Material mat_, ACTOR_TYPE type_ = OBJECT_ACTOR, std::string name_ = "New RenderActor");
+};
+
+// ModelActor class for RenderActors with Model component
+class ModelActor : public RenderActor
+{
+public:
+    Model *model; // Model Class pointer
+
+    // Default ModelActor constructor
+    ModelActor(std::string name_ = "New ModelActor");
+    // Path constructor for ModelActor
+    ModelActor(std::string path, std::string name_ = "New ModelActor");
+    // ModelActor destructor
+    ~ModelActor();
 };
 
 #endif // !ACTOR_H

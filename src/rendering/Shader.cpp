@@ -329,10 +329,12 @@ bool Shader::check_compile_errors(unsigned int shader, SHADER_TYPE type)
 }
 
 std::string vShaderNames[] = {"shaders/3dshaders/lighting.vs",
+                              "shaders/3dshaders/lighting.vs",
                               "shaders/3dshaders/lighting.vs"};
 
 std::string fShaderNames[] = {"shaders/3dshaders/lighting.fs",
-                              "shaders/3dshaders/lighting_texture.fs"};
+                              "shaders/3dshaders/lighting_texture.fs",
+                              "shaders/3dshaders/lighting_model.fs"};
 
 Material::Material()
 {

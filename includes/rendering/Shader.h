@@ -164,7 +164,7 @@ struct MaterialField
     unsigned int tex; // Texture for the field
 
     // Default MaterialField Constructor
-    MaterialField(glm::vec3 color_ = DEFAULT_SHADER_COLOR) : color(color_) {}
+    MaterialField(glm::vec3 color_ = DEFAULT_SHADER_COLOR) : color(color_), tex(0) {}
     // Texture MaterialField Constructor
     MaterialField(unsigned int tex_, glm::vec3 color_ = DEFAULT_SHADER_COLOR) : color(color_), tex(tex_) {}
 };
@@ -174,6 +174,7 @@ enum SHADER_TEMPLATE
 {
     COLOR_SHADER_3D,
     TEXTURE_SHADER_3D,
+    MODEL_SHADER_3D,
 };
 
 // Array of file name for the vertex shaders
@@ -183,7 +184,7 @@ extern std::string vShaderNames[LOADED_SHADERS_COUNT];
 extern std::string fShaderNames[LOADED_SHADERS_COUNT];
 
 // Shader names to use for UI
-static const char *shaderNames[] = {"Color Shader", "Texture Shader"};
+static const char *shaderNames[] = {"Color Shader", "Texture Shader", "Model Shader"};
 
 // Material Class for Actor
 class Material
