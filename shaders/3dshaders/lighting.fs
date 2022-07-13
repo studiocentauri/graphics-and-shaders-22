@@ -18,6 +18,7 @@ struct Light {
 uniform Light light;
 
 out vec4 FragColor;
+
 in vec3 normal;
 in vec2 uv;
 in vec3 position;
@@ -25,7 +26,8 @@ in vec3 position;
 uniform vec3 viewPos;
 uniform sampler2D tex;
 
-void main() {
+void main() 
+{
     vec3 ambient = mat.ambient * light.amb;
 
     vec3 norm = normalize(normal);

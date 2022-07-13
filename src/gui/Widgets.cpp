@@ -43,7 +43,7 @@ void show_section_header(const char *title)
     ImGui::Text("---------------------------");
 }
 
-void show_actor_ui(std::vector<RenderActor> *actors, std::vector<RenderActor> *lightActors, bool *showUI)
+void show_actor_ui(std::vector<RenderActor> *actors, std::vector<RenderActor> *lightActors, std::vector<LightSource *> *lights, bool *showUI)
 {
     ImGui::SetNextWindowSize(ImVec2(500, 440), ImGuiCond_FirstUseEver);
     static int selectedIndex = 0;
@@ -166,9 +166,40 @@ void show_actor_ui(std::vector<RenderActor> *actors, std::vector<RenderActor> *l
                     actor->tr.scale = glm::vec3(0.2f);
                 }
                 show_section_header("LIGHT");
+                int i = selectedIndex - actors->size();
+                switch (lights->at(i)->type)
+                {
+                case POINT_LIGHT:
+                    ImGui::Text("Type:- Point Light");
+                    break;
+                case DIRECTIONAL_LIGHT:
+                    ImGui::Text("Type:- Directional Light");
+                    break;
+                case SPOT_LIGHT:
+                    ImGui::Text("Type:- Spot Light");
+                    break;
+                default:
+                    break;
+                }
                 ImGui::ColorEdit3("Light Ambience: ", &(actor->mat.ambient.color.x));
                 ImGui::ColorEdit3("Light Diffuse: ", &(actor->mat.diffuse.color.x));
                 ImGui::ColorEdit3("Light Specular: ", &(actor->mat.specular.color.x));
+                switch (lights->at(i)->type)
+                {
+                case POINT_LIGHT:
+                    ImGui::SliderFloat("Radius:", &(((PointLight *)lights->at(i))->radius), 0.0f, 10.0f);
+                    ImGui::SliderFloat("Constant:", &(((PointLight *)lights->at(i))->constant), 1.0f, 5.0f);
+                    ImGui::SliderFloat("Linear:", &(((PointLight *)lights->at(i))->linear), 0.01f, 3.0f);
+                    ImGui::SliderFloat("Quadratic:", &(((PointLight *)lights->at(i))->quadratic), 0.001f, 1.0f);
+                    break;
+                case DIRECTIONAL_LIGHT:
+                    ImGui::SliderFloat3("Direction: ", &(((DirectionalLight *)lights->at(i))->direction.x), -1.0f, 1.0f);
+                    break;
+                case SPOT_LIGHT:
+                    break;
+                default:
+                    break;
+                }
             }
             ImGui::EndChild();
             ImGui::EndGroup();

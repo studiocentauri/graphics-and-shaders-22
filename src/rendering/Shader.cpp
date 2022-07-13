@@ -235,6 +235,7 @@ Material::Material(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, 
     shininess = shininess_;
     shader = COLOR_SHADER_3D;
 }
+
 Material::Material(unsigned int diffuseTex, unsigned int specularTex, bool hasEmission_, unsigned int emissionTex, float shininess_)
 {
     ambient = MaterialField(diffuseTex);
@@ -315,6 +316,7 @@ SpotLight::SpotLight()
     innerFallOff = 5.0f;
     outerFallOFf = 7.5f;
 }
+
 SpotLight::SpotLight(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 position_, glm::vec3 lookAt_, float innerFallOff_, int outerFallOff_)
 {
     ambient = ambient_;

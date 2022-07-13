@@ -97,6 +97,7 @@ int main()
     renderer.set_camera(camera);
     load_template_shaders();
     load_template_textures();
+
     // Setting up imgui
     GUI gui(renderer.window, renderer.major, renderer.minor);
 
@@ -113,6 +114,7 @@ int main()
 
     // Setup Shaders and Textures
     Shader lightshdr(FileSystem::get_path("shaders/3dshaders/colorShader.vs").c_str(), FileSystem::get_path("shaders/3dshaders/colorShader.fs").c_str());
+
     // Setup Data
     float totalTime = 0;
     ImVec4 bkgColor(55.0f / 255.0f, 100.0f / 255.0f, 110.0f / 255.0f, 1.0f);
@@ -138,20 +140,49 @@ int main()
         actors.push_back(rc);
     }
 
-    Transform lightstr[] = {Transform(glm::vec3(0.7f, 1.0f, 1.0f), glm::vec3(0.0f), glm::vec3(0.2f))};
-    for (int i = 0; i < 1; i++)
+    Transform lightstr[] = {
+        Transform(glm::vec3(0.0f, 1.0f, 1.0f), glm::vec3(0.0f), glm::vec3(0.2f)),
+        Transform(glm::vec3(1.2f, 0.314f, -1.0f), glm::vec3(0.0f), glm::vec3(0.2f)),
+        Transform(glm::vec3(1.2f, 1.314f, -1.0f), glm::vec3(0.0f), glm::vec3(0.2f)),
+        Transform(glm::vec3(-0.7f, -1.0f, 0.0f), glm::vec3(0.0f), glm::vec3(0.2f))};
+
+    Material lightmat(glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.4f));
+
+    for (int i = 0; i < (int)(sizeof(lightstr) / sizeof(Transform)); i++)
     {
-        RenderActor rc("Light " + std::to_string(i + 1));
-        Material mat(glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.4f));
-        rc.mat = mat;
-        rc.tr = lightstr[i];
-        rc.type = LIGHT_ACTOR;
-        lightActors.push_back(rc);
+        if (i < 3)
+        {
+            PointLight *light = new PointLight(lightmat.ambient.color, lightmat.diffuse.color, lightmat.specular.color, lightstr[i].position);
+            lights.push_back((LightSource *)(light));
+        }
+        else
+        {
+            DirectionalLight *light = new DirectionalLight(lightmat.ambient.color, lightmat.diffuse.color, lightmat.specular.color);
+            lights.push_back((LightSource *)(light));
+        }
     }
-    for (int i = 0; i < lightActors.size(); i++)
+
+    for (int i = 0; i < lights.size(); i++)
     {
-        PointLight light(lightActors[i].mat.ambient.color, lightActors[i].mat.diffuse.color, lightActors[i].mat.specular.color, lightActors[i].tr.position);
-        lights.push_back((LightSource *)(&light));
+        if (lights[i]->type == POINT_LIGHT)
+        {
+            RenderActor rc("PointLight " + std::to_string(i + 1));
+            Material mat(glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.4f));
+            rc.mat = mat;
+            rc.tr = lightstr[i];
+            rc.type = LIGHT_ACTOR;
+            lightActors.push_back(rc);
+        }
+
+        else if (lights[i]->type == DIRECTIONAL_LIGHT)
+        {
+            RenderActor rc("DirectionalLight " + std::to_string(i + 1));
+            Material mat(glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.4f));
+            rc.mat = mat;
+            rc.tr = lightstr[i];
+            rc.type = LIGHT_ACTOR;
+            lightActors.push_back(rc);
+        }
     }
 
     // Start Render Loop
@@ -250,6 +281,7 @@ int main()
                 glm::vec2 camDim(aspect * camSize, camSize);
                 projection = glm::ortho(-camDim.x / 2.0f, camDim.x / 2.0f, -camDim.y / 2.0f, camDim.y / 2.0f, CAMERA_NEAR_PLANE, CAMERA_FAR_PLANE);
             }
+            int pointLightCount = 0, dirLightCount = 0, spotLightCount = 0;
             for (int i = 0; i < lightActors.size(); i++)
             {
                 switch (lights[i]->type)
@@ -259,12 +291,13 @@ int main()
                     ((PointLight *)lights[i])->ambient = lightActors[i].mat.ambient.color;
                     ((PointLight *)lights[i])->diffuse = lightActors[i].mat.diffuse.color;
                     ((PointLight *)lights[i])->specular = lightActors[i].mat.specular.color;
+                    pointLightCount++;
                     break;
                 case DIRECTIONAL_LIGHT:
                     ((DirectionalLight *)lights[i])->ambient = lightActors[i].mat.ambient.color;
                     ((DirectionalLight *)lights[i])->diffuse = lightActors[i].mat.diffuse.color;
                     ((DirectionalLight *)lights[i])->specular = lightActors[i].mat.specular.color;
-
+                    dirLightCount++;
                     break;
                 case SPOT_LIGHT:
                     ((SpotLight *)lights[i])->position = renderer.get_camera()->position;
@@ -272,12 +305,12 @@ int main()
                     ((SpotLight *)lights[i])->ambient = lightActors[i].mat.ambient.color;
                     ((SpotLight *)lights[i])->diffuse = lightActors[i].mat.diffuse.color;
                     ((SpotLight *)lights[i])->specular = lightActors[i].mat.specular.color;
+                    spotLightCount++;
                     break;
                 default:
                     break;
                 }
             }
-
             // Setup Shader Uniforms
             set_active_texture(0);
             for (int i = 0; i < actors.size(); i++)
@@ -286,23 +319,83 @@ int main()
                 {
                     Shader *shdr = &(templateShaders[int(actors[i].mat.shader)]);
                     shdr->use();
+                    shdr->set_int("pointLightCount", pointLightCount);
+                    shdr->set_int("dirLightCount", dirLightCount);
+                    shdr->set_int("spotLightCount", spotLightCount);
+                    int pLight = 0;
+                    int dLight = 0;
+                    int sLight = 0;
                     switch (actors[i].mat.shader)
                     {
                     case COLOR_SHADER_3D:
-                        shdr->set_vec3("light.amb", ((PointLight *)lights[0])->ambient);
-                        shdr->set_vec3("light.diff", ((PointLight *)lights[0])->diffuse);
-                        shdr->set_vec3("light.spec", ((PointLight *)lights[0])->specular);
-                        shdr->set_vec3("light.pos", ((PointLight *)lights[0])->position);
+                        for (int i = 0; i < lightActors.size(); i++)
+                        {
+                            switch (lights[i]->type)
+                            {
+                            case POINT_LIGHT:
+                                shdr->set_vec3("pointLights[" + std::to_string(pLight) + "].amb", ((PointLight *)lights[i])->ambient);
+                                shdr->set_vec3("pointLights[" + std::to_string(pLight) + "].diff", ((PointLight *)lights[i])->diffuse);
+                                shdr->set_vec3("pointLights[" + std::to_string(pLight) + "].spec", ((PointLight *)lights[i])->specular);
+                                shdr->set_vec3("pointLights[" + std::to_string(pLight) + "].pos", ((PointLight *)lights[i])->position);
+                                shdr->set_float("pointLights[" + std::to_string(pLight) + "].radius", ((PointLight *)lights[i])->radius);
+                                shdr->set_float("pointLights[" + std::to_string(pLight) + "].constant", ((PointLight *)lights[i])->constant);
+                                shdr->set_float("pointLights[" + std::to_string(pLight) + "].linear", ((PointLight *)lights[i])->linear);
+                                shdr->set_float("pointLights[" + std::to_string(pLight) + "].quadratic", ((PointLight *)lights[i])->quadratic);
+                                pLight++;
+                                break;
+                            case DIRECTIONAL_LIGHT:
+                                shdr->set_vec3("dirLights[" + std::to_string(dLight) + "].amb", ((DirectionalLight *)lights[i])->ambient);
+                                shdr->set_vec3("dirLights[" + std::to_string(dLight) + "].diff", ((DirectionalLight *)lights[i])->diffuse);
+                                shdr->set_vec3("dirLights[" + std::to_string(dLight) + "].spec", ((DirectionalLight *)lights[i])->specular);
+                                shdr->set_vec3("dirLights[" + std::to_string(dLight) + "].direction", ((DirectionalLight *)lights[i])->direction);
+                                // std::cout << ((DirectionalLight *)lights[i])->ambient.x;
+                                dLight++;
+                                break;
+                            case SPOT_LIGHT:
+
+                                sLight++;
+                                break;
+                            default:
+                                break;
+                            }
+                        }
                         shdr->set_vec3("viewPos", renderer.get_camera()->position);
                         shdr->set_matrices(actors[i].tr.get_model_matrix(), view, projection);
                         shdr->set_material(actors[i].mat.ambient.color, actors[i].mat.diffuse.color,
                                            actors[i].mat.specular.color, actors[i].mat.shininess);
                         break;
                     case TEXTURE_SHADER_3D:
-                        shdr->set_vec3("light.amb", ((PointLight *)lights[0])->ambient);
-                        shdr->set_vec3("light.diff", ((PointLight *)lights[0])->diffuse);
-                        shdr->set_vec3("light.spec", ((PointLight *)lights[0])->specular);
-                        shdr->set_vec3("light.pos", ((PointLight *)lights[0])->position);
+                        for (int i = 0; i < lightActors.size(); i++)
+                        {
+                            switch (lights[i]->type)
+                            {
+                            case POINT_LIGHT:
+                                shdr->set_vec3("pointLights[" + std::to_string(pLight) + "].amb", ((PointLight *)lights[i])->ambient);
+                                shdr->set_vec3("pointLights[" + std::to_string(pLight) + "].diff", ((PointLight *)lights[i])->diffuse);
+                                shdr->set_vec3("pointLights[" + std::to_string(pLight) + "].spec", ((PointLight *)lights[i])->specular);
+                                shdr->set_vec3("pointLights[" + std::to_string(pLight) + "].pos", ((PointLight *)lights[i])->position);
+                                shdr->set_float("pointLights[" + std::to_string(pLight) + "].radius", ((PointLight *)lights[i])->radius);
+                                shdr->set_float("pointLights[" + std::to_string(pLight) + "].constant", ((PointLight *)lights[i])->constant);
+                                shdr->set_float("pointLights[" + std::to_string(pLight) + "].linear", ((PointLight *)lights[i])->linear);
+                                shdr->set_float("pointLights[" + std::to_string(pLight) + "].quadratic", ((PointLight *)lights[i])->quadratic);
+                                pLight++;
+                                break;
+                            case DIRECTIONAL_LIGHT:
+                                shdr->set_vec3("dirLights[" + std::to_string(dLight) + "].amb", ((DirectionalLight *)lights[i])->ambient);
+                                shdr->set_vec3("dirLights[" + std::to_string(dLight) + "].diff", ((DirectionalLight *)lights[i])->diffuse);
+                                shdr->set_vec3("dirLights[" + std::to_string(dLight) + "].spec", ((DirectionalLight *)lights[i])->specular);
+                                shdr->set_vec3("dirLights[" + std::to_string(dLight) + "].direction", ((DirectionalLight *)lights[i])->direction);
+                                // std::cout << ((DirectionalLight *)lights[i])->ambient.x;
+                                dLight++;
+                                break;
+                            case SPOT_LIGHT:
+
+                                sLight++;
+                                break;
+                            default:
+                                break;
+                            }
+                        }
                         shdr->set_vec3("viewPos", renderer.get_camera()->position);
                         shdr->set_texture("mat.diffuse", &(textures[actors[i].mat.diffuse.tex]));
                         shdr->set_texture("mat.specular", &(textures[actors[i].mat.specular.tex]));
@@ -325,7 +418,7 @@ int main()
                 if (lightActors[i].toRender)
                 {
                     lightshdr.set_matrices(lightActors[i].tr.get_model_matrix(), view, projection);
-                    lightshdr.set_vec3("col", lightActors[i].mat.ambient.color);
+                    lightshdr.set_vec3("col", lights[i]->ambient);
                     varray.draw_triangle(36, 0);
                 }
             }
@@ -335,7 +428,7 @@ int main()
             {
                 if (showActorUI)
                 {
-                    show_actor_ui(&actors, &lightActors, &showActorUI);
+                    show_actor_ui(&actors, &lightActors, &lights, &showActorUI);
                 }
                 // Scene UI
                 ImGui::Begin("Scene UI");
@@ -367,6 +460,10 @@ int main()
     }
 
     // Free Date and stop processes
+    for (int i = 0; i < lightActors.size(); i++)
+    {
+        delete lights[i];
+    }
     gui.terminate_gui();
 
     lightshdr.free_data();

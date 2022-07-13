@@ -91,6 +91,7 @@ struct MaterialField
 
     // Default MaterialField Constructor
     MaterialField(glm::vec3 color_ = DEFAULT_SHADER_COLOR) : color(color_) {}
+    // Texture MaterialField Constructor
     MaterialField(unsigned int tex_, glm::vec3 color_ = DEFAULT_SHADER_COLOR) : color(color_), tex(tex_) {}
 };
 
@@ -114,21 +115,23 @@ static const char *shaderNames[] = {"Color Shader", "Texture Shader"};
 class Material
 {
 public:
-    MaterialField ambient;  // Ambient color for Mat
-    MaterialField diffuse;  // Diffuse color for Mat
-    MaterialField specular; // Specular color for Mat
-    MaterialField emission; // Specular color for Mat
-    float shininess;        // Shininess factor for Mat
-    SHADER_TEMPLATE shader; // Type of shader used by this material
-    bool hasEmission = false;
+    MaterialField ambient;    // Ambient color for Mat
+    MaterialField diffuse;    // Diffuse color for Mat
+    MaterialField specular;   // Specular color for Mat
+    MaterialField emission;   // Specular color for Mat
+    float shininess;          // Shininess factor for Mat
+    SHADER_TEMPLATE shader;   // Type of shader used by this material
+    bool hasEmission = false; // Checks if the material has emission map
 
     // Default Material Constructor
     Material();
     // Color Material Constructor
     Material(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, float shininess_ = 64.0f);
+    // Texture Material Constructor
     Material(unsigned int diffuseTex, unsigned int specularTex = 0, bool hasEmission_ = false, unsigned int emissionTex = 0, float shininess_ = 64.0f);
 };
 
+// Types of Light Sources
 enum LIGHT_TYPE
 {
     POINT_LIGHT,
@@ -137,7 +140,6 @@ enum LIGHT_TYPE
 };
 
 // LightSource class for Shader
-
 class LightSource
 {
 public:
@@ -152,34 +154,49 @@ public:
     LightSource(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_);
 };
 
+// Point Light Class
 class PointLight : public LightSource
 {
 public:
-    glm::vec3 position;
-    float radius;
-    float quadratic;
-    float linear;
-    float constant;
+    glm::vec3 position; // World Space position of Light
+    float radius;       // Radius of maximum intensity
+    float quadratic;    // Quadratic factor in attenuation
+    float linear;       // Linear factor in attenuation
+    float constant;     // Constant factor in attenuation
+
+    // Default Point Light Constructor
     PointLight();
+    // Color Point Light Constructor
     PointLight(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 position_, float radius_ = 2.0f, float quadratic_ = 0.2f, float linear_ = 0.22f, float constant_ = 1.0f);
 
 private:
 };
+
+// Directional Light Class
 class DirectionalLight : public LightSource
 {
 public:
-    glm::vec3 direction;
+    glm::vec3 direction; // Direction where is light is facing
+
+    // Default Directional Light Constructor
     DirectionalLight();
+    // Color Directional Light Constructor
     DirectionalLight(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 direction_ = glm::vec3(-1.0f, -1.0f, -1.0f));
 };
+
+// Spot Light Class
 class SpotLight : public LightSource
 {
 public:
-    glm::vec3 position;
-    glm::vec3 lookAt;
-    float innerFallOff;
-    float outerFallOFf;
+    glm::vec3 position; // Position of the spot light
+    glm::vec3 lookAt;   // Look at direction where the light is facing
+    float innerFallOff; // Half-Angle for the inner falloff
+    float outerFallOFf; // Half-Angle for the outer falloff
+
+    // Default Spot Light Constructor
     SpotLight();
+    // Color Spot Light Constructor
     SpotLight(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 position_, glm::vec3 lookAt_, float innerFallOff_ = 5.0f, int outerFallOff_ = 7.5f);
 };
+
 #endif // !SHADER_H

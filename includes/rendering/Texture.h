@@ -36,7 +36,10 @@ private:
 // Sets the active texture based on index to the renderer
 void set_active_texture(int index);
 
+// Texture path for loading textures
 extern std::string texturePaths[LOADED_TEXTURES_COUNT];
+
+// Texture names for the actor ui
 static const char *textureNames[] = {
     "bricks",
     "brickwall",

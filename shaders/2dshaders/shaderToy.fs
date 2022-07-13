@@ -1,8 +1,11 @@
 #version 330 core
 
 out vec4 FragColor;
+
 in vec3 position;
 in vec2 texUV;
+in vec2 screenPosition;
+
 uniform float iTime;
 uniform float iTimeDelta;
 uniform vec2 iResolution;
@@ -10,7 +13,6 @@ uniform sampler2D iChannel0;
 uniform sampler2D iChannel1;
 
 vec4 mainImage(vec2 fragCoord);
-in vec2 screenPosition;
 
 void main()
 {
