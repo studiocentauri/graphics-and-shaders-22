@@ -196,6 +196,8 @@ void show_actor_ui(std::vector<RenderActor> *actors, std::vector<RenderActor> *l
                     ImGui::SliderFloat3("Direction: ", &(((DirectionalLight *)lights->at(i))->direction.x), -1.0f, 1.0f);
                     break;
                 case SPOT_LIGHT:
+                    ImGui::SliderFloat("Inner:", &(((SpotLight *)lights->at(i))->innerFallOff), 0.01f, (((SpotLight *)lights->at(i))->outerFallOff));
+                    ImGui::SliderFloat("Outer:", &(((SpotLight *)lights->at(i))->outerFallOff), (((SpotLight *)lights->at(i))->innerFallOff), 45.0f);
                     break;
                 default:
                     break;

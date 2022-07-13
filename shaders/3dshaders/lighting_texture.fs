@@ -22,6 +22,7 @@ struct PointLight {
 #define MAX_POINT_LIGHTS 5
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform int pointLightCount;
+uniform bool enablePointLight;
 
 struct DirectionalLight {
     vec3 amb;
@@ -33,6 +34,7 @@ struct DirectionalLight {
 #define MAX_DIRECTIONAL_LIGHTS 3
 uniform DirectionalLight dirLights[MAX_DIRECTIONAL_LIGHTS];
 uniform int dirLightCount;
+uniform bool enableDirLight;
 
 struct SpotLight {
     vec3 amb;
@@ -42,12 +44,13 @@ struct SpotLight {
     vec3 direction;
     vec3 pos;
 
-    float innerCutoff;
-    float outerCutoff;
+    float innerFalloff;
+    float outerFalloff;
 };
 #define MAX_SPOT_LIGHTS 1
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 uniform int spotLightCount;
+uniform bool enableSpotLight;
 
 out vec4 FragColor;
 
@@ -57,34 +60,54 @@ in vec3 position;
 
 uniform vec3 viewPos;
 uniform sampler2D tex;
+uniform bool enableEmission;
 
 vec3 get_ambient(vec3 amb);
-vec3 get_diffuse(vec3 diff,vec3 dir);
-vec3 get_specular(vec3 spec,vec3 dir, vec3 viewDirection);
+vec3 get_diffuse(vec3 diff,vec3 lightDir); // lightDir is point to light Direction
+vec3 get_specular(vec3 spec,vec3 lightDir, vec3 viewDirection); // lightDir is point to light Direction
 vec3 calculate_for_point_light(PointLight light, vec3 viewDirection);
 vec3 calculate_for_directional_light(DirectionalLight light, vec3 viewDirection);
+vec3 calculate_for_spot_light(SpotLight light, vec3 viewDirection);
 
 void main() 
 {
     vec3 resultant = vec3(0.0f);
     vec3 viewDirection = normalize(viewPos - position);
+   
+    if(enablePointLight)
+    {
+        for(int i=0; i < min(MAX_POINT_LIGHTS, pointLightCount); i++)
+        {
+            resultant += calculate_for_point_light(pointLights[i], viewDirection);
+        }
+    }
     
-    for(int i=0; i < min(MAX_POINT_LIGHTS, pointLightCount); i++)
+    if(enableDirLight)
     {
-        resultant += calculate_for_point_light(pointLights[i], viewDirection);
+         for(int i=0; i < min(MAX_DIRECTIONAL_LIGHTS, dirLightCount); i++)
+        {
+            resultant += calculate_for_directional_light(dirLights[i], viewDirection);
+        }
     }
 
-    for(int i=0; i < min(MAX_DIRECTIONAL_LIGHTS, dirLightCount); i++)
+    if(enableSpotLight)
     {
-        resultant += calculate_for_directional_light(dirLights[i], viewDirection);
+         for(int i=0; i < min(MAX_SPOT_LIGHTS, spotLightCount); i++)
+        {
+            resultant += calculate_for_spot_light(spotLights[i], viewDirection);
+        }
     }
 
-    vec3 emission = vec3(0.0f);
-    if(texture(mat.specular,uv).x<0.1f)
+    if(enableEmission)
     {
-        emission = vec3(texture(mat.emission,uv));
-    }
-    resultant += emission;
+        vec3 emission = vec3(0.0f);
+        if(texture(mat.specular,uv).x<0.1f)
+        {
+            emission = vec3(texture(mat.emission,uv));
+        }
+        resultant += emission;
+    } 
+    
     FragColor = vec4(resultant.xyz, 1.0f);
 }
 
@@ -107,14 +130,34 @@ vec3 calculate_for_point_light(PointLight light, vec3 viewDirection)
 
     return att*(ambient+diffuse+specular);
 }
+
 vec3 calculate_for_directional_light(DirectionalLight light, vec3 viewDirection)
 {
     vec3 ambient = get_ambient(light.amb);
 
-    vec3 diffuse = get_diffuse(light.diff, light.direction);
+    vec3 diffuse = get_diffuse(light.diff, -light.direction);
 
-    vec3 specular = get_specular(light.spec, light.direction, viewDirection);
+    vec3 specular = get_specular(light.spec, -light.direction, viewDirection);
+    
     return (ambient+diffuse+specular);
+}
+
+vec3 calculate_for_spot_light(SpotLight light, vec3 viewDirection)
+{
+    vec3 lightDir=normalize(light.pos-position);
+
+    float theta=(dot(normalize(-light.direction),lightDir));
+    float epsilon=cos((3.14f/180.0f)*light.innerFalloff)-cos((3.14f/180.0f)*light.outerFalloff);
+    
+    float intensity=clamp(((theta-cos((3.14f/180.0f)*light.outerFalloff))/epsilon),0.0f,1.0f);
+    
+    vec3 ambient = get_ambient(light.amb);
+
+    vec3 diffuse = get_diffuse(light.diff, lightDir);
+
+    vec3 specular = get_specular(light.spec, lightDir, viewDirection);
+    
+    return (ambient + (diffuse*intensity) + (specular*intensity));
 }
 
 vec3 get_ambient(vec3 amb)
@@ -122,15 +165,15 @@ vec3 get_ambient(vec3 amb)
     return (vec3(texture(mat.diffuse,uv)) * amb);
 }
 
-vec3 get_diffuse(vec3 diff, vec3 dir)
+vec3 get_diffuse(vec3 diff, vec3 lightDir)
 {
-    float diffuseFactor = max(0, dot(normalize(normal), dir));
+    float diffuseFactor = max(0, dot(normalize(normal), lightDir));
     return (vec3(texture(mat.diffuse,uv)) * diffuseFactor * diff);
 }
 
-vec3 get_specular(vec3 spec, vec3 dir, vec3 viewDirection)
+vec3 get_specular(vec3 spec, vec3 lightDir, vec3 viewDirection)
 {
-    vec3 reflected = normalize(reflect(-dir, normalize(normal)));
+    vec3 reflected = normalize(reflect(-lightDir, normalize(normal)));
     float specularFactor = pow(max(0, dot(reflected, viewDirection)), mat.shininess);
     return (vec3(texture(mat.specular,uv)) * specularFactor * spec);
 }

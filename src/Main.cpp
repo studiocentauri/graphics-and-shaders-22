@@ -124,6 +124,10 @@ int main()
     bool freeRoam = false;
     bool showFrameRate = false;
     bool lockFrameRate = true;
+    bool enablePointLight = true;
+    bool enableDirLight = true;
+    bool enableSpotLight = true;
+    bool enableEmission = true;
 
     Transform transforms[] = {Transform(glm::vec3(0.0f, 0.0f, -5.0f)),
                               Transform(glm::vec3(1.5f, 1.0f, -4.0f)),
@@ -143,46 +147,55 @@ int main()
     Transform lightstr[] = {
         Transform(glm::vec3(0.0f, 1.0f, 1.0f), glm::vec3(0.0f), glm::vec3(0.2f)),
         Transform(glm::vec3(1.2f, 0.314f, -1.0f), glm::vec3(0.0f), glm::vec3(0.2f)),
-        Transform(glm::vec3(1.2f, 1.314f, -1.0f), glm::vec3(0.0f), glm::vec3(0.2f)),
-        Transform(glm::vec3(-0.7f, -1.0f, 0.0f), glm::vec3(0.0f), glm::vec3(0.2f))};
+        Transform(glm::vec3(1.2f, -1.314f, -1.0f), glm::vec3(0.0f), glm::vec3(0.2f)),
+        Transform(glm::vec3(-0.7f, -1.0f, 0.0f), glm::vec3(0.0f), glm::vec3(0.2f)),
+        Transform(glm::vec3(2.7f, 4.0f, 2.0f), glm::vec3(0.0f), glm::vec3(0.2f))};
 
-    Material lightmat(glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.4f));
+    Material lightMat(glm::vec3(0.08f), glm::vec3(0.3f), glm::vec3(0.4f));
 
     for (int i = 0; i < (int)(sizeof(lightstr) / sizeof(Transform)); i++)
     {
         if (i < 3)
         {
-            PointLight *light = new PointLight(lightmat.ambient.color, lightmat.diffuse.color, lightmat.specular.color, lightstr[i].position);
+            PointLight *light = new PointLight(lightMat.ambient.color, lightMat.diffuse.color, lightMat.specular.color, lightstr[i].position);
             lights.push_back((LightSource *)(light));
         }
         else
         {
-            DirectionalLight *light = new DirectionalLight(lightmat.ambient.color, lightmat.diffuse.color, lightmat.specular.color);
+            DirectionalLight *light = new DirectionalLight(lightMat.ambient.color, lightMat.diffuse.color, lightMat.specular.color);
             lights.push_back((LightSource *)(light));
         }
     }
-
+    {
+        SpotLight *light = new SpotLight(lightMat.ambient.color, lightMat.diffuse.color, lightMat.specular.color,
+                                         renderer.get_camera()->position, renderer.get_camera()->lookAt);
+        lights.push_back((LightSource *)(light));
+    }
+    int pLight = 1;
+    int dLight = 1;
+    int sLight = 1;
     for (int i = 0; i < lights.size(); i++)
     {
+        RenderActor rc;
+        rc.mat = lightMat;
+        rc.tr = lightstr[i];
+        rc.type = LIGHT_ACTOR;
         if (lights[i]->type == POINT_LIGHT)
         {
-            RenderActor rc("PointLight " + std::to_string(i + 1));
-            Material mat(glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.4f));
-            rc.mat = mat;
-            rc.tr = lightstr[i];
-            rc.type = LIGHT_ACTOR;
-            lightActors.push_back(rc);
+            rc.name = "PointLight " + std::to_string(pLight++);
         }
-
         else if (lights[i]->type == DIRECTIONAL_LIGHT)
         {
-            RenderActor rc("DirectionalLight " + std::to_string(i + 1));
-            Material mat(glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.4f));
-            rc.mat = mat;
-            rc.tr = lightstr[i];
-            rc.type = LIGHT_ACTOR;
-            lightActors.push_back(rc);
+            rc.name = "DirLight " + std::to_string(dLight++);
+            rc.mat.diffuse.color = rc.mat.diffuse.color / 2.0f;
         }
+        else if (lights[i]->type == SPOT_LIGHT)
+        {
+            rc.name = "SpotLight " + std::to_string(sLight++);
+            rc.tr = Transform(renderer.get_camera()->position);
+            rc.toRender = false;
+        }
+        lightActors.push_back(rc);
     }
 
     // Start Render Loop
@@ -305,6 +318,7 @@ int main()
                     ((SpotLight *)lights[i])->ambient = lightActors[i].mat.ambient.color;
                     ((SpotLight *)lights[i])->diffuse = lightActors[i].mat.diffuse.color;
                     ((SpotLight *)lights[i])->specular = lightActors[i].mat.specular.color;
+                    lightActors[i].tr.position = renderer.get_camera()->position;
                     spotLightCount++;
                     break;
                 default:
@@ -322,6 +336,10 @@ int main()
                     shdr->set_int("pointLightCount", pointLightCount);
                     shdr->set_int("dirLightCount", dirLightCount);
                     shdr->set_int("spotLightCount", spotLightCount);
+                    shdr->set_bool("enablePointLight", enablePointLight);
+                    shdr->set_bool("enableDirLight", enableDirLight);
+                    shdr->set_bool("enableSpotLight", enableSpotLight);
+                    shdr->set_bool("enableEmission", enableEmission);
                     int pLight = 0;
                     int dLight = 0;
                     int sLight = 0;
@@ -333,27 +351,13 @@ int main()
                             switch (lights[i]->type)
                             {
                             case POINT_LIGHT:
-                                shdr->set_vec3("pointLights[" + std::to_string(pLight) + "].amb", ((PointLight *)lights[i])->ambient);
-                                shdr->set_vec3("pointLights[" + std::to_string(pLight) + "].diff", ((PointLight *)lights[i])->diffuse);
-                                shdr->set_vec3("pointLights[" + std::to_string(pLight) + "].spec", ((PointLight *)lights[i])->specular);
-                                shdr->set_vec3("pointLights[" + std::to_string(pLight) + "].pos", ((PointLight *)lights[i])->position);
-                                shdr->set_float("pointLights[" + std::to_string(pLight) + "].radius", ((PointLight *)lights[i])->radius);
-                                shdr->set_float("pointLights[" + std::to_string(pLight) + "].constant", ((PointLight *)lights[i])->constant);
-                                shdr->set_float("pointLights[" + std::to_string(pLight) + "].linear", ((PointLight *)lights[i])->linear);
-                                shdr->set_float("pointLights[" + std::to_string(pLight) + "].quadratic", ((PointLight *)lights[i])->quadratic);
-                                pLight++;
+                                shdr->set_point_light(pLight++, ((PointLight *)lights[i]));
                                 break;
                             case DIRECTIONAL_LIGHT:
-                                shdr->set_vec3("dirLights[" + std::to_string(dLight) + "].amb", ((DirectionalLight *)lights[i])->ambient);
-                                shdr->set_vec3("dirLights[" + std::to_string(dLight) + "].diff", ((DirectionalLight *)lights[i])->diffuse);
-                                shdr->set_vec3("dirLights[" + std::to_string(dLight) + "].spec", ((DirectionalLight *)lights[i])->specular);
-                                shdr->set_vec3("dirLights[" + std::to_string(dLight) + "].direction", ((DirectionalLight *)lights[i])->direction);
-                                // std::cout << ((DirectionalLight *)lights[i])->ambient.x;
-                                dLight++;
+                                shdr->set_directional_light(dLight++, ((DirectionalLight *)lights[i]));
                                 break;
                             case SPOT_LIGHT:
-
-                                sLight++;
+                                shdr->set_spot_light(sLight++, ((SpotLight *)lights[i]));
                                 break;
                             default:
                                 break;
@@ -370,27 +374,13 @@ int main()
                             switch (lights[i]->type)
                             {
                             case POINT_LIGHT:
-                                shdr->set_vec3("pointLights[" + std::to_string(pLight) + "].amb", ((PointLight *)lights[i])->ambient);
-                                shdr->set_vec3("pointLights[" + std::to_string(pLight) + "].diff", ((PointLight *)lights[i])->diffuse);
-                                shdr->set_vec3("pointLights[" + std::to_string(pLight) + "].spec", ((PointLight *)lights[i])->specular);
-                                shdr->set_vec3("pointLights[" + std::to_string(pLight) + "].pos", ((PointLight *)lights[i])->position);
-                                shdr->set_float("pointLights[" + std::to_string(pLight) + "].radius", ((PointLight *)lights[i])->radius);
-                                shdr->set_float("pointLights[" + std::to_string(pLight) + "].constant", ((PointLight *)lights[i])->constant);
-                                shdr->set_float("pointLights[" + std::to_string(pLight) + "].linear", ((PointLight *)lights[i])->linear);
-                                shdr->set_float("pointLights[" + std::to_string(pLight) + "].quadratic", ((PointLight *)lights[i])->quadratic);
-                                pLight++;
+                                shdr->set_point_light(pLight++, ((PointLight *)lights[i]));
                                 break;
                             case DIRECTIONAL_LIGHT:
-                                shdr->set_vec3("dirLights[" + std::to_string(dLight) + "].amb", ((DirectionalLight *)lights[i])->ambient);
-                                shdr->set_vec3("dirLights[" + std::to_string(dLight) + "].diff", ((DirectionalLight *)lights[i])->diffuse);
-                                shdr->set_vec3("dirLights[" + std::to_string(dLight) + "].spec", ((DirectionalLight *)lights[i])->specular);
-                                shdr->set_vec3("dirLights[" + std::to_string(dLight) + "].direction", ((DirectionalLight *)lights[i])->direction);
-                                // std::cout << ((DirectionalLight *)lights[i])->ambient.x;
-                                dLight++;
+                                shdr->set_directional_light(dLight++, ((DirectionalLight *)lights[i]));
                                 break;
                             case SPOT_LIGHT:
-
-                                sLight++;
+                                shdr->set_spot_light(sLight++, ((SpotLight *)lights[i]));
                                 break;
                             default:
                                 break;
@@ -441,6 +431,10 @@ int main()
                 {
                     ImGui::Text("%d FPS", (int)(1 / renderer.deltaTime));
                 }
+                ImGui::Checkbox("Enable Point Lights:", &enablePointLight);
+                ImGui::Checkbox("Enable Directional Lights:", &enableDirLight);
+                ImGui::Checkbox("Enable Spot Lights:", &enableSpotLight);
+                ImGui::Checkbox("Enable Emission:", &enableEmission);
                 ImGui::End();
             }
         }
