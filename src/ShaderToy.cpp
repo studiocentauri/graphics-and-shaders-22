@@ -25,8 +25,8 @@ float vertices[] = {
     -1.0f, -1.0f, 0.0f, 0.0f, 0.0f};
 
 unsigned int indices[] = {
-    0, 1, 2,
-    2, 3, 0};
+    0, 2, 1,
+    2, 0, 3};
 
 VertexArray varray;
 
@@ -55,7 +55,7 @@ int main()
 
     // Setup Shaders and Textures
     Shader shdr(FileSystem::get_path("shaders/2dshaders/shaderToy.vs").c_str(), FileSystem::get_path("shaders/2dshaders/shaderToy.fs").c_str());
-    Texture tex(FileSystem::get_path("resources/textures/iitk_logo.png"));
+    Texture tex(FileSystem::get_path("resources/textures/marble.jpg"));
 
     // Setup Data
     float totalTime = 0;

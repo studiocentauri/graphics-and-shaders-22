@@ -33,9 +33,18 @@ void Mesh::draw(Shader *shader)
 
         shader->set_texture("mat." + textures[i].type + number, &(textures[i]));
     }
+    if (specularNR == 1)
+    {
+        shader->set_texture("mat.specular1", &(textures[0]));
+    }
     set_active_texture(0);
 
     varray.draw_indices(indices.size());
+}
+
+void Mesh::free_data()
+{
+    varray.free_data();
 }
 
 void Mesh::setup_mesh()

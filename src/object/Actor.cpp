@@ -24,9 +24,9 @@ ModelActor::ModelActor(std::string name_)
     name = name_;
 }
 
-ModelActor::ModelActor(std::string path, std::string name_)
+ModelActor::ModelActor(std::string path, std::string name_, bool gamma)
 {
-    model = new Model(path);
+    model = new Model(path, gamma);
     type = MODEL_ACTOR;
     name = name_;
 }

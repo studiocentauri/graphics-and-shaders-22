@@ -47,7 +47,7 @@ void show_actor_ui(std::vector<RenderActor *> *actors, std::vector<RenderActor> 
 {
     ImGui::SetNextWindowSize(ImVec2(500, 440), ImGuiCond_FirstUseEver);
     static int selectedIndex = 0;
-    if (ImGui::Begin("Scene Actors", showUI, ImGuiWindowFlags_MenuBar))
+    if (ImGui::Begin("SCENE ACTOR LIST", showUI, ImGuiWindowFlags_MenuBar))
     {
         if (ImGui::BeginMenuBar())
         {
@@ -108,103 +108,14 @@ void show_actor_ui(std::vector<RenderActor *> *actors, std::vector<RenderActor> 
             ImGui::BeginChild("Actor Properties", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()));
             ImGui::Text(actor->name.c_str());
             show_section_header("DATA");
-            ImGui::InputText(": Name", &(actor->name[0]), 30);
-            ImGui::Checkbox("Visibility", &(actor->toRender));
+            ImGui::InputText(":Name", &(actor->name[0]), 30);
+            ImGui::Checkbox(":Visibility", &(actor->toRender));
             show_section_header("TRANSFORM");
-            ImGui::SliderFloat3("Position", &(actor->tr.position.x), -10.0f, 10.0f);
-            ImGui::SliderFloat3("Rotation", &(actor->tr.rotation.x), -180.0f, 180.0f);
-            ImGui::SliderFloat3("Scale", &(actor->tr.scale.x), -8.0f, 8.0f);
+            ImGui::SliderFloat3(":Position", &(actor->tr.position.x), -10.0f, 10.0f);
+            ImGui::SliderFloat3(":Rotation", &(actor->tr.rotation.x), -180.0f, 180.0f);
+            ImGui::SliderFloat3(":Scale", &(actor->tr.scale.x), -8.0f, 8.0f);
 
-            if (actor->type == OBJECT_ACTOR)
-            {
-                if (ImGui::Button("Reset Transform"))
-                {
-                    actor->tr.reset_transform();
-                }
-                show_section_header("MATERIAL");
-                int shaderTemplate = int(actor->mat.shader);
-                if (ImGui::Combo("Shader: ", &(shaderTemplate), &shaderNames[0], LOADED_SHADERS_COUNT))
-                {
-                    actor->mat.shader = static_cast<SHADER_TEMPLATE>(shaderTemplate);
-                }
-                int texID = 0;
-                switch (actor->mat.shader)
-                {
-                case COLOR_SHADER_3D:
-                    ImGui::ColorEdit3("Ambient Col: ", &(actor->mat.ambient.color.x));
-                    ImGui::ColorEdit3("Diffuse Col: ", &(actor->mat.diffuse.color.x));
-                    ImGui::ColorEdit3("Specular Col: ", &(actor->mat.specular.color.x));
-                    ImGui::SliderFloat("Shininess: ", &(actor->mat.shininess), 1.0f, 256.0f);
-                    break;
-                case TEXTURE_SHADER_3D:
-                    texID = int(actor->mat.diffuse.tex);
-                    if (ImGui::Combo("Diffuse: ", &(texID), &textureNames[0], LOADED_TEXTURES_COUNT))
-                    {
-                        actor->mat.diffuse.tex = unsigned int(texID);
-                    }
-                    texID = int(actor->mat.specular.tex);
-                    if (ImGui::Combo("Specular: ", &(texID), &textureNames[0], LOADED_TEXTURES_COUNT))
-                    {
-                        actor->mat.specular.tex = unsigned int(texID);
-                    }
-                    texID = int(actor->mat.emission.tex);
-                    if (ImGui::Combo("Emission: ", &(texID), &textureNames[0], LOADED_TEXTURES_COUNT))
-                    {
-                        actor->mat.emission.tex = unsigned int(texID);
-                    }
-                    ImGui::SliderFloat("Shininess: ", &(actor->mat.shininess), 1.0f, 256.0f);
-                    break;
-                default:
-                    break;
-                }
-            }
-            else if (actor->type == MODEL_ACTOR)
-            {
-                if (ImGui::Button("Reset Transform"))
-                {
-                    actor->tr.reset_transform();
-                }
-                show_section_header("MATERIAL");
-                int shaderTemplate = int(actor->mat.shader);
-                if (ImGui::Combo("Shader: ", &(shaderTemplate), &shaderNames[0], LOADED_SHADERS_COUNT))
-                {
-                    actor->mat.shader = static_cast<SHADER_TEMPLATE>(shaderTemplate);
-                }
-                int texID = 0;
-                switch (actor->mat.shader)
-                {
-                case COLOR_SHADER_3D:
-                    ImGui::ColorEdit3("Ambient Col: ", &(actor->mat.ambient.color.x));
-                    ImGui::ColorEdit3("Diffuse Col: ", &(actor->mat.diffuse.color.x));
-                    ImGui::ColorEdit3("Specular Col: ", &(actor->mat.specular.color.x));
-                    ImGui::SliderFloat("Shininess: ", &(actor->mat.shininess), 1.0f, 256.0f);
-                    break;
-                case TEXTURE_SHADER_3D:
-                    texID = int(actor->mat.diffuse.tex);
-                    if (ImGui::Combo("Diffuse: ", &(texID), &textureNames[0], LOADED_TEXTURES_COUNT))
-                    {
-                        actor->mat.diffuse.tex = unsigned int(texID);
-                    }
-                    texID = int(actor->mat.specular.tex);
-                    if (ImGui::Combo("Specular: ", &(texID), &textureNames[0], LOADED_TEXTURES_COUNT))
-                    {
-                        actor->mat.specular.tex = unsigned int(texID);
-                    }
-                    texID = int(actor->mat.emission.tex);
-                    if (ImGui::Combo("Emission: ", &(texID), &textureNames[0], LOADED_TEXTURES_COUNT))
-                    {
-                        actor->mat.emission.tex = unsigned int(texID);
-                    }
-                    ImGui::SliderFloat("Shininess: ", &(actor->mat.shininess), 1.0f, 256.0f);
-                    break;
-                case MODEL_SHADER_3D:
-                    ImGui::SliderFloat("Shininess: ", &(actor->mat.shininess), 1.0f, 256.0f);
-                    break;
-                default:
-                    break;
-                }
-            }
-            else if (actor->type == LIGHT_ACTOR)
+            if (actor->type == LIGHT_ACTOR)
             {
                 if (ImGui::Button("Reset Transform"))
                 {
@@ -227,32 +138,73 @@ void show_actor_ui(std::vector<RenderActor *> *actors, std::vector<RenderActor> 
                 default:
                     break;
                 }
-                ImGui::ColorEdit3("Light Ambience: ", &(actor->mat.ambient.color.x));
-                ImGui::ColorEdit3("Light Diffuse: ", &(actor->mat.diffuse.color.x));
-                ImGui::ColorEdit3("Light Specular: ", &(actor->mat.specular.color.x));
+                ImGui::ColorEdit3(":Light Ambience", &(actor->mat.ambient.color.x));
+                ImGui::ColorEdit3(":Light Diffuse", &(actor->mat.diffuse.color.x));
+                ImGui::ColorEdit3(":Light Specular", &(actor->mat.specular.color.x));
                 switch (lights->at(i)->type)
                 {
                 case POINT_LIGHT:
-                    ImGui::SliderFloat("Radius:", &(((PointLight *)lights->at(i))->radius), 0.0f, 10.0f);
-                    ImGui::SliderFloat("Constant:", &(((PointLight *)lights->at(i))->constant), 1.0f, 5.0f);
-                    ImGui::SliderFloat("Linear:", &(((PointLight *)lights->at(i))->linear), 0.01f, 3.0f);
-                    ImGui::SliderFloat("Quadratic:", &(((PointLight *)lights->at(i))->quadratic), 0.001f, 1.0f);
+                    ImGui::SliderFloat(":Radius", &(((PointLight *)lights->at(i))->radius), 0.0f, 10.0f);
+                    ImGui::SliderFloat(":Constant", &(((PointLight *)lights->at(i))->constant), 1.0f, 5.0f);
+                    ImGui::SliderFloat(":Linear", &(((PointLight *)lights->at(i))->linear), 0.01f, 3.0f);
+                    ImGui::SliderFloat(":Quadratic", &(((PointLight *)lights->at(i))->quadratic), 0.001f, 1.0f);
                     break;
                 case DIRECTIONAL_LIGHT:
-                    ImGui::SliderFloat3("Direction: ", &(((DirectionalLight *)lights->at(i))->direction.x), -1.0f, 1.0f);
+                    ImGui::SliderFloat3(":Direction", &(((DirectionalLight *)lights->at(i))->direction.x), -1.0f, 1.0f);
                     break;
                 case SPOT_LIGHT:
-                    ImGui::SliderFloat("Inner:", &(((SpotLight *)lights->at(i))->innerFallOff), 0.01f, (((SpotLight *)lights->at(i))->outerFallOff));
-                    ImGui::SliderFloat("Outer:", &(((SpotLight *)lights->at(i))->outerFallOff), (((SpotLight *)lights->at(i))->innerFallOff), 45.0f);
+                    ImGui::SliderFloat(":Inner", &(((SpotLight *)lights->at(i))->innerFallOff), 0.01f, (((SpotLight *)lights->at(i))->outerFallOff));
+                    ImGui::SliderFloat(":Outer", &(((SpotLight *)lights->at(i))->outerFallOff), (((SpotLight *)lights->at(i))->innerFallOff), 45.0f);
                     break;
                 default:
                     break;
                 }
             }
+            else
+            {
+                if (ImGui::Button("Reset Transform"))
+                {
+                    actor->tr.reset_transform();
+                }
+                show_section_header("MATERIAL");
+                int shaderTemplate = int(actor->mat.shader);
+                if (ImGui::Combo(":Shader", &(shaderTemplate), &shaderNames[0], LOADED_SHADERS_COUNT))
+                {
+                    actor->mat.shader = static_cast<SHADER_TEMPLATE>(shaderTemplate);
+                }
+                int texID = 0;
+                switch (actor->mat.shader)
+                {
+                case COLOR_SHADER_3D:
+                    ImGui::ColorEdit3(":Ambient Col", &(actor->mat.ambient.color.x));
+                    ImGui::ColorEdit3(":Diffuse Col", &(actor->mat.diffuse.color.x));
+                    ImGui::ColorEdit3(":Specular Col", &(actor->mat.specular.color.x));
+                    break;
+                case TEXTURE_SHADER_3D:
+                    texID = int(actor->mat.diffuse.tex);
+                    if (ImGui::Combo(":Diffuse", &(texID), &textureNames[0], LOADED_TEXTURES_COUNT))
+                    {
+                        actor->mat.diffuse.tex = (unsigned int)(texID);
+                    }
+                    texID = int(actor->mat.specular.tex);
+                    if (ImGui::Combo(":Specular", &(texID), &textureNames[0], LOADED_TEXTURES_COUNT))
+                    {
+                        actor->mat.specular.tex = (unsigned int)(texID);
+                    }
+                    texID = int(actor->mat.emission.tex);
+                    if (ImGui::Combo(":Emission", &(texID), &textureNames[0], LOADED_TEXTURES_COUNT))
+                    {
+                        actor->mat.emission.tex = (unsigned int)(texID);
+                    }
+                    break;
+                default:
+                    break;
+                }
+                ImGui::SliderFloat(":Shininess", &(actor->mat.shininess), 1.0f, 256.0f);
+            }
             ImGui::EndChild();
             ImGui::EndGroup();
         }
-
-        ImGui::End();
     }
+    ImGui::End();
 }

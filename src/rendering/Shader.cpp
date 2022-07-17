@@ -332,9 +332,9 @@ std::string vShaderNames[] = {"shaders/3dshaders/lighting.vs",
                               "shaders/3dshaders/lighting.vs",
                               "shaders/3dshaders/lighting.vs"};
 
-std::string fShaderNames[] = {"shaders/3dshaders/lighting.fs",
-                              "shaders/3dshaders/lighting_texture.fs",
-                              "shaders/3dshaders/lighting_model.fs"};
+std::string fShaderNames[] = {"shaders/3dshaders/lightingColor.fs",
+                              "shaders/3dshaders/lightingTexture.fs",
+                              "shaders/3dshaders/lightingModel.fs"};
 
 Material::Material()
 {

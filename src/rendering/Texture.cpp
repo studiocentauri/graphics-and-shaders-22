@@ -4,13 +4,13 @@ Texture::Texture()
 {
 }
 
-Texture::Texture(std::string path_)
+Texture::Texture(std::string path_, bool gamma)
 {
     path = path_;
-    load_texture_from_path();
+    load_texture_from_path(gamma);
 }
 
-void Texture::load_texture_from_path()
+void Texture::load_texture_from_path(bool gamma)
 {
     generate_texture();
 
@@ -21,22 +21,25 @@ void Texture::load_texture_from_path()
     if (data)
     {
         GLenum format;
-
+        GLenum otherFormat;
         if (nrComponents == 1)
         {
             format = GL_RED;
+            otherFormat = format;
         }
         else if (nrComponents == 3)
         {
             format = GL_RGB;
+            otherFormat = (gamma) ? (GL_SRGB) : (format);
         }
         else if (nrComponents == 4)
         {
             format = GL_RGBA;
+            otherFormat = (gamma) ? (GL_SRGB_ALPHA) : (format);
         }
         bind_texture();
 
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, otherFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -82,4 +85,17 @@ std::string texturePaths[] = {
     "resources/textures/metal.png",
     "resources/textures/wall.jpg",
     "resources/textures/wood.png",
+};
+
+std::string texTypes[] = {
+    "diffuse",
+    "diffuse",
+    "diffuse",
+    "diffuse",
+    "specular",
+    "diffuse",
+    "diffuse",
+    "diffuse",
+    "diffuse",
+    "diffuse",
 };

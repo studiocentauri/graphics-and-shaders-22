@@ -1,8 +1,9 @@
 #version 330 core
 
 struct Material {
-    sampler2D diffuse1;
-    sampler2D specular1;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
     float shininess;
 };
 uniform Material mat;
@@ -58,7 +59,9 @@ in vec2 uv;
 in vec3 position;
 
 uniform vec3 viewPos;
-uniform sampler2D tex;
+uniform bool enableBlinnPhong;
+uniform bool enableGamma;
+float gamma=2.2f;
 
 vec3 get_ambient(vec3 amb);
 vec3 get_diffuse(vec3 diff,vec3 lightDir); // lightDir is point to light Direction
@@ -96,6 +99,10 @@ void main()
         }
     }
     
+    if(enableGamma)
+    {
+        resultant=pow(resultant,vec3(1.0f/gamma));
+    }
     FragColor = vec4(resultant.xyz, 1.0f);
 }
 
@@ -107,6 +114,10 @@ vec3 calculate_for_point_light(PointLight light, vec3 viewDirection)
     {
         distance -= light.radius;
         att = 1.0f / (light.constant+light.linear*distance+light.quadratic*distance*distance);
+        if(enableGamma)
+        {
+            att = 1.0f / (light.constant+light.quadratic*distance*distance);
+        }
     }
 
     vec3 ambient = get_ambient(light.amb);
@@ -150,18 +161,27 @@ vec3 calculate_for_spot_light(SpotLight light, vec3 viewDirection)
 
 vec3 get_ambient(vec3 amb)
 {
-    return (vec3(texture(mat.diffuse1,uv)) * amb);
+    return (mat.ambient * amb);
 }
 
 vec3 get_diffuse(vec3 diff, vec3 lightDir)
 {
     float diffuseFactor = max(0, dot(normalize(normal), lightDir));
-    return (vec3(texture(mat.diffuse1,uv)) * diffuseFactor * diff);
+    return (mat.diffuse * diffuseFactor * diff);
 }
 
 vec3 get_specular(vec3 spec, vec3 lightDir, vec3 viewDirection)
 {
-    vec3 reflected = normalize(reflect(-lightDir, normalize(normal)));
-    float specularFactor = pow(max(0, dot(reflected, viewDirection)), mat.shininess);
-    return (vec3(texture(mat.specular1,uv)) * specularFactor * spec);
+    float specularFactor=0.0f;
+    if(enableBlinnPhong)
+    {
+        vec3 halfDir=normalize(viewDirection+lightDir);
+        specularFactor = pow(max(0, dot(normal, halfDir)), mat.shininess*2.0f);
+    }
+    else
+    {
+        vec3 reflected = normalize(reflect(-lightDir, normalize(normal)));
+        specularFactor = pow(max(0, dot(reflected, viewDirection)), mat.shininess);
+    }
+    return (mat.specular * specularFactor * spec);
 }

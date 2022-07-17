@@ -42,6 +42,8 @@ public:
     RenderActor(std::string name_ = "New RenderActor");
     // Mat constructor for RenderActor
     RenderActor(Material mat_, ACTOR_TYPE type_ = OBJECT_ACTOR, std::string name_ = "New RenderActor");
+
+private:
 };
 
 // ModelActor class for RenderActors with Model component
@@ -53,9 +55,11 @@ public:
     // Default ModelActor constructor
     ModelActor(std::string name_ = "New ModelActor");
     // Path constructor for ModelActor
-    ModelActor(std::string path, std::string name_ = "New ModelActor");
+    ModelActor(std::string path, std::string name_ = "New ModelActor", bool gamma = false);
     // ModelActor destructor
     ~ModelActor();
+
+private:
 };
 
 #endif // !ACTOR_H

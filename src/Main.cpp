@@ -31,49 +31,59 @@ Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 //     0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f};
 
 float vertices[] = {
-    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+    0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
     0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
-    0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
-    0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
-    -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
     -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+    -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
+    0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
 
-    -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
     0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
     0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-    0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+    -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
     -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
     -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+    0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 
-    -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
     -0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
     -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+    -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
     -0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
     -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 
-    0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+    0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
     0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-    0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-    0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-    0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
     0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+    0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+    0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+    0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 
-    -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
     0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
     0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-    0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
     -0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
     -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+    0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
 
-    -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+    0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
     0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-    0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-    0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+    -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+    -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
     -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-    -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f};
-
+    0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f};
 VertexArray varray;
+
+float qVertices[] = {
+    -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+    1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+    1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+    -1.0f, -1.0f, 0.0f, 0.0f, 0.0f};
+unsigned int qIndices[] = {
+    0, 2, 1,
+    2, 0, 3};
+VertexArray qVArray;
+
 std::vector<RenderActor *> actors;
 std::vector<RenderActor> lightActors;
 std::vector<LightSource *> lights;
@@ -81,6 +91,32 @@ bool renderScene = true;
 bool showActorUI = true;
 std::vector<Shader> templateShaders;
 std::vector<Texture> textures;
+
+// Application Data
+float totalTime = 0;
+ImVec4 bkgColor(35.0f / 255.0f, 60.0f / 255.0f, 75.0f / 255.0f, 1.0f);
+const char *drawOptions[3] = {"Point", "Line", "Fill"};
+int drawOption = 2;
+int FPS = 0;
+float FPSfrequency = 3;
+float timer = 1;
+bool isPerspective = true;
+float camSize = 5.0f;
+bool freeRoam = false;
+bool showFrameRate = false;
+bool lockFrameRate = true;
+bool enablePointLight = true;
+bool enableDirLight = true;
+bool enableSpotLight = true;
+bool enableEmission = true;
+bool enableFaceCulling = true;
+const char *imageFilters[] = {"Normal", "Invert", "GrayScale",
+                              "Sharpen", "Blur", "Edge",
+                              "Emboss"};
+int imageFilter = 0;
+float kOffset = 0.002f;
+bool enableBlinnPhong = ENABLE_BLINN_PHONG;
+bool enableGamma = ENABLE_GAMMA_CORRECTION;
 
 // Sets the template shaders via path
 void load_template_shaders();
@@ -95,12 +131,15 @@ int main()
         return -1;
     }
     renderer.setup_window_data();
+    renderer.setup_frame_buffer();
     renderer.set_camera(camera);
+
+    // Setup GUI
+    GUI gui(renderer.window, renderer.major, renderer.minor);
+
+    // Load Data
     load_template_shaders();
     load_template_textures();
-
-    // Setting up imgui
-    GUI gui(renderer.window, renderer.major, renderer.minor);
 
     // Setup Vertex Array
     varray.generate_buffers();
@@ -113,23 +152,22 @@ int main()
     varray.unbind_vbo();
     varray.unbind_vao();
 
+    qVArray.generate_buffers();
+    qVArray.bind_vao();
+    qVArray.bind_vbo(4, 5 * sizeof(float), qVertices);
+    qVArray.bind_ebo(6, qIndices);
+    qVArray.set_attribute_array(0, 3, 5 * sizeof(float));
+    qVArray.set_attribute_array(1, 2, 5 * sizeof(float), (void *)(3 * sizeof(float)));
+    qVArray.unbind_vbo();
+    qVArray.unbind_vao();
+
     // Setup Shaders and Textures
-    Shader lightshdr(FileSystem::get_path("shaders/3dshaders/colorShader.vs").c_str(), FileSystem::get_path("shaders/3dshaders/colorShader.fs").c_str());
+    Shader lightshdr(FileSystem::get_path("shaders/3dshaders/3dShader.vs").c_str(),
+                     FileSystem::get_path("shaders/3dshaders/colorShader.fs").c_str());
+    Shader frameShader(FileSystem::get_path("shaders/shaderFBO.vs").c_str(),
+                       FileSystem::get_path("shaders/shaderFBO.fs").c_str());
 
-    // Setup Data
-    float totalTime = 0;
-    ImVec4 bkgColor(55.0f / 255.0f, 100.0f / 255.0f, 110.0f / 255.0f, 1.0f);
-    const char *drawOptions[3] = {"Point", "Line", "Fill"};
-    int drawOption = 2;
-    bool isPerspective = true;
-    bool freeRoam = false;
-    bool showFrameRate = false;
-    bool lockFrameRate = true;
-    bool enablePointLight = true;
-    bool enableDirLight = true;
-    bool enableSpotLight = true;
-    bool enableEmission = true;
-
+    // Setup Actors
     Transform transforms[] = {Transform(glm::vec3(0.0f, 0.0f, -5.0f)),
                               Transform(glm::vec3(1.5f, 1.0f, -4.0f)),
                               Transform(glm::vec3(-1.0f, -1.0f, -3.0f)),
@@ -145,9 +183,23 @@ int main()
         actors.push_back(rc);
     }
 
-    ModelActor *model = new ModelActor(FileSystem::get_path("resources/models/teapot/teapot.obj"), "teapot");
-    model->mat.shader = MODEL_SHADER_3D;
-    actors.push_back((RenderActor *)model);
+    ModelActor *backpack = new ModelActor(FileSystem::get_path("resources/models/backpack/backpack.obj"), "Backpack", enableGamma);
+    backpack->mat.shader = MODEL_SHADER_3D;
+    actors.push_back((RenderActor *)backpack);
+    ModelActor *teapot = new ModelActor(FileSystem::get_path("resources/models/teapot/teapot.obj"), "Teapot", enableGamma);
+    teapot->mat.shader = MODEL_SHADER_3D;
+    teapot->tr.position = glm::vec3(-3.0f, 0.0f, -3.0f);
+    actors.push_back((RenderActor *)teapot);
+    ModelActor *plane = new ModelActor(FileSystem::get_path("resources/models/plane/plane.obj"), "Plane", enableGamma);
+    plane->mat.shader = MODEL_SHADER_3D;
+    plane->tr.position = glm::vec3(0.0f, -2.5f, 0.0f);
+    plane->tr.scale = glm::vec3(3.0f, 1.0f, 3.0f);
+    actors.push_back((RenderActor *)plane);
+    ModelActor *sphere = new ModelActor(FileSystem::get_path("resources/models/sphere/sphere.obj"), "Sphere", enableGamma);
+    sphere->mat.shader = MODEL_SHADER_3D;
+    sphere->tr.position = glm::vec3(4.0f, 0.0f, -3.0f);
+    sphere->tr.scale = glm::vec3(1.5f, 1.5f, 1.5f);
+    actors.push_back((RenderActor *)sphere);
 
     Transform lightstr[] = {
         Transform(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f), glm::vec3(0.2f)),
@@ -197,6 +249,7 @@ int main()
         else if (lights[i]->type == SPOT_LIGHT)
         {
             rc.name = "SpotLight " + std::to_string(sLight++);
+            rc.mat.ambient.color = glm::vec3(0.0f);
             rc.tr = Transform(renderer.get_camera()->position);
             rc.toRender = false;
         }
@@ -207,21 +260,29 @@ int main()
     renderer.start_timer();
     while (!renderer.close_window())
     {
-        // Frame Start
+        // New Renderer Frame
         renderer.new_frame();
+
         totalTime += renderer.deltaTime;
+        timer += renderer.deltaTime;
+        if (timer >= 1 / FPSfrequency)
+        {
+            timer = 0.0f;
+            FPS = (int)(1 / renderer.deltaTime);
+        }
         totalTime = (totalTime > 300.0f) ? (totalTime - 300.0f) : totalTime;
 
         // New UI Frame
         gui.new_frame();
 
-        // Check for Inputs
+        // Process Scene
         if (renderer.check_key(GLFW_KEY_ESCAPE))
         {
             glfwSetWindowShouldClose(renderer.window, true);
         }
         if (renderScene)
         {
+            // Check for Input
             if (renderer.check_key(GLFW_KEY_SPACE))
             {
                 freeRoam = true;
@@ -259,30 +320,12 @@ int main()
             }
             renderer.process_mouse(freeRoam);
 
-            // Clear Previous Frame
-            glClearColor(bkgColor.x, bkgColor.y, bkgColor.z, bkgColor.w);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            // Set Draw Mode
-            if (drawOption == 0)
-            {
-                glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-            }
-            else if (drawOption == 1)
-            {
-                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            }
-            else
-            {
-                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            }
-
             // Do Calculations
             glm::mat4 view = renderer.get_camera()->get_view_matrix();
 
             glm::mat4 projection(1.0f);
-            int currentWidth, currentHeight;
-            glfwGetWindowSize(renderer.window, &currentWidth, &currentHeight);
+            int currentWidth = (int)(renderer.get_width());
+            int currentHeight = (int)(renderer.get_height());
             if (currentHeight == 0 || currentWidth == 0)
             {
                 currentHeight = 1.0f;
@@ -295,10 +338,30 @@ int main()
             else
             {
                 float aspect = (((float)currentWidth) / ((float)currentHeight));
-                float camSize = 5.0f;
                 glm::vec2 camDim(aspect * camSize, camSize);
                 projection = glm::ortho(-camDim.x / 2.0f, camDim.x / 2.0f, -camDim.y / 2.0f, camDim.y / 2.0f, CAMERA_NEAR_PLANE, CAMERA_FAR_PLANE);
             }
+
+            // Set Face Culling
+            if (enableFaceCulling)
+            {
+                glEnable(GL_CULL_FACE);
+            }
+            else
+            {
+                glDisable(GL_CULL_FACE);
+            }
+
+            // Set Draw Mode
+            renderer.set_draw_mode(drawOption);
+
+            // New Framebuffer Frame
+            renderer.frameBuffer.new_frame(currentWidth, currentHeight);
+
+            // Clear Previous Frame
+            renderer.clear_screen(bkgColor.x, bkgColor.y, bkgColor.z);
+
+            // Setup Shader Uniforms
             int pointLightCount = 0, dirLightCount = 0, spotLightCount = 0;
             for (int i = 0; i < lightActors.size(); i++)
             {
@@ -330,7 +393,6 @@ int main()
                     break;
                 }
             }
-            // Setup Shader Uniforms
             set_active_texture(0);
             for (int i = 0; i < actors.size(); i++)
             {
@@ -345,6 +407,9 @@ int main()
                     shdr->set_bool("enableDirLight", enableDirLight);
                     shdr->set_bool("enableSpotLight", enableSpotLight);
                     shdr->set_bool("enableEmission", enableEmission);
+                    shdr->set_bool("enableBlinnPhong", enableBlinnPhong);
+                    shdr->set_bool("enableGamma", enableGamma);
+                    shdr->set_vec3("viewPos", renderer.get_camera()->position);
                     int pLight = 0;
                     int dLight = 0;
                     int sLight = 0;
@@ -368,7 +433,6 @@ int main()
                                 break;
                             }
                         }
-                        shdr->set_vec3("viewPos", renderer.get_camera()->position);
                         shdr->set_matrices(actors[i]->tr.get_model_matrix(), view, projection);
                         shdr->set_material(actors[i]->mat.ambient.color, actors[i]->mat.diffuse.color,
                                            actors[i]->mat.specular.color, actors[i]->mat.shininess);
@@ -391,7 +455,6 @@ int main()
                                 break;
                             }
                         }
-                        shdr->set_vec3("viewPos", renderer.get_camera()->position);
                         shdr->set_texture("mat.diffuse", &(textures[actors[i]->mat.diffuse.tex]));
                         shdr->set_texture("mat.specular", &(textures[actors[i]->mat.specular.tex]));
                         shdr->set_texture("mat.emission", &(textures[actors[i]->mat.emission.tex]));
@@ -416,7 +479,6 @@ int main()
                                 break;
                             }
                         }
-                        shdr->set_vec3("viewPos", renderer.get_camera()->position);
                         shdr->set_float("mat.shininess", actors[i]->mat.shininess);
                         shdr->set_matrices(actors[i]->tr.get_model_matrix(), view, projection);
                         break;
@@ -446,6 +508,15 @@ int main()
                     varray.draw_triangle(36, 0);
                 }
             }
+            // Drawing Frame Buffer
+            renderer.start_fbo_pass(1.0f, 1.0f, 1.0f);
+            renderer.set_draw_mode();
+            frameShader.use();
+            frameShader.set_texture("tex", &(renderer.frameBuffer.textureColorBuffer));
+            frameShader.set_int("cFilter", imageFilter);
+            frameShader.set_float("offset", kOffset);
+            set_active_texture(0);
+            qVArray.draw_indices(6);
 
             // Setup UI Windows
             if (!freeRoam)
@@ -458,25 +529,31 @@ int main()
                 ImGui::Begin("Scene UI");
                 ImGui::ColorEdit3("Background Color", &bkgColor.x);
                 ImGui::Combo("RenderMode", &drawOption, &drawOptions[0], 3);
+                ImGui::Combo("Image Filter:", &imageFilter, &imageFilters[0], 7);
+                ImGui::SliderFloat("Kernel Offset", &kOffset, 0.001f, 0.02f);
                 ImGui::Checkbox("IsPerspective", &isPerspective);
+                ImGui::SliderFloat("Camera Size", &camSize, 1.0f, 10.0f);
+                ImGui::Checkbox("Enable Face Culling", &enableFaceCulling);
                 ImGui::Checkbox("VSync", &lockFrameRate);
                 ImGui::Checkbox("Show FPS", &showFrameRate);
+                ImGui::SliderFloat("FPS Update Frequency", &FPSfrequency, 0.5f, 60.0f);
                 if (showFrameRate)
                 {
-                    ImGui::Text("%d FPS", (int)(1 / renderer.deltaTime));
+                    ImGui::Text("%d FPS", FPS);
                 }
                 ImGui::Checkbox("Enable Point Lights:", &enablePointLight);
                 ImGui::Checkbox("Enable Directional Lights:", &enableDirLight);
                 ImGui::Checkbox("Enable Spot Lights:", &enableSpotLight);
                 ImGui::Checkbox("Enable Emission:", &enableEmission);
+                ImGui::Checkbox("Enable Blinn Phong: ", &enableBlinnPhong);
+                ImGui::Checkbox("Enable Gamma:", &enableGamma);
                 ImGui::End();
             }
         }
         else
         {
             // Clear Previous Frame
-            glClearColor(DEFAULT_BACKGROUND_COLOR.x, DEFAULT_BACKGROUND_COLOR.y, DEFAULT_BACKGROUND_COLOR.z, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            renderer.clear_screen(DEFAULT_BACKGROUND_COLOR.x, DEFAULT_BACKGROUND_COLOR.y, DEFAULT_BACKGROUND_COLOR.z);
         }
         show_main_menu_bar(&renderer, &renderScene, &showActorUI);
 
@@ -520,7 +597,7 @@ void load_template_textures()
 {
     for (int i = 0; i < LOADED_TEXTURES_COUNT; i++)
     {
-        Texture tex(FileSystem::get_path(texturePaths[i]));
+        Texture tex(FileSystem::get_path(texturePaths[i]), ((enableGamma && (texTypes[i] == "diffuse")) ? (true) : (false)));
         textures.push_back(tex);
     }
 }

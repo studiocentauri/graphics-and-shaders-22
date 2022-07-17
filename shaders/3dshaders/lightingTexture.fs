@@ -59,8 +59,10 @@ in vec2 uv;
 in vec3 position;
 
 uniform vec3 viewPos;
-uniform sampler2D tex;
 uniform bool enableEmission;
+uniform bool enableBlinnPhong;
+uniform bool enableGamma;
+float gamma=2.2f;
 
 vec3 get_ambient(vec3 amb);
 vec3 get_diffuse(vec3 diff,vec3 lightDir); // lightDir is point to light Direction
@@ -108,6 +110,10 @@ void main()
         resultant += emission;
     } 
     
+    if(enableGamma)
+    {
+        resultant=pow(resultant,vec3(1.0f/gamma));
+    }
     FragColor = vec4(resultant.xyz, 1.0f);
 }
 
@@ -119,6 +125,10 @@ vec3 calculate_for_point_light(PointLight light, vec3 viewDirection)
     {
         distance -= light.radius;
         att = 1.0f / (light.constant+light.linear*distance+light.quadratic*distance*distance);
+        if(enableGamma)
+        {
+            att = 1.0f / (light.constant+light.quadratic*distance*distance);
+        }
     }
 
     vec3 ambient = get_ambient(light.amb);
@@ -173,7 +183,16 @@ vec3 get_diffuse(vec3 diff, vec3 lightDir)
 
 vec3 get_specular(vec3 spec, vec3 lightDir, vec3 viewDirection)
 {
-    vec3 reflected = normalize(reflect(-lightDir, normalize(normal)));
-    float specularFactor = pow(max(0, dot(reflected, viewDirection)), mat.shininess);
+    float specularFactor=0.0f;
+    if(enableBlinnPhong)
+    {
+        vec3 halfDir=normalize(viewDirection+lightDir);
+        specularFactor = pow(max(0, dot(normal, halfDir)), mat.shininess*2.0f);
+    }
+    else
+    {
+        vec3 reflected = normalize(reflect(-lightDir, normalize(normal)));
+        specularFactor = pow(max(0, dot(reflected, viewDirection)), mat.shininess);
+    }
     return (vec3(texture(mat.specular,uv)) * specularFactor * spec);
 }

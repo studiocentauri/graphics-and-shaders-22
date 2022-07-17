@@ -37,6 +37,8 @@ public:
     Mesh(std::vector<Vertex> vertices_, std::vector<unsigned int> indices_, std::vector<Texture> textures_);
     // Draws a mesh using a Shader as input
     void draw(Shader *shader);
+    // Frees mesh data
+    void free_data();
 
 private:
     // Sets up the vertex array for the mesh

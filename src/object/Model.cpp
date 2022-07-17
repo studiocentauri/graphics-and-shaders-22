@@ -4,8 +4,9 @@ Model::Model()
 {
 }
 
-Model::Model(std::string path)
+Model::Model(std::string path, bool gamma_)
 {
+    gamma = gamma_;
     load_model(path);
 }
 
@@ -21,7 +22,7 @@ void Model::free_data()
 {
     for (int i = 0; i < meshes.size(); i++)
     {
-        meshes[i].varray.free_data();
+        meshes[i].free_data();
     }
 }
 
@@ -133,7 +134,7 @@ std::vector<Texture> Model::load_material_textures(aiMaterial *mat, aiTextureTyp
         {
             std::string filePath = std::string(strs.C_Str());
             filePath = dir + "/" + filePath;
-            Texture tex(filePath);
+            Texture tex(filePath, ((gamma && (textureType == "diffuse")) ? (true) : (false)));
             tex.type = textureType;
             tex.path = std::string(strs.C_Str());
             textures.push_back(tex);

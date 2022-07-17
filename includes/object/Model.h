@@ -24,11 +24,11 @@ public:
     std::vector<Mesh> meshes;      // List of meshes in a model
     std::vector<Texture> textures; // List of textures in a model
     std::string dir;               // Directory of model file
-
+    bool gamma;                    // Whether to correct gamma of textures
     // Default Model constructor
     Model();
     // Path constructor for Model
-    Model(std::string path);
+    Model(std::string path, bool gamma_ = false);
     // Draw function to draw a model using a Shader
     void draw(Shader *shader);
     // Frees the data in the model

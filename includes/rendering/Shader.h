@@ -40,6 +40,8 @@ public:
     LightSource();
     // Color LightSource Constructor
     LightSource(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_);
+
+private:
 };
 
 // Point Light Class
@@ -70,6 +72,8 @@ public:
     DirectionalLight();
     // Color Directional Light Constructor
     DirectionalLight(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 direction_ = glm::vec3(-1.0f, -1.0f, -1.0f));
+
+private:
 };
 
 // Spot Light Class
@@ -85,6 +89,8 @@ public:
     SpotLight();
     // Color Spot Light Constructor
     SpotLight(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, glm::vec3 position_, glm::vec3 lookAt_, float innerFallOff_ = 7.5f, int outerFallOff_ = 15.0f);
+
+private:
 };
 
 // Types of Shaders
@@ -204,6 +210,8 @@ public:
     Material(glm::vec3 ambient_, glm::vec3 diffuse_, glm::vec3 specular_, float shininess_ = 64.0f);
     // Texture Material Constructor
     Material(unsigned int diffuseTex, unsigned int specularTex = 0, bool hasEmission_ = false, unsigned int emissionTex = 0, float shininess_ = 64.0f);
+
+private:
 };
 
 #endif // !SHADER_H
