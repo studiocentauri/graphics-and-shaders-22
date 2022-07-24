@@ -2,7 +2,7 @@
 #define SHADER_H
 
 // Third-party Headers
-#include "thirdparty/glad/glad.h"
+#include "glad/glad.h"
 #include "thirdparty/glm/glm.hpp"
 #include "thirdparty/glm/gtc/matrix_transform.hpp"
 #include "thirdparty/glm/gtc/type_ptr.hpp"

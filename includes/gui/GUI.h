@@ -2,7 +2,7 @@
 #define GUI_H
 
 // Third-party Headers
-#include "thirdparty/glad/glad.h"
+#include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "thirdparty/imgui/imgui.h"
 #include "thirdparty/imgui/imgui_impl_glfw.h"

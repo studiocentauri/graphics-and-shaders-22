@@ -2,7 +2,7 @@
 #define MODEL_H
 
 // Third-party Headers
-#include "thirdparty/glad/glad.h"
+#include "glad/glad.h"
 #include "thirdparty/assimp/Importer.hpp"
 #include "thirdparty/assimp/scene.h"
 #include "thirdparty/assimp/postprocess.h"

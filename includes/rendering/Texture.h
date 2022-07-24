@@ -2,7 +2,7 @@
 #define TEXTURE_H
 
 // Third-party Headers
-#include "thirdparty/glad/glad.h"
+#include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "thirdparty/stb_image.h"
 #include "Config.h"

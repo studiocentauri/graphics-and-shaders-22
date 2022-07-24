@@ -23,6 +23,7 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(${THIRD_PARTY_SRCS}/glfw/ "${CMAKE_CURRENT_BINARY_DIR}/glfw")
+add_subdirectory(${THIRD_PARTY_SRCS}/glad/ "${CMAKE_CURRENT_BINARY_DIR}/glad")
 
 # Find third party libs
 find_package(ASSIMP REQUIRED)
@@ -34,6 +35,7 @@ endif(ASSIMP_FOUND)
 include_directories(${PROJECT_DIR})
 include_directories(${PROJECT_DIR}/includes)
 include_directories(${THIRD_PARTY_SRCS})
+include_directories(${THIRD_PARTY_SRCS}/glad/include)
 include_directories(${THIRD_PARTY_SRCS}/glfw/include)
 include_directories(${PROJECT_DIR}/configuration)
 configure_file(${PROJECT_DIR}/configuration/root_directory.h.in configuration/root_directory.h)
@@ -44,10 +46,10 @@ if(WIN32)
 endif()
 
 # Define files
-file(GLOB_RECURSE FILES_THIRD_PARTY "${PROJECT_DIR}/src/thirdparty/*.cpp" "${PROJECT_DIR}/src/thirdparty/*.c")
+file(GLOB_RECURSE FILES_THIRD_PARTY "${PROJECT_DIR}/src/thirdparty/*.cpp")
 file(GLOB_RECURSE FILES_IMGUI "${THIRD_PARTY_SRCS}/imgui/*.cpp")
 file(GLOB_RECURSE FILES_UTILS "${PROJECT_DIR}/src/utility/*.cpp")
-file(GLOB_RECURSE FILES_GRAPHICS "${PROJECT_DIR}/src/rendering/*.cpp")
+file(GLOB_RECURSE FILES_GRAPHICS "${PROJECT_DIR}/src/rendering/*.cpp" "${THIRD_PARTY_SRCS}/glad/src/*.c")
 file(GLOB_RECURSE FILES_OBJECT "${PROJECT_DIR}/src/object/*.cpp")
 file(GLOB_RECURSE FILES_GUI "${PROJECT_DIR}/src/gui/*.cpp")
 
