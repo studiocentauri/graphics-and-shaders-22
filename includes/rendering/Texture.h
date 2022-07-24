@@ -3,7 +3,7 @@
 
 // Third-party Headers
 #include "thirdparty/glad/glad.h"
-#include "thirdparty/GLFW/glfw3.h"
+#include "GLFW/glfw3.h"
 #include "thirdparty/stb_image.h"
 #include "Config.h"
 

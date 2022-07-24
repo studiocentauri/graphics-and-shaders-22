@@ -17,9 +17,14 @@ set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(THIRD_PARTY_SRCS "${PROJECT_DIR}/includes/thirdparty")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_DIR}/cmake/modules")
 
+# GLFW Flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lGL")
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+add_subdirectory(${THIRD_PARTY_SRCS}/glfw/ "${CMAKE_CURRENT_BINARY_DIR}/glfw")
+
 # Find third party libs
-find_package(OpenGL REQUIRED)
-find_package(GLFW3 REQUIRED)
 find_package(ASSIMP REQUIRED)
 if(ASSIMP_FOUND)
   include_directories(${ASSIMP_INCLUDE_DIR})
@@ -29,6 +34,7 @@ endif(ASSIMP_FOUND)
 include_directories(${PROJECT_DIR})
 include_directories(${PROJECT_DIR}/includes)
 include_directories(${THIRD_PARTY_SRCS})
+include_directories(${THIRD_PARTY_SRCS}/glfw/include)
 include_directories(${PROJECT_DIR}/configuration)
 configure_file(${PROJECT_DIR}/configuration/root_directory.h.in configuration/root_directory.h)
 include_directories(${CMAKE_BINARY_DIR}/configuration)
@@ -69,8 +75,8 @@ target_link_libraries(
                   graphics-and-shaders 
                   graphics-renderer 
                   ${CMAKE_DL_LIBS}  
-                  ${GLFW_LIBRARIES} 
                   glfw 
+                  ${GLFW_LIBRARIES} 
                   assimp)
 
 if(WIN32)
