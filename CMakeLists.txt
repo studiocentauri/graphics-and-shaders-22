@@ -1,75 +1,77 @@
+# Setup CMake version
 cmake_minimum_required(VERSION "3.16.3")
 
+# Setup project target
 project(graphics-and-shaders)
 
-set(CMAKE_CXX_STANDARD 17)
+# Set C/C++ compiler
+set(CMAKE_C_STANDARD 99 CACHE INTERNAL "")
+set(CMAKE_CXX_STANDARD 17 CACHE INTERNAL "")
+set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE INTERNAL "")
 
-if(MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}/std:c++17")
-endif(MSVC)
+# Set Project Flags
+set(BUILD_SHADERTOY 0 CACHE INTERNAL "")
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
+# Set folder paths
+set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(THIRD_PARTY_SRCS "${PROJECT_DIR}/includes/thirdparty")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_DIR}/cmake/modules")
 
+# Find third party libs
 find_package(OpenGL REQUIRED)
 find_package(GLFW3 REQUIRED)
 find_package(ASSIMP REQUIRED)
-
 if(ASSIMP_FOUND)
   include_directories(${ASSIMP_INCLUDE_DIR})
 endif(ASSIMP_FOUND)
 
-include_directories(includes)
-include_directories(includes/thirdparty)
-include_directories(configuration)
-configure_file(configuration/root_directory.h.in configuration/root_directory.h)
+# Include paths
+include_directories(${PROJECT_DIR})
+include_directories(${PROJECT_DIR}/includes)
+include_directories(${THIRD_PARTY_SRCS})
+include_directories(${PROJECT_DIR}/configuration)
+configure_file(${PROJECT_DIR}/configuration/root_directory.h.in configuration/root_directory.h)
 include_directories(${CMAKE_BINARY_DIR}/configuration)
 
 if(WIN32)
   link_directories(lib)
 endif()
 
+# Define files
+file(GLOB_RECURSE FILES_THIRD_PARTY "${PROJECT_DIR}/src/thirdparty/*.cpp" "${PROJECT_DIR}/src/thirdparty/*.c")
+file(GLOB_RECURSE FILES_IMGUI "${THIRD_PARTY_SRCS}/imgui/*.cpp")
+file(GLOB_RECURSE FILES_UTILS "${PROJECT_DIR}/src/utility/*.cpp")
+file(GLOB_RECURSE FILES_GRAPHICS "${PROJECT_DIR}/src/rendering/*.cpp")
+file(GLOB_RECURSE FILES_OBJECT "${PROJECT_DIR}/src/object/*.cpp")
+file(GLOB_RECURSE FILES_GUI "${PROJECT_DIR}/src/gui/*.cpp")
+
+# Add common renderer library
+add_library(
+          graphics-renderer
+          ${FILES_THIRD_PARTY}
+          ${FILES_GRAPHICS}
+          ${FILES_UTILS}
+          ${FILES_OBJECT}
+          ${FILES_GUI}
+          ${FILES_IMGUI})
+
+# Add required executable
+if(${BUILD_SHADERTOY})
 add_executable(
-  graphics-and-shaders
-
-  src/Main.cpp
-  # src/ShaderToy.cpp
-  src/thirdparty/glad.c
-  src/thirdparty/stb_image.cpp
-  src/rendering/Camera.cpp
-  src/rendering/Renderer.cpp
-  src/rendering/Shader.cpp
-  src/rendering/Texture.cpp
-  src/utility/FileSystem.cpp
-  src/object/Transform.cpp
-  src/object/Actor.cpp
-  src/object/Mesh.cpp
-  src/object/Model.cpp
-  src/gui/GUI.cpp
-  src/gui/Widgets.cpp
-  includes/thirdparty/imgui/imgui.cpp
-  includes/thirdparty/imgui/imgui_draw.cpp
-  includes/thirdparty/imgui/imgui_demo.cpp
-  includes/thirdparty/imgui/imgui_widgets.cpp
-  includes/thirdparty/imgui/imgui_tables.cpp
-  includes/thirdparty/imgui/imgui_impl_glfw.cpp
-  includes/thirdparty/imgui/imgui_impl_opengl3.cpp
-)
-
-target_link_libraries(
-  graphics-and-shaders ${CMAKE_DL_LIBS}
-)
-
-if(WIN32)
-  target_link_libraries(
-    graphics-and-shaders
-    ${glfw_LIBRARIES}
-  )
-  target_link_libraries(graphics-and-shaders glfw3)
+            graphics-and-shaders 
+            src/ShaderToy.cpp)
 else()
-  target_link_libraries(graphics-and-shaders glfw)
+add_executable(
+            graphics-and-shaders 
+            src/Main.cpp)
 endif()
-
-  target_link_libraries(graphics-and-shaders assimp)
+target_link_libraries(
+                  graphics-and-shaders 
+                  graphics-renderer 
+                  ${CMAKE_DL_LIBS}  
+                  ${GLFW_LIBRARIES} 
+                  glfw 
+                  assimp)
 
 if(WIN32)
   add_custom_command(TARGET graphics-and-shaders POST_BUILD
