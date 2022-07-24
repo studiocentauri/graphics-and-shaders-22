@@ -37,6 +37,8 @@ include_directories(${PROJECT_DIR}/includes)
 include_directories(${THIRD_PARTY_SRCS})
 include_directories(${THIRD_PARTY_SRCS}/glad/include)
 include_directories(${THIRD_PARTY_SRCS}/glfw/include)
+include_directories(${THIRD_PARTY_SRCS}/stb_image)
+include_directories(${THIRD_PARTY_SRCS}/imgui)
 include_directories(${PROJECT_DIR}/configuration)
 configure_file(${PROJECT_DIR}/configuration/root_directory.h.in configuration/root_directory.h)
 include_directories(${CMAKE_BINARY_DIR}/configuration)
@@ -46,17 +48,15 @@ if(WIN32)
 endif()
 
 # Define files
-file(GLOB_RECURSE FILES_THIRD_PARTY "${PROJECT_DIR}/src/thirdparty/*.cpp")
 file(GLOB_RECURSE FILES_IMGUI "${THIRD_PARTY_SRCS}/imgui/*.cpp")
 file(GLOB_RECURSE FILES_UTILS "${PROJECT_DIR}/src/utility/*.cpp")
-file(GLOB_RECURSE FILES_GRAPHICS "${PROJECT_DIR}/src/rendering/*.cpp" "${THIRD_PARTY_SRCS}/glad/src/*.c")
+file(GLOB_RECURSE FILES_GRAPHICS "${PROJECT_DIR}/src/rendering/*.cpp" "${THIRD_PARTY_SRCS}/glad/src/*.c" "${THIRD_PARTY_SRCS}/stb_image/*.cpp")
 file(GLOB_RECURSE FILES_OBJECT "${PROJECT_DIR}/src/object/*.cpp")
 file(GLOB_RECURSE FILES_GUI "${PROJECT_DIR}/src/gui/*.cpp")
 
 # Add common renderer library
 add_library(
           graphics-renderer
-          ${FILES_THIRD_PARTY}
           ${FILES_GRAPHICS}
           ${FILES_UTILS}
           ${FILES_OBJECT}
@@ -77,6 +77,7 @@ target_link_libraries(
                   graphics-and-shaders 
                   graphics-renderer 
                   ${CMAKE_DL_LIBS}  
+                  glad
                   glfw 
                   ${GLFW_LIBRARIES} 
                   assimp)
