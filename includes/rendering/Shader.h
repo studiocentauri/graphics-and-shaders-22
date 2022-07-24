@@ -3,9 +3,9 @@
 
 // Third-party Headers
 #include "glad/glad.h"
-#include "thirdparty/glm/glm.hpp"
-#include "thirdparty/glm/gtc/matrix_transform.hpp"
-#include "thirdparty/glm/gtc/type_ptr.hpp"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 // Custom Headers
 #include "rendering/Texture.h"
