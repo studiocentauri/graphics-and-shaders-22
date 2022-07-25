@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 17 CACHE INTERNAL "")
 set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE INTERNAL "")
 
 # Set Project Flags
-set(BUILD_SHADERTOY 0 CACHE INTERNAL "")
+set(BUILD_SHADER_VIEWER 0 CACHE INTERNAL "")
 
 # Set folder paths
 set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
@@ -51,28 +51,35 @@ file(GLOB_RECURSE FILES_GUI "${PROJECT_DIR}/src/gui/*.cpp")
 
 # Add common renderer library
 add_library(
-          graphics-renderer
-          ${FILES_GRAPHICS}
-          ${FILES_UTILS}
-          ${FILES_OBJECT}
-          ${FILES_GUI}
-          ${FILES_IMGUI})
+        graphics-renderer
+        ${FILES_GRAPHICS}
+        ${FILES_UTILS}
+        ${FILES_OBJECT}
+        ${FILES_GUI}
+        ${FILES_IMGUI})
 
 # Add required executable
-if(${BUILD_SHADERTOY})
 add_executable(
-            graphics-and-shaders 
-            src/ShaderToy.cpp)
-else()
-add_executable(
-            graphics-and-shaders 
+            ${PROJECT_NAME}
             src/Main.cpp)
-endif()
 target_link_libraries(
-                  graphics-and-shaders 
-                  graphics-renderer 
-                  ${CMAKE_DL_LIBS}  
-                  glad
-                  glfw 
-                  ${GLFW_LIBRARIES} 
-                  assimp)
+                    ${PROJECT_NAME}
+                    graphics-renderer 
+                    ${CMAKE_DL_LIBS}  
+                    glad
+                    glfw 
+                    ${GLFW_LIBRARIES} 
+                    assimp)
+if(${BUILD_SHADER_VIEWER})
+add_executable(
+                shader-viewer
+                src/ShaderViewer.cpp)
+target_link_libraries(
+                    shader-viewer
+                    graphics-renderer 
+                    ${CMAKE_DL_LIBS}  
+                    glad
+                    glfw 
+                    ${GLFW_LIBRARIES} 
+                    assimp)
+endif()

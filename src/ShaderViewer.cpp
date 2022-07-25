@@ -1,7 +1,7 @@
 // Third-party Headers
-#include "thirdparty/glm/glm.hpp"
-#include "thirdparty/glm/gtc/matrix_transform.hpp"
-#include "thirdparty/glm/gtc/type_ptr.hpp"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 // Custom Headers
 #include "Config.h"
@@ -23,12 +23,21 @@ float vertices[] = {
     1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
     1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
     -1.0f, -1.0f, 0.0f, 0.0f, 0.0f};
-
 unsigned int indices[] = {
     0, 2, 1,
     2, 0, 3};
-
 VertexArray varray;
+
+// Application Data
+float totalTime = 0;
+ImVec4 bkgColor(35.0f / 255.0f, 60.0f / 255.0f, 75.0f / 255.0f, 1.0f);
+const char *drawOptions[3] = {"Point", "Line", "Fill"};
+int drawOption = 2;
+bool showFrameRate = true;
+bool lockFrameRate = true;
+int FPS = 0;
+float FPSfrequency = 3;
+float timer = 1;
 
 int main()
 {
@@ -54,61 +63,47 @@ int main()
     varray.unbind_vao();
 
     // Setup Shaders and Textures
-    Shader shdr(FileSystem::get_path("shaders/2dshaders/shaderToy.vs").c_str(), FileSystem::get_path("shaders/2dshaders/shaderToy.fs").c_str());
+    Shader shdr(FileSystem::get_path("shaders/2dshaders/shaderViewer.vs").c_str(), FileSystem::get_path("shaders/2dshaders/shaderViewer.fs").c_str());
     Texture tex(FileSystem::get_path("resources/textures/marble.jpg"));
-
-    // Setup Data
-    float totalTime = 0;
-    ImVec4 bkgColor(0.2f, 0.3f, 0.2f, 1.0f);
-    const char *drawOptions[3] = {"Point", "Line", "Fill"};
-    int drawOption = 2;
-    bool showFrameRate = true;
-    bool lockFrameRate = true;
 
     // Start Render Loop
     renderer.start_timer();
     while (!renderer.close_window())
     {
-        // Frame Start
+        // New Renderer Frame
         renderer.new_frame();
         totalTime += renderer.deltaTime;
+        timer += renderer.deltaTime;
+        if (timer >= 1 / FPSfrequency)
+        {
+            timer = 0.0f;
+            FPS = (int)(1 / renderer.deltaTime);
+        }
         totalTime = (totalTime > 300.0f) ? (totalTime - 300.0f) : totalTime;
 
         // New UI Frame
         gui.new_frame();
 
-        // Check for Inputs
+        // Process Scene
         if (renderer.check_key(GLFW_KEY_ESCAPE))
         {
             glfwSetWindowShouldClose(renderer.window, true);
         }
 
-        // Clear Previous Frame
-        glClearColor(bkgColor.x, bkgColor.y, bkgColor.z, bkgColor.w);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Set Draw Mode
-        if (drawOption == 0)
-        {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-        }
-        else if (drawOption == 1)
-        {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        }
-        else
-        {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        }
-
         // Do Calculations
-        int currentWidth, currentHeight;
-        glfwGetWindowSize(renderer.window, &currentWidth, &currentHeight);
+        int currentWidth = (int)(renderer.get_width());
+        int currentHeight = (int)(renderer.get_height());
         if (currentHeight == 0 || currentWidth == 0)
         {
             currentHeight = 1.0f;
             currentWidth = 1.0f;
         }
+
+        // Set Draw Mode
+        renderer.set_draw_mode(drawOption);
+
+        // Clear Previous Frame
+        renderer.clear_screen(bkgColor.x, bkgColor.y, bkgColor.z);
 
         // Setup Shader Uniforms
         shdr.use();
@@ -123,14 +118,15 @@ int main()
         varray.draw_indices(6);
 
         // Setup UI Windows
-        ImGui::Begin("UI Box");
+        ImGui::Begin("Viewer UI");
         ImGui::ColorEdit3("Background Color", &bkgColor.x);
         ImGui::Combo("RenderMode", &drawOption, &drawOptions[0], 3);
         ImGui::Checkbox("VSync", &lockFrameRate);
         ImGui::Checkbox("Show FPS", &showFrameRate);
+        ImGui::SliderFloat("FPS Update Frequency", &FPSfrequency, 0.5f, 60.0f);
         if (showFrameRate)
         {
-            ImGui::Text("%d FPS", (int)(1 / renderer.deltaTime));
+            ImGui::Text("%d FPS", FPS);
         }
         ImGui::End();
 
