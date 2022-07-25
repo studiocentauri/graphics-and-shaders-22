@@ -3,9 +3,9 @@
 
 // Third-party Headers
 #include "glad/glad.h"
-#include "thirdparty/assimp/Importer.hpp"
-#include "thirdparty/assimp/scene.h"
-#include "thirdparty/assimp/postprocess.h"
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 

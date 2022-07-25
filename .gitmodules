@@ -4,3 +4,6 @@
 [submodule "includes/thirdparty/glm"]
 	path = includes/thirdparty/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "includes/thirdparty/assimp"]
+	path = includes/thirdparty/assimp
+	url = https://github.com/assimp/assimp.git

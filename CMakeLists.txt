@@ -25,28 +25,22 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(${THIRD_PARTY_SRCS}/glfw/ "${CMAKE_CURRENT_BINARY_DIR}/glfw")
 add_subdirectory(${THIRD_PARTY_SRCS}/glad/ "${CMAKE_CURRENT_BINARY_DIR}/glad")
 
-# Find third party libs
-find_package(ASSIMP REQUIRED)
-if(ASSIMP_FOUND)
-  include_directories(${ASSIMP_INCLUDE_DIR})
-endif(ASSIMP_FOUND)
+# Assimp flags
+set(ASSIMP_INSTALL OFF CACHE BOOL "disable assimp install")
+add_subdirectory(${THIRD_PARTY_SRCS}/assimp/ "${CMAKE_CURRENT_BINARY_DIR}/assimp")
 
 # Include paths
-include_directories(${PROJECT_DIR})
 include_directories(${PROJECT_DIR}/includes)
-include_directories(${THIRD_PARTY_SRCS})
 include_directories(${THIRD_PARTY_SRCS}/glad/include)
 include_directories(${THIRD_PARTY_SRCS}/glfw/include)
 include_directories(${THIRD_PARTY_SRCS}/stb_image)
 include_directories(${THIRD_PARTY_SRCS}/imgui)
 include_directories(${THIRD_PARTY_SRCS}/glm/)
+set(ASSIMP_INCLUDE_DIRS "${THIRD_PARTY_SRCS}/assimp/include" "${CMAKE_CURRENT_BINARY_DIR}/assimp/include")
+include_directories(${ASSIMP_INCLUDE_DIRS})
 include_directories(${PROJECT_DIR}/configuration)
 configure_file(${PROJECT_DIR}/configuration/root_directory.h.in configuration/root_directory.h)
 include_directories(${CMAKE_BINARY_DIR}/configuration)
-
-if(WIN32)
-  link_directories(lib)
-endif()
 
 # Define files
 file(GLOB_RECURSE FILES_IMGUI "${THIRD_PARTY_SRCS}/imgui/*.cpp")
@@ -82,10 +76,3 @@ target_link_libraries(
                   glfw 
                   ${GLFW_LIBRARIES} 
                   assimp)
-
-if(WIN32)
-  add_custom_command(TARGET graphics-and-shaders POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/dll/assimp-vc142-mtd.dll"
-  $<TARGET_FILE_DIR:graphics-and-shaders>
-  )
-endif(WIN32)
