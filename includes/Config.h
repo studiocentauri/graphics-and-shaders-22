@@ -18,6 +18,8 @@
 #define ENABLE_FIXED_ASPECT_RATIO 1
 #define ASPECT_RATIO_X 16
 #define ASPECT_RATIO_Y 10
+#define ENABLE_WINDOW_BOUNDS 1
+#define WINDOW_SIZE_LIMITS glm::vec4(80.0f, 50.0f, 1600.0f, 1000.0f)
 
 // Vector Settings
 #define WORLD_UP glm::vec3(0.0f, 1.0f, 0.0f)

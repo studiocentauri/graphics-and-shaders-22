@@ -140,8 +140,13 @@ void Renderer::setup_window_data()
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
-#if ((!ENABLE_FULLSCREEN) * ENABLE_FIXED_ASPECT_RATIO)
+#if !(ENABLE_FULLSCREEN)
+#if ENABLE_FIXED_ASPECT_RATIO
     glfwSetWindowAspectRatio(window, ASPECT_RATIO_X, ASPECT_RATIO_Y);
+#endif
+#if ENABLE_WINDOW_BOUNDS
+    glfwSetWindowSizeLimits(window, WINDOW_SIZE_LIMITS.x, WINDOW_SIZE_LIMITS.y, WINDOW_SIZE_LIMITS.z, WINDOW_SIZE_LIMITS.w);
+#endif
 #endif
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -285,16 +290,24 @@ void Renderer::process_mouse(bool isActive)
 
 float Renderer::get_width()
 {
+#if ENABLE_FULLSCREEN
+    return (float)WINDOW_WIDTH;
+#else
     int width, height;
     glfwGetWindowSize(window, &width, &height);
     return (float)width;
+#endif
 }
 
 float Renderer::get_height()
 {
+#if ENABLE_FULLSCREEN
+    return (float)WINDOW_HEIGHT;
+#else
     int width, height;
     glfwGetWindowSize(window, &width, &height);
     return (float)height;
+#endif
 }
 
 void Renderer::start_fbo_pass(float r, float g, float b)
