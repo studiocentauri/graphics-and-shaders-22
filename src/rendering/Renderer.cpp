@@ -26,8 +26,16 @@ void Renderer::terminate_glfw()
 
 bool Renderer::create_window()
 {
+    //window = glfwCreateWindow(width, height, WINDOW_NAME, NULL, NULL); // unmodified code
+    //window = glfwCreateWindow(width, height, WINDOW_NAME, glfwGetPrimaryMonitor(), NULL); // For "Full Screen" (not Maximized/Windowed Full Screen)
+
+    glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE); // Maximized Window
+
     window = glfwCreateWindow(width, height, WINDOW_NAME, NULL, NULL);
 
+    glfwSetWindowAspectRatio(window, 16, 9); // Fixing the aspect ratio on resizing the window
+    glfwSetWindowSizeLimits(window, 640, 360, GLFW_DONT_CARE, GLFW_DONT_CARE); // Min and Max Resolution
+    
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
