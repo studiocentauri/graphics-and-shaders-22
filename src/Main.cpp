@@ -41,7 +41,12 @@ int main()
     }
 
     renderer.setup_window_data();
-    Shader shdr("../../shaders/defaultShader.vs", "../../shaders/defaultShader.fs");
+    //Shader shdr("../../shaders/defaultShader.vs", "../../shaders/defaultShader.fs"); // Incorrect path
+    Shader shdr("../shaders/defaultShader.vs", "../shaders/defaultShader.fs");
+   
+    // Creating a new shader for different colour
+
+    Shader shdr2("../shaders/defaultShader.vs", "../shaders/newShader.fs");
 
     varray.generate_buffers();
     varray.bind_vao();
@@ -53,6 +58,7 @@ int main()
     varray.set_attribute_array(0, 3, 3 * sizeof(float));
     varray.unbind_vbo();
     varray.unbind_vao();
+
 
     renderer.start_timer();
     while (!renderer.close_window())
@@ -113,13 +119,13 @@ int main()
         // Drawing Shapes and Objects
         shdr.use();
         // varray.draw_triangle(3, 0);
-
         varray.bind_vbo(3, 3 * sizeof(float), tri1);
         varray.draw_triangle(3, 0);
 
+        shdr2.use();
+        varray.set_attribute_array(0, 3, 3 * sizeof(float));
         varray.bind_vbo(3, 3 * sizeof(float), tri2);
         varray.draw_triangle(3, 0);
-
 
         //varray.draw_indices(6);
         // End of Frame
