@@ -8,13 +8,14 @@ Renderer renderer;
 //     0.5f, -0.5f, 0.0f,
 //     0.0f, 0.5f, 0.0f};
 float vertices[] = {
-    -0.5f, 0.5f, 0.0f,
+    0.0f, 0.0f, 0.0f,
     0.5f, 0.5f, 0.0f,
-    0.5f, -0.5f, 0.0f,
-    -0.5f, -0.5f, 0.0f};
+    -0.5f, 0.5f, 0.0f,
+    -0.5f, -0.5f, 0.0f,
+    0.5f, -0.5f, 0.0f, };
 unsigned int indices[] = {
     0, 1, 2,
-    2, 3, 0};
+    0, 3, 4 };
 VertexArray varray;
 
 int main()
@@ -30,7 +31,7 @@ int main()
 
     varray.generate_buffers();
     varray.bind_vao();
-    varray.bind_vbo(4, 3 * sizeof(float), vertices);
+    varray.bind_vbo(6, 3 * sizeof(float), vertices);
     varray.bind_ebo(6, indices);
     varray.set_attribute_array(0, 3, 3 * sizeof(float));
     varray.unbind_vbo();
@@ -40,22 +41,25 @@ int main()
     while (!renderer.close_window())
     {
         renderer.new_frame();
-        std::cout << renderer.deltaTime << " " << (int)(1.0f / renderer.deltaTime) << std::endl;
+        //std::cout << renderer.deltaTime << " " << (int)(renderer.deltaTime) << std::endl;
+        float time = glfwGetTime() - (floor)(glfwGetTime());
+        std::cout << time << std::endl;
         if (renderer.check_key(GLFW_KEY_ESCAPE))
         {
             glfwSetWindowShouldClose(renderer.window, true);
         }
         if (renderer.check_key(GLFW_KEY_R))
         {
-            glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+            glClearColor(1.0f * time, 0.0f, 0.0f, 1.0f);
+
         }
         else if (renderer.check_key(GLFW_KEY_G))
         {
-            glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+            glClearColor(0.0f, 1.0f * time, 0.0f, 1.0f);
         }
         else if (renderer.check_key(GLFW_KEY_B))
         {
-            glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+            glClearColor(0.0f, 0.0f, 1.0f * time, 1.0f);
         }
         else
         {

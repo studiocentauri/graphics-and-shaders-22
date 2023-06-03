@@ -14,6 +14,8 @@ void Renderer::initialise_glfw()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE); //Defaulting to Maximised Form
+
 #if __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
@@ -27,6 +29,10 @@ void Renderer::terminate_glfw()
 bool Renderer::create_window()
 {
     window = glfwCreateWindow(width, height, WINDOW_NAME, NULL, NULL);
+
+    glfwSetWindowAspectRatio(window, 1920, 1080); //Fixing the aspect ratio of the window
+    glfwSetWindowSizeLimits(window, 1280, 720, 1920, 1080); //Limits of the window
+
 
     if (window == NULL)
     {
@@ -89,7 +95,7 @@ void Renderer::new_frame()
 
 //------------------------------------------------------------
 
-void framebuffer_size_callback(GLFWwindow *window, int width, int height)
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
@@ -110,7 +116,7 @@ void VertexArray::unbind_vao()
 {
     glBindVertexArray(0);
 }
-void VertexArray::bind_vbo(int vertexCount, GLsizeiptr stride, void *pointer)
+void VertexArray::bind_vbo(int vertexCount, GLsizeiptr stride, void* pointer)
 {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertexCount * stride, pointer, GL_STATIC_DRAW);
@@ -119,7 +125,7 @@ void VertexArray::unbind_vbo()
 {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
-void VertexArray::bind_ebo(int indexCount, void *pointer)
+void VertexArray::bind_ebo(int indexCount, void* pointer)
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), pointer, GL_STATIC_DRAW);
@@ -128,7 +134,7 @@ void VertexArray::unbind_ebo()
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
-void VertexArray::set_attribute_array(int layoutLayer, int count, GLsizeiptr stride, const void *pointer)
+void VertexArray::set_attribute_array(int layoutLayer, int count, GLsizeiptr stride, const void* pointer)
 {
     glEnableVertexAttribArray(layoutLayer);
     glVertexAttribPointer(layoutLayer, count, GL_FLOAT, GL_FALSE, stride, pointer);
