@@ -35,7 +35,6 @@ public:
     int minor;
     int width;
     int height;
-
     float deltaTime;
 
     GLFWwindow *window;
