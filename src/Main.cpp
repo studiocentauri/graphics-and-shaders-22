@@ -19,7 +19,14 @@ Renderer renderer;
 float vertices[] = {
     -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
     0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f};
+    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f,
+
+    0.55f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+    0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+    0.75f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+    0.75f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+};
 
 // float vertices[] = {
 //     -0.5f, 0.5f, 0.0f,
@@ -55,11 +62,11 @@ int main()
     // Setup Vertex Array
     varray.generate_buffers();
     varray.bind_vao();
-    varray.bind_vbo(3, 8 * sizeof(float), vertices);
+    //varray.bind_vbo(3, 8 * sizeof(float), vertices);
     // varray.bind_ebo(6, indices);
-    varray.set_attribute_array(0, 3, 8 * sizeof(float));
-    varray.set_attribute_array(1, 3, 8 * sizeof(float), (void *)(3 * sizeof(float)));
-    varray.set_attribute_array(2, 2, 8 * sizeof(float), (void *)(6 * sizeof(float)));
+    //varray.set_attribute_array(0, 3, 8 * sizeof(float));
+    //varray.set_attribute_array(1, 3, 8 * sizeof(float), (void *)(3 * sizeof(float)));
+    //varray.set_attribute_array(2, 2, 8 * sizeof(float), (void *)(6 * sizeof(float)));
     varray.unbind_vbo();
     varray.unbind_vao();
 
@@ -76,14 +83,26 @@ int main()
     ImVec4 objectColor(0.8f, 0.5f, 0.2f, 1.0f);
     ImVec4 bkgColor(0.2f, 0.3f, 0.2f, 1.0f);
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
+    const char *texSelect[3] = { "Texture1", "Texture2", "Texture3"};
+
     int drawOption = 2;
+    int texSelected = 0;
+    bool isRotating = false;
+    bool check[3]={false, false, false};
+
     // Start Render Loop
     renderer.start_timer();
+    float timer = 1;
+    bool vSync = false;
+    int FPS = 30;
     while (!renderer.close_window())
     {
         // Frame Start
         renderer.new_frame();
+
         totalTime += renderer.deltaTime;
+        FPS = (int) (1.0f / renderer.deltaTime);
+
         totalTime = (totalTime > 1.0f) ? (totalTime - 1.0f) : totalTime;
         // std::cout << renderer.deltaTime << " " << (int)(1.0f / renderer.deltaTime) << std::endl;
         // New UI Frame
@@ -96,6 +115,82 @@ int main()
         {
             glfwSetWindowShouldClose(renderer.window, true);
         }
+
+        // for rotating triangle
+        if (renderer.check_key(GLFW_KEY_R))
+        {
+            isRotating = !isRotating;
+        }
+        if (isRotating == 0) std::cout << "NOT Rotating\n";
+        else std::cout << "RRRRRRRRRRRRRRRRRRR\n";
+
+        //get centroid 
+        int n_Vertices = (sizeof(vertices) / sizeof(float) )/8;
+        float gX = 0, gY = 0;
+
+        std::cout << "there are vertices" << n_Vertices << "\n";
+        int i = 0;
+        for (int i = 0; i < n_Vertices * 8; i+=8);
+        {
+            gX += vertices[i];
+            gY += vertices[i + 1];
+        }
+        gX /= n_Vertices;
+        gY /= n_Vertices;
+        gX = 0;
+        gY = 0;
+        float theta = 0.005f;
+        if (isRotating == 1)
+        {
+            int i = 0;
+            for (i = 0; i < n_Vertices * 8; i += 8)
+            {
+                std::cout << i << " " << " OG VERTICES : " << vertices[i] << " " << vertices[i + 1] << " \n";
+
+                float new_x, new_y, new_xx, new_yy;
+                new_x = (vertices[i]-gX) * cos(theta) - (vertices[i + 1]-gY) * sin(theta) + gX;
+                new_y = (vertices[i]-gX) * sin(theta) + (vertices[i + 1]-gY) * cos(theta) + gY;
+                /* new_x = vertices[i] - gX;
+                new_y = vertices[i+1] - gY;
+                new_xx = new_x * cos(theta) - new_y * sin(theta);
+                new_yy = new_x * sin(theta) + new_y * cos(theta);
+                new_x = new_xx + gX;
+                new_y = new_yy + gY; */
+                vertices[i] = new_x;
+                vertices[i + 1] = new_y;
+
+                std::cout << i << " " << " NUUUUU VERTICES : " << vertices[i] << " " << vertices[i + 1] << " \n";
+            }
+        }
+
+        varray.generate_buffers();
+        varray.bind_vao();
+        if (check[0] == 1 && check[1] == 0) {
+            varray.bind_vbo(3, 8 * sizeof(float), vertices);
+            varray.set_attribute_array(0, 3, 8 * sizeof(float));
+            varray.set_attribute_array(1, 3, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+            varray.set_attribute_array(2, 2, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+
+        }
+        else if (check[1] == 1 && check[0] == 0)
+        {
+            varray.bind_vbo(4, 8 * sizeof(float), vertices + 8 * 3);
+            varray.set_attribute_array(0, 4, 8 * sizeof(float));
+            varray.set_attribute_array(1, 4, 8 * sizeof(float), (void*)(4 * sizeof(float)));
+            varray.set_attribute_array(2, 3, 8 * sizeof(float), (void*)(8 * sizeof(float)));
+        }
+        //fixing rectangle + both checked also left
+        
+        /* else if (check[0] == 1 && check[1] == 1)
+        {
+            varray.bind_vbo(7, 8 * sizeof(float), vertices);
+            varray.set_attribute_array(0, 7, 8 * sizeof(float));
+            varray.set_attribute_array(1, 7, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+            varray.set_attribute_array(2, 6, 8 * sizeof(float), (void*)(8 * sizeof(float)));
+        } */
+        //varray.bind_ebo(6, indices);
+        varray.unbind_vbo();
+        varray.unbind_vao();
 
         // Setup Background Color
         glClearColor(bkgColor.x, bkgColor.y, bkgColor.z, bkgColor.w);
@@ -128,6 +223,7 @@ int main()
         set_active_texture(0);
         varray.draw_triangle(3, 0);
         // varray.draw_indices(6);
+       
         // Setup UI Windows
         ImGui::Begin("UI Box");
         ImGui::ColorEdit3("Object Color", &objectColor.x);
@@ -136,14 +232,30 @@ int main()
         ImGui::SliderFloat("SliderY", &yAxis, -0.5f, 0.5f);
         ImGui::Combo("RenderMode", &drawOption, &drawOptions[0], 3);
         ImGui::End();
+
+        ImGui::Begin("New controls");
+        ImGui::Checkbox("Draw Triangle", &check[0]);
+        ImGui::Checkbox("Draw Rectangle", &check[1]);
+        ImGui::Checkbox("Show FPS", &check[2]);
+        ImGui::Checkbox("Rotating?", &isRotating);
+        ImGui::Checkbox("vSync?", &vSync);
+
+
+        if (check[2])
+        {
+            ImGui::Text("%d FPS", FPS);
+        }
+        ImGui::Combo("Select texture", &texSelected, &texSelect[0], 3);
+        ImGui::End();
+
         // Draw UI
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         // End of Frame
-        renderer.swap_buffers(false);
+        renderer.swap_buffers(vSync);
     }
 
-    // Free Date and stop processes
+    // Free Data and stop processes
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
