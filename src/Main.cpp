@@ -17,14 +17,14 @@ Renderer renderer;
 //     0.0f, 0.5f, 0.0f};
 
 float vertices[] = {
-    -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-    0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f,
+    -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+    0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.5f,
 
-    0.55f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-    0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-    0.75f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-    0.75f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+    0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+    0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+    0.75f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+    0.75f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
 
 };
 
@@ -72,6 +72,12 @@ int main()
 
     // Setup Shaders and Textures
     Shader shdr(FileSystem::get_path("shaders/2dshaders/defaultShader.vs").c_str(), FileSystem::get_path("shaders/2dshaders/colorShader.fs").c_str());
+    Shader shdr2(FileSystem::get_path("shaders/2dshaders/textureShader.vs").c_str(), FileSystem::get_path("shaders/2dshaders/textureShader.fs").c_str());
+    Shader shdr3(FileSystem::get_path("shaders/2dshaders/newVertexShader.vs").c_str(), FileSystem::get_path("shaders/2dshaders/newColorShader.fs").c_str());
+    
+    Shader shdr4(FileSystem::get_path("shaders/2dshaders/defaultShader.vs").c_str(), FileSystem::get_path("shaders/2dshaders/colorShader.fs").c_str());
+
+
     Texture tex(FileSystem::get_path("resources/textures/iitk_logo.png"));
     Texture tex1(FileSystem::get_path("resources/textures/logo4.png"));
     Texture tex2(FileSystem::get_path("resources/textures/council_logo.png"));
@@ -84,11 +90,14 @@ int main()
     ImVec4 bkgColor(0.2f, 0.3f, 0.2f, 1.0f);
     const char *drawOptions[3] = {"Point", "Line", "Fill"};
     const char *texSelect[3] = { "Texture1", "Texture2", "Texture3"};
+    Texture texarr[] = {tex, tex1, tex2}; // Array of textures?
 
     int drawOption = 2;
     int texSelected = 0;
     bool isRotating = false;
-    bool check[3]={false, false, false};
+    bool check[4]={false, false, false, false};
+
+    float timePeriod = 5.0f;
 
     // Start Render Loop
     renderer.start_timer();
@@ -103,10 +112,10 @@ int main()
         totalTime += renderer.deltaTime;
         FPS = (int) (1.0f / renderer.deltaTime);
 
-        totalTime = (totalTime > 1.0f) ? (totalTime - 1.0f) : totalTime;
+        totalTime = (totalTime > timePeriod) ? (totalTime - timePeriod) : totalTime;
         // std::cout << renderer.deltaTime << " " << (int)(1.0f / renderer.deltaTime) << std::endl;
         // New UI Frame
-        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplOpenGL3_NewFrame();           
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
@@ -165,29 +174,79 @@ int main()
 
         varray.generate_buffers();
         varray.bind_vao();
+
+        shdr4.use();
+        //shdr2.set_texture("tex", &tex);
+
+
         if (check[0] == 1 && check[1] == 0) {
+            shdr2.use();
+            shdr2.set_texture("tex1", &texarr[texSelected]);
+            shdr2.set_vec3("col", objectColor.x, objectColor.y, objectColor.z);
+            //shdr2.set_float("Time", totalTime);
+            shdr2.set_vec2("offset", xAxis, yAxis);
             varray.bind_vbo(3, 8 * sizeof(float), vertices);
             varray.set_attribute_array(0, 3, 8 * sizeof(float));
             varray.set_attribute_array(1, 3, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-            varray.set_attribute_array(2, 2, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-
+            varray.set_attribute_array(2, 3, 8 * sizeof(float), (void*)(6 * sizeof(float)));
         }
         else if (check[1] == 1 && check[0] == 0)
         {
+            shdr2.use();
+            shdr2.set_texture("tex1", &texarr[texSelected]);
+            shdr2.set_vec3("col", objectColor.x, objectColor.y, objectColor.z);
+            //shdr2.set_float("Time", totalTime);
+            shdr2.set_vec2("offset", xAxis, yAxis);
             varray.bind_vbo(4, 8 * sizeof(float), vertices + 8 * 3);
             varray.set_attribute_array(0, 4, 8 * sizeof(float));
-            varray.set_attribute_array(1, 4, 8 * sizeof(float), (void*)(4 * sizeof(float)));
-            varray.set_attribute_array(2, 3, 8 * sizeof(float), (void*)(8 * sizeof(float)));
+            varray.set_attribute_array(1, 4, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+            varray.set_attribute_array(2, 4, 8 * sizeof(float), (void*)(6 * sizeof(float)));
         }
         //fixing rectangle + both checked also left
         
-        /* else if (check[0] == 1 && check[1] == 1)
+        else if (check[0] == 1 && check[1] == 1)
         {
-            varray.bind_vbo(7, 8 * sizeof(float), vertices);
-            varray.set_attribute_array(0, 7, 8 * sizeof(float));
-            varray.set_attribute_array(1, 7, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-            varray.set_attribute_array(2, 6, 8 * sizeof(float), (void*)(8 * sizeof(float)));
-        } */
+            shdr2.use();
+            shdr2.use();
+            shdr2.set_texture("tex1", &texarr[texSelected]);
+            shdr2.set_vec3("col", objectColor.x, objectColor.y, objectColor.z);
+            //shdr2.set_float("Time", totalTime);
+            shdr2.set_vec2("offset", xAxis, yAxis);
+            varray.bind_vbo(3, 8 * sizeof(float), vertices);
+            varray.set_attribute_array(0, 3, 8 * sizeof(float));
+            varray.set_attribute_array(1, 3, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+            varray.set_attribute_array(2, 3, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+            
+        }
+        else
+        {
+            if (totalTime < timePeriod / 3.)
+            {
+                vertices[3] = vertices[12] = vertices[21] = 1.0f - (totalTime) * (3 / timePeriod);
+                vertices[4] = vertices[13] = vertices[19] = 0.0f;
+                vertices[5] = vertices[11] = vertices[20] = totalTime * 3/timePeriod;
+            }
+            else if (totalTime < (2 * timePeriod / 3.))
+            {
+                vertices[5] = vertices[11] = vertices[20] = 1.0f - (totalTime) * (3 / timePeriod) + 1.0f;
+                vertices[3] = vertices[12] = vertices[21] = 0.0f;
+                vertices[4] = vertices[13] = vertices[19] = (totalTime) * 3 / timePeriod - 1.0f;
+            }
+            else if (totalTime < timePeriod)
+            {
+                vertices[4] = vertices[13] = vertices[19] = 1.0f - (totalTime) * (3 / timePeriod) + 2.0f;
+                vertices[5] = vertices[11] = vertices[20] = 0.0f;
+                vertices[3] = vertices[12] = vertices[21] = totalTime * 3 / timePeriod - 2.0f;
+            }
+
+            shdr4.set_vec3("col", objectColor.x, objectColor.y, objectColor.z);
+
+            shdr4.use();
+            varray.bind_vbo(3, 8 * sizeof(float), vertices);
+            varray.set_attribute_array(0, 3, 8 * sizeof(float));
+            varray.set_attribute_array(1, 3, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+            varray.set_attribute_array(2, 3, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+        }
         //varray.bind_ebo(6, indices);
         varray.unbind_vbo();
         varray.unbind_vao();
@@ -211,17 +270,51 @@ int main()
         }
 
         // Setup Shader Uniforms
-        shdr.use();
+        /* shdr.use();
         shdr.set_vec3("col", objectColor.x, objectColor.y, objectColor.z);
         shdr.set_float("Time", totalTime);
-        shdr.set_vec2("offset", xAxis, yAxis);
-        shdr.set_texture("tex", &tex);
-        shdr.set_texture("tex1", &tex2);
+        shdr.set_vec2("offset", xAxis, yAxis); */
 
         // Drawing Shapes and Objects
-        shdr.use();
-        set_active_texture(0);
-        varray.draw_triangle(3, 0);
+
+        if (check[0] == 1 && check[1] == 0) {
+            varray.draw_triangle(3, 0);
+        }
+        else if (check[1] == 1 && check[0] == 0)
+        {
+            varray.draw_triangle(3, 0);
+            varray.draw_triangle(3, 1);
+        }
+        else if (check[0] == 1 && check[1] == 1)
+        {
+           varray.draw_triangle(3, 0);
+
+           shdr2.use();
+
+           varray.bind_vbo(4, 8 * sizeof(float), vertices + 8 * 3);
+           varray.set_attribute_array(0, 4, 8 * sizeof(float));
+           varray.set_attribute_array(1, 4, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+           varray.set_attribute_array(2, 4, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+           varray.draw_triangle(3, 0);
+           varray.draw_triangle(3, 1);
+           // varray.draw_triangle(3, 1);
+
+        }
+        else
+        {
+            if (check[3] == 1) shdr3.use();
+            else {
+                shdr4.use();
+            }
+            //shdr.set_vec3("col", objectColor.x, objectColor.y, objectColor.z);
+
+            shdr3.set_float("Time", totalTime);
+            shdr3.set_vec2("offset", xAxis, yAxis);
+            varray.draw_triangle(3, 0);
+
+        }
+        //set_active_texture(0);
+        //varray.draw_triangle(3, 0);
         // varray.draw_indices(6);
        
         // Setup UI Windows
@@ -234,6 +327,7 @@ int main()
         ImGui::End();
 
         ImGui::Begin("New controls");
+        ImGui::Checkbox("Draw Color Cycle", &check[3]);
         ImGui::Checkbox("Draw Triangle", &check[0]);
         ImGui::Checkbox("Draw Rectangle", &check[1]);
         ImGui::Checkbox("Show FPS", &check[2]);
@@ -246,6 +340,7 @@ int main()
             ImGui::Text("%d FPS", FPS);
         }
         ImGui::Combo("Select texture", &texSelected, &texSelect[0], 3);
+        //ImGui::Text("Texture is %d", texSelected);
         ImGui::End();
 
         // Draw UI
